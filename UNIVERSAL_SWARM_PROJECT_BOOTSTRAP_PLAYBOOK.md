@@ -36,6 +36,9 @@ graph TD
 3. **Cấm ôm việc chi tiết & Cấm hỏi nước đôi**:
    - Con Lead là Tổng công trình sư (Chief Architect), không tự bóc tách chi tiết luồng màn hình ở Tab 1 làm phình Token.
    - Lead phải đưa ra **ĐỀ XUẤT DUY NHẤT CHUẨN XÁC THEO KIẾN TRÚC** cho sếp duyệt, cấm hỏi nước đôi mơ hồ *"Sếp muốn làm A hay B?"* đẩy trách nhiệm lại cho người dùng!
+4. **Lệnh Cấm Thi Công Trực Tiếp Đối Với Lead (Execution Embargo)**:
+   - Khi đã có Worker trong Registry: Lead **TUYỆT ĐỐI BỊ CẤM** tự ý chạy lệnh SSH, sửa code, can thiệp server hay tự viết biên bản nghiệm thu thay cho QA Auditor.
+   - Lead chỉ được bóc tách task vào `swarm/TASK_DISPATCH_BOARD.json` và đẩy Git để Worker thực thi và Worker Audit kiểm định. Lead tự làm là tước đoạt công việc của Worker và vi phạm nguyên lý Tam Quyền Phân Lập (Separation of Powers)!
 
 ---
 
