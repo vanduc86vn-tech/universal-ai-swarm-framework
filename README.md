@@ -1,6 +1,6 @@
 # 🌌 Universal AI Swarm Orchestration Framework (UASOF)
-### Khung Kiến Trúc Đa Tác Tử Vạn Năng Cho Kỹ Nghệ Phần Mềm (Domain-Agnostic OOP Swarm)
-**Phiên bản: 2.5.0 Enterprise | Tác giả: Alex (Owner) & AI Swarm Architecture Core**
+### Khung Kiến Trúc Đa Tác Tử Vạn Năng: Co-Pilot Kép (AI-LEAD&BA) & GitOps Autonomous Workers
+**Phiên bản: 3.0.0 Enterprise | Tác giả: Alex (Owner) & AI Swarm Architecture Core**
 
 ---
 
@@ -10,17 +10,13 @@ Khi mở một hộp thoại chat mới cho bất kỳ dự án phần mềm nà
 
 > *"Hãy đọc và thực thi toàn bộ chỉ dẫn tại https://raw.githubusercontent.com/vanduc86vn-tech/universal-ai-swarm-framework/main/BOOTSTRAP_PROMPT.md để khởi tạo workspace và bắt đầu phỏng vấn tao ngay!"*
 
-AI-LEAD sẽ tự động:
-1. Nhận diện Conversation ID của chính nó và khóa vai trò `AI-LEAD`.
-2. Tạo cấu trúc thư mục Clean Architecture, file `.gitignore` chống phình đĩa và các công cụ dọn rác `swarm-gc.js`.
-3. **Hướng dẫn người dùng cách lấy Conversation ID của tab chat mới**.
-4. **Phỏng vấn người dùng để hoàn thiện hạ tầng GitHub cá nhân hóa** và nắm bắt hồ sơ nghiệp vụ dự án trước khi kích hoạt tác tử tiếp theo theo chuẩn Just-In-Time (JIT)!
-
 ---
 
-## 🏛️ 2. HAI TRỤ CỘT HẠ TẦNG BẮT BUỘC (INFRASTRUCTURE BASELINE)
+## 🏛️ 2. ĐỘT PHÁ KIẾN TRÚC UASOF V3.0
 
-Hệ thống UASOF V2.5 bảo đảm 100% dự án phần mềm không bao giờ bị "đầu voi đuôi chuột":
-- **Git SSOT Cá Nhân Hóa**: Mỗi dự án liên kết với 1 repository riêng của người dùng trên GitHub, bảo đảm an toàn dữ liệu và version control.
-- **Đăng Bạ Bất Biến Bằng UUID**: 1 Hộp thoại = 1 UUID Duy Nhất = 1 Vai Trò Độc Quyền trong `swarm/AI_SWARM_REGISTRY.json`.
-- **Hạ Tầng Lưu Trữ 3 Cấp (3-Tier Storage)**: Chặn đứng rác đĩa và cắt giảm 98% Token qua `swarm-query.js`.
+1. **Mô Hình Co-Pilot Kép (AI-LEAD&BA - Single Point of Contact)**:  
+   Người dùng chỉ nói chuyện với **DUY NHẤT 01 HỘP THOẠI**. AI-LEAD&BA vừa là Trợ lý phân tích nghiệp vụ (BA) làm rõ yêu cầu, vừa là Tổng chỉ huy (LEAD) điều phối kỹ nghệ. Không còn tình trạng phân mảnh chat giữa nhiều cửa sổ.
+2. **Cơ Chế GitOps Event-Driven Daemons (`swarm-watch.js`)**:  
+   Các AI kỹ thuật (Data, Backend, Audit, UI) ở các tab khác tự động chạy ngầm, định kỳ kéo Git về (`git pull`) để tự bắt task và tự bàn giao chéo cho nhau mà không cần con người làm trung gian!
+3. **Hạ Tầng 3-Tier Storage & Dọn Rác Tự Động**:  
+   Bảo vệ 100% ổ cứng máy tính qua `swarm-gc.js` và cắt giảm 98% Token qua `swarm-query.js`.

@@ -1,70 +1,53 @@
-# 🚀 UNIVERSAL AI SWARM BOOTSTRAP PLAYBOOK (ENTERPRISE V2.5)
-### CẨM NANG KHỞI TẠO TỔNG QUÁT: THIẾT LẬP HẠ TẦNG GITHUB CÁ NHÂN & TIẾN HÓA ĐA TÁC TỬ
-**Dành cho mọi Lập trình viên, Project Owner & AI-LEAD thế hệ mới**  
-*Mã tài liệu: `UASOF-BOOTSTRAP-V2.5` | Phạm vi: Mọi dự án phần mềm trên mọi máy tính*
+# 🚀 UNIVERSAL AI SWARM BOOTSTRAP PLAYBOOK (UASOF V3.0)
+### CẨM NANG KHỞI TẠO TỔNG QUÁT: MÔ HÌNH CO-PILOT KÉP (AI-LEAD&BA) & GITOPS WORKER DAEMONS
+**Dành cho Project Owner & Hệ thống AI Swarm Tự Động Hóa 100%**  
+*Mã tài liệu: `UASOF-BOOTSTRAP-V3.0` | Triết lý: Single Point of Contact & Autonomous GitOps Daemons*
 
 ---
 
-## 🏛️ I. HAI TRỤ CỘT HẠ TẦNG BẮT BUỘC (MANDATORY INFRASTRUCTURE BASELINE)
+## 🏛️ I. MÔ HÌNH VẬN HÀNH CO-PILOT KÉP (AI-LEAD&BA)
 
-Trước khi viết bất kỳ dòng mã tính năng nào, hệ thống AI Swarm bắt buộc phải hoàn thành 100% hai trụ cột hạ tầng:
-
-### 1. Trụ Cột Git SSOT Cá Nhân Hóa (Personalized GitHub Remote)
-- Mỗi dự án phần mềm phải được liên kết với một **GitHub Repository độc lập** thuộc tài khoản của chính người dùng đó (`https://github.com/<username>/<project-name>`).
-- Cấu hình file `.gitignore` nghiêm ngặt để chặn đứng rác đĩa (`scratch/`, `*.dump`, `*.tmp`, database nhị phân).
-- AI-LEAD có trách nhiệm hướng dẫn người dùng kết nối remote:
-  ```bash
-  git remote add origin https://github.com/<username>/<project-name>.git
-  git push -u origin main
-  ```
-
-### 2. Trụ Cột Đăng Bạ Bất Biến Bằng Conversation ID (UUID)
-- Cơ chế chống "đa nhân cách" và "xung đột vai trò":
-  > **1 Hộp Thoại Chat = 1 Session Container = 1 Conversation ID (UUID) = 1 Vai Trò Độc Quyền**
-- File sổ bộ SSOT: `swarm/AI_SWARM_REGISTRY.json`.
-
----
-
-## 💡 II. HƯỚNG DẪN CÁCH LẤY CONVERSATION ID CỦA TAB CHAT MỚI
-
-Khi AI-LEAD đề xuất mở thêm một tác tử mới (ví dụ: `AI-BA` hoặc `AI-DATA`), người dùng thực hiện theo 3 bước cực kỳ đơn giản:
-
-```text
-[BƯỚC 1]: Bấm dấu "+" trên IDE để mở 1 Tab Chat / Cửa Sổ Mới.
-    │
-    ▼
-[BƯỚC 2]: Tại cửa sổ mới đó, gõ đúng câu hỏi:
-    "Conversation ID của phiên chat này là gì?"
-    -> Con AI mới sẽ trả lời: "Mã Conversation ID của tôi là: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-    │
-    ▼
-[BƯỚC 3]: Copy mã UUID đó dán lại vào hộp thoại của AI-LEAD.
-    -> AI-LEAD sẽ ghi vào swarm/AI_SWARM_REGISTRY.json và xuất lệnh Khóa Vai Trò cho con AI mới đó!
-```
-
----
-
-## 🧭 III. QUY TRÌNH TIẾN HÓA ĐA TÁC TỬ TỪNG BƯỚC (JUST-IN-TIME ONBOARDING)
+Để loại bỏ hoàn toàn việc con người phải nhảy qua nhảy lại giữa các tab chat gây phân mảnh ngữ cảnh (Context Fragmentation), UASOF V3.0 thiết lập kiến trúc **Điểm Chạm Duy Nhất (Single Point of Contact - SPOC)**:
 
 ```mermaid
-flowchart TD
-    Lead["👑 Giai đoạn 0: AI-LEAD khởi động<br/>(Tạo workspace, .gitignore, khóa CONVERSATION_ID_1)"] --> Infra["Giai đoạn 1: Thiết lập Hạ Tầng & Phỏng vấn<br/>(Kết nối GitHub cá nhân + Hỏi tên, tài liệu, giai đoạn)"]
-    
-    Infra --> Decision{"Giai đoạn 2: Đánh giá nút thắt kỹ thuật"}
-    
-    Decision -->|"Ý tưởng mới / Cần bóc tách User Stories"| StepBA["Lead hướng dẫn mở 1 tab mới cho AI-BA<br/>User cấp UUID_BA -> Lead khóa vai trò AI-BA"]
-    Decision -->|"Có sẵn CSDL / Cần thiết kế DDL 3NF"| StepData["Lead hướng dẫn mở 1 tab mới cho AI-DATA<br/>User cấp UUID_DATA -> Lead khóa vai trò AI-DATA"]
-    
-    StepBA & StepData --> Work["AI mới nhận việc chuyên môn độc quyền"]
-    Work --> Next["Hoàn thành cột mốc -> Lead đề xuất kích hoạt tiếp (AI-AUDIT, AI-BACKEND, AI-UI...)"]
+graph TD
+    User["👤 Project Owner (Alex)"] <== "Trao đổi liên tục không đổi tab" ==> LeadBA["👑 Hộp thoại 1: AI-LEAD&BA<br/>(Vừa là Trợ lý Chiến lược BA + Vừa là Nhạc Trưởng LEAD)"]
+
+    subgraph AutoWorkers["CÁC WORKER KỸ THUẬT TỰ ĐỘNG CHẠY NGẦM (GITOPS DAEMONS)"]
+        direction TB
+        W1["🗄️ Hộp thoại 2: AI-DATA<br/>(Chạy ngầm: swarm-watch.js --role AI-DATA)"]
+        W2["🛡️ Hộp thoại 3: AI-AUDIT<br/>(Chạy ngầm: swarm-watch.js --role AI-AUDIT)"]
+        W3["⚙️ Hộp thoại 4: AI-BACKEND<br/>(Chạy ngầm: swarm-watch.js --role AI-BACKEND)"]
+        W4["🎨 Hộp thoại 5: AI-CLIENT-UI<br/>(Chạy ngầm: swarm-watch.js --role AI-CLIENT-UI)"]
+    end
+
+    LeadBA -- "1. Ghi Task & Git Push" --> GitRepo[("📦 GITHUB / REPO REMOTE<br/>(TASK_DISPATCH_BOARD.json)")]
+    GitRepo -. "2. Tự động kéo & bắt task" .-> W1 & W2 & W3 & W4
+    W1 -. "3. Thi công xong -> Ghi bàn giao" .-> GitRepo
+    GitRepo -. "4. Đồng bộ kết quả" .-> LeadBA
 ```
+
+### Ưu Điểm Đột Phá:
+1. **Người dùng (Alex)**: Chỉ cần chat với **DUY NHẤT 01 CON AI-LEAD&BA** trong Tab 1. Toàn bộ ý tưởng, sửa đổi yêu cầu, duyệt tính năng chỉ diễn ra ở đây.
+2. **Các AI Kỹ thuật (Workers)**: Được kích hoạt ở các tab khác nhưng **KHÔNG CẦN NGƯỜI DÙNG PHẢI LÀM SHIPPER CHUYỂN TIN NHẮN**! Chúng tự động chạy ngầm kịch bản `swarm-watch.js` để tự bắt việc từ Git và tự bàn giao chéo cho nhau!
 
 ---
 
-## 📦 IV. NGUYÊN TẮC QUẢN TRỊ FILE TRONG DỰ ÁN
+## 🛰️ II. CƠ CHẾ GITOPS EVENT-DRIVEN DAEMON (`swarm-watch.js`)
 
-| Phân Loại | Danh mục Tài nguyên | Quy Tắc Xử Lý |
-| :--- | :--- | :--- |
-| **🟢 Git Production SSOT** | `src/`, `migrations/*.sql`, `schema/`, `docs/`, `swarm/*.json`, `README.md` | **Bắt buộc commit & push lên GitHub** để lưu vết lịch sử |
-| **🔴 Local Runtime Only** | File DDL realtime dump gộp lớn (>1MB), `swarm/swarm_runtime.db`, file chứa mật khẩu `.env` | **CẤM PUSH GIT (Đã đưa vào .gitignore)** |
-| **⚡ Hot Scratchpad** | Thư mục `scratch/`, file payload `*.tmp`, `*.dump` | **Tự hủy sau 48h qua `swarm-gc.js` (100% .gitignore)** |
+Khi một tác tử chuyên môn (ví dụ: `AI-DATA`) được kích hoạt trong tab chat của nó, nó chỉ cần chạy lệnh lắng nghe:
+
+```bash
+node swarm/scripts/swarm-watch.js --role AI-DATA --loop --interval 15
+```
+
+### Chu Trình Vận Hành Tự Động 100%:
+1. **Kiểm tra định kỳ (Polling)**: Cứ mỗi 15-30 giây, script tự động chạy `git pull origin main` để cập nhật trạng thái mới nhất từ Git.
+2. **Bắt tín hiệu tác vụ**: Script kiểm tra file `swarm/TASK_DISPATCH_BOARD.json`. Khi thấy có task được giao cho `AI-DATA` với trạng thái `ASSIGNED` hoặc `READY`:
+   - Script tự động in ra màn hình thông báo: `🚨 [PHÁT HIỆN TÍN HIỆU TÁC VỤ MỚI CHO AI-DATA]`.
+   - Con `AI-DATA` tự động nhận task `IN_PROGRESS`, bắt tay vào thiết kế DDL hoặc viết code.
+3. **Tự động bàn giao (Autonomous Handoff)**:
+   - Khi `AI-DATA` làm xong, nó đổi trạng thái task sang `READY_FOR_AUDIT` kèm `handoff_to: "AI-AUDIT"`, commit và push lên Git.
+   - Script `swarm-watch.js` của tab `AI-AUDIT` lập tức phát hiện tín hiệu, đánh thức `AI-AUDIT` vào chạy kiểm toán 5 Quality Gates mà không cần con người bấm nút!
+4. **Báo cáo về Nhạc Trưởng**:
+   - `AI-LEAD&BA` ở Tab 1 tự động đồng bộ kết quả từ Git và thông báo cho Alex: *"Dạ anh Alex, CSDL đã được AI-DATA thiết kế và AI-AUDIT nghiệm thu PASS 100% rồi ạ!"*
