@@ -4,7 +4,17 @@
 
 ---
 
-## 🏛️ 1. GIỚI THIỆU TỔNG QUAN
+## ⚡ 1. KHỞI TẠO DỰ ÁN MỚI 1-CLICK (QUICK START)
+
+Khi mở một hộp thoại chat mới cho bất kỳ dự án phần mềm nào, anh Alex chỉ cần copy đoạn lệnh trong file:  
+👉 **[BOOTSTRAP_PROMPT.md](BOOTSTRAP_PROMPT.md)**
+
+Hoặc gõ trực tiếp đúng **1 câu lệnh duy nhất**:
+> *"Hãy đọc và thực thi toàn bộ chỉ dẫn tại https://raw.githubusercontent.com/vanduc86vn-tech/universal-ai-swarm-framework/main/BOOTSTRAP_PROMPT.md cho dự án mới có tên là: [TÊN DỰ ÁN MỚI]"*
+
+---
+
+## 🏛️ 2. GIỚI THIỆU TỔNG QUAN
 
 **UASOF (Universal AI Swarm Orchestration Framework)** là khung kiến trúc độc lập ngữ cảnh, chuẩn hóa việc điều phối một nhóm tác tử AI (AI Swarm) cùng phát triển phần mềm trong các môi trường IDE hiện đại (như Google Antigravity).
 
@@ -15,7 +25,7 @@ Framework giải quyết triệt để 3 vấn nạn cốt lõi của các mô h
 
 ---
 
-## 🧩 2. CẤU TRÚC 7 SLOTS TRỪU TƯỢNG (UNIVERSAL 7-SLOT ARCHETYPE)
+## 🧩 3. CẤU TRÚC 7 SLOTS TRỪU TƯỢNG (UNIVERSAL 7-SLOT ARCHETYPE)
 
 | Slot ID | Siêu Vai Trò Kỹ Nghệ (Meta-Role) | Chuyên Môn Độc Quyền | Vùng Cấm Tuyệt Đối |
 | :---: | :--- | :--- | :--- |
@@ -29,14 +39,15 @@ Framework giải quyết triệt để 3 vấn nạn cốt lõi của các mô h
 
 ---
 
-## 📁 3. CẤU TRÚC REPOSITORY
+## 📁 4. CẤU TRÚC REPOSITORY
 
 ```text
 universal-ai-swarm-framework/
 ├── README.md                                 # Tài liệu tổng quan SSOT
-├── UNIVERSAL_AI_SWARM_ARCHETYPE.json         # Tầng 1: Bản mẫu trừu tượng 7 Slots
+├── BOOTSTRAP_PROMPT.md                       # Lệnh khởi tạo 1-click cho dự án mới
+├── UNIVERSAL_AI_SWARM_ARCHETYPE.json         # TẦNG 1: Bản mẫu trừu tượng 7 Slots
 ├── UNIVERSAL_AI_SWARM_ARCHITECTURE.md        # Hiến pháp kiến trúc 2 tầng (OOP Polymorphism)
-├── UNIVERSAL_SWARM_PROJECT_BOOTSTRAP_PLAYBOOK.md # Cẩm nang khởi tạo dự án mới 1-click
+├── UNIVERSAL_SWARM_PROJECT_BOOTSTRAP_PLAYBOOK.md # Cẩm nang khởi tạo dự án mới từ 0 đến 1
 ├── .gitignore                                # Bộ lọc Git chuẩn chống rác
 ├── templates/
 │   └── AI_SWARM_REGISTRY_TEMPLATE.json       # Mẫu đăng bạ cho dự án mới kế thừa
@@ -44,13 +55,3 @@ universal-ai-swarm-framework/
     ├── swarm-gc.js                           # Động cơ dọn rác tự động (Garbage Collector)
     └── swarm-sync.js                         # CLI đồng bộ hàng đợi Task Dispatch
 ```
-
----
-
-## 🚀 4. CÁCH KẾ THỪA CHO BẤT KỲ DỰ ÁN MỚI NÀO (1-CLICK)
-
-Khi bắt đầu một dự án mới (Fintech, E-Commerce, SaaS, HealthTech...):
-1. Mở 1 hộp thoại chat mới với AI đầu tiên (`CONVERSATION_ID_1`).
-2. Cung cấp đường dẫn GitHub của repository này:  
-   👉 **`https://github.com/vanduc86vn-tech/universal-ai-swarm-framework.git`**
-3. AI sẽ tự động `git clone` hoặc đọc các file template để setup toàn bộ dự án từ con số 0.
