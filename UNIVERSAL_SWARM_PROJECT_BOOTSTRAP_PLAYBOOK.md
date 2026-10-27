@@ -26,6 +26,17 @@ graph TD
     GitRepo -. "4. Đồng bộ kết quả" .-> LeadBA
 ```
 
+### 🚨 NGUYÊN TẮC VÀNG: TIẾN TRÌNH SDLC & TÁI SỬ DỤNG WORKER (CHỐNG ÔM VIỆC & CHỐNG ĐẺ TAB)
+1. **Tuân thủ nghiêm ngặt chuỗi kỹ nghệ SDLC (Stage-Gate Enforcement)**:
+   - Không bao giờ được nhảy cóc: `(1) Khảo sát CSDL` ➔ `(2) Chuẩn hóa Schema 3NF & Viết Migration` ➔ `(3) Kiểm toán CSDL độc lập (QA Audit Gate)` ➔ `(4) Xây dựng Backend APIs` ➔ `(5) Phát triển Web & Mobile UI`.
+   - **Cấm tuyệt đối**: Vừa khảo sát hiện trạng DDL thô xong đã vội vã đòi nhảy sang code Backend API trên nền CSDL chưa chuẩn hóa!
+2. **Tối đa hóa tái sử dụng Worker hiện có (Lean Swarm - Chống đẻ tab vô tội vạ)**:
+   - Worker CSDL ở Tab 2 đang trực chiến và nắm toàn bộ ngữ cảnh CSDL. Phải giao ngay task tiếp theo (Chuẩn hóa Schema 3NF & Viết Migrations) cho chính Worker này!
+   - **Cấm tùy tiện đòi mở thêm Tab mới** khi Worker hiện tại chưa hết việc hoặc giai đoạn kỹ thuật tương ứng chưa tới.
+3. **Cấm ôm việc chi tiết & Cấm hỏi nước đôi**:
+   - Con Lead là Tổng công trình sư (Chief Architect), không tự bóc tách chi tiết luồng màn hình ở Tab 1 làm phình Token.
+   - Lead phải đưa ra **ĐỀ XUẤT DUY NHẤT CHUẨN XÁC THEO KIẾN TRÚC** cho sếp duyệt, cấm hỏi nước đôi mơ hồ *"Sếp muốn làm A hay B?"* đẩy trách nhiệm lại cho người dùng!
+
 ---
 
 ## 💡 II. 🚨 QUY TRÌNH KÍCH HOẠT WORKER MỚI (CHỈ COPY-PASTE, KHÔNG DÙNG TERMINAL)
