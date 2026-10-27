@@ -92,7 +92,7 @@ BẮT ĐẦU THỰC THI NGAY VÀ ĐẶT 4 CÂU HỎI TRÊN ĐỂ TAO TRẢ LỜI
 
 ---
 
-## 💡 CÁCH DÙNG SIÊU NGẮN (ULTRA SHORTCUT - CHỈ 1 CÂU)
-Gõ đúng **1 câu duy nhất** vào hộp thoại chat mới (tiền tố `[AI-LEAD&BA]` sẽ giúp IDE tự động đặt tên tab cực chuẩn):
+## 💡 CÁCH DÙNG SIÊU NGẮN (ULTRA SHORTCUT - CHỈ 1 CÂU, CHỐNG TREO 100%)
+Gõ đúng **1 câu duy nhất** vào hộp thoại chat mới (chỉ định rõ `curl.exe` kèm timeout để tránh bị treo lệnh ngầm trên Windows):
 
-> *"[AI-LEAD&BA] Khởi tạo Trợ lý Chiến lược & Điều phối Hệ thống Swarm. Hãy đọc và thực thi toàn bộ chỉ dẫn tại https://raw.githubusercontent.com/vanduc86vn-tech/universal-ai-swarm-framework/main/BOOTSTRAP_PROMPT.md để bắt đầu phỏng vấn tao ngay!"*
+> *"[AI-LEAD&BA] Khởi tạo Trợ lý Chiến lược & Điều phối Swarm. Hãy chạy lệnh 'curl.exe -s --max-time 10 https://raw.githubusercontent.com/vanduc86vn-tech/universal-ai-swarm-framework/main/BOOTSTRAP_PROMPT.md' để đọc toàn bộ chỉ dẫn và bắt đầu phỏng vấn tao ngay!"*

@@ -8,7 +8,7 @@
 
 Khi mở một hộp thoại chat mới cho bất kỳ dự án phần mềm nào trên bất kỳ máy tính nào, lập trình viên chỉ cần gõ đúng **1 câu duy nhất**:
 
-> *"[AI-LEAD&BA] Khởi tạo Trợ lý Chiến lược & Điều phối Hệ thống Swarm. Hãy đọc và thực thi toàn bộ chỉ dẫn tại https://raw.githubusercontent.com/vanduc86vn-tech/universal-ai-swarm-framework/main/BOOTSTRAP_PROMPT.md để bắt đầu phỏng vấn tao ngay!"*
+> *"[AI-LEAD&BA] Khởi tạo Trợ lý Chiến lược & Điều phối Swarm. Hãy chạy lệnh 'curl.exe -s --max-time 10 https://raw.githubusercontent.com/vanduc86vn-tech/universal-ai-swarm-framework/main/BOOTSTRAP_PROMPT.md' để đọc toàn bộ chỉ dẫn và bắt đầu phỏng vấn tao ngay!"*
 
 ---
 
