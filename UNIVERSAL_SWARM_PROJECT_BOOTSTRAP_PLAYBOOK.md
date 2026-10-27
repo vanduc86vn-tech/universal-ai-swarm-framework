@@ -1,58 +1,70 @@
-# 🚀 UNIVERSAL AI SWARM BOOTSTRAP PLAYBOOK (DYNAMIC EVOLUTION)
-### CẨM NANG KHỞI TẠO TỔNG QUÁT: TỰ TIẾN HÓA ĐA TÁC TỬ THEO VÒNG ĐỜI DỰ ÁN
-**Dành cho Project Owner (Alex) & AI-LEAD thế hệ mới**  
-*Mã tài liệu: `UASOF-BOOTSTRAP-V2.3` | Triết lý: Dynamic UUID Binding & Just-In-Time Swarm Evolution*
+# 🚀 UNIVERSAL AI SWARM BOOTSTRAP PLAYBOOK (ENTERPRISE V2.5)
+### CẨM NANG KHỞI TẠO TỔNG QUÁT: THIẾT LẬP HẠ TẦNG GITHUB CÁ NHÂN & TIẾN HÓA ĐA TÁC TỬ
+**Dành cho mọi Lập trình viên, Project Owner & AI-LEAD thế hệ mới**  
+*Mã tài liệu: `UASOF-BOOTSTRAP-V2.5` | Phạm vi: Mọi dự án phần mềm trên mọi máy tính*
 
 ---
 
-## 🏛️ I. NGUYÊN LÝ CỐT LÕI: ĐỊNH DANH BẤT BIẾN BẰNG CONVERSATION ID (UUID)
+## 🏛️ I. HAI TRỤ CỘT HẠ TẦNG BẮT BUỘC (MANDATORY INFRASTRUCTURE BASELINE)
 
-Cơ chế quản trị duy nhất giúp Biệt đội AI Swarm không bao giờ bị "nhập nhằng vai trò", "đa nhân cách" hay "tự đá bóng tự thổi còi" là:
-> **1 HỘP THOẠI CHAT = 1 SESSION CONTAINER = 1 CONVERSATION ID (UUID) DUY NHẤT = 1 VAI TRÒ BẤT BIẾN**
+Trước khi viết bất kỳ dòng mã tính năng nào, hệ thống AI Swarm bắt buộc phải hoàn thành 100% hai trụ cột hạ tầng:
 
-Toàn bộ Swarm vận hành dựa trên file sổ bộ `swarm/AI_SWARM_REGISTRY.json`. Khi bất kỳ AI nào được sinh ra, nó bắt buộc phải được gắn chặt vào một mã UUID thực tế.
+### 1. Trụ Cột Git SSOT Cá Nhân Hóa (Personalized GitHub Remote)
+- Mỗi dự án phần mềm phải được liên kết với một **GitHub Repository độc lập** thuộc tài khoản của chính người dùng đó (`https://github.com/<username>/<project-name>`).
+- Cấu hình file `.gitignore` nghiêm ngặt để chặn đứng rác đĩa (`scratch/`, `*.dump`, `*.tmp`, database nhị phân).
+- AI-LEAD có trách nhiệm hướng dẫn người dùng kết nối remote:
+  ```bash
+  git remote add origin https://github.com/<username>/<project-name>.git
+  git push -u origin main
+  ```
+
+### 2. Trụ Cột Đăng Bạ Bất Biến Bằng Conversation ID (UUID)
+- Cơ chế chống "đa nhân cách" và "xung đột vai trò":
+  > **1 Hộp Thoại Chat = 1 Session Container = 1 Conversation ID (UUID) = 1 Vai Trò Độc Quyền**
+- File sổ bộ SSOT: `swarm/AI_SWARM_REGISTRY.json`.
 
 ---
 
-## 🧭 II. BẢN ĐỒ TIẾN HÓA ĐỘNG TỪNG BƯỚC (DYNAMIC ONBOARDING PROTOCOL)
+## 💡 II. HƯỚNG DẪN CÁCH LẤY CONVERSATION ID CỦA TAB CHAT MỚI
 
-Thay vì tư duy Thác nước (Waterfall) cứng nhắc mở ồ ạt cả 7 AI ngay ngày đầu tiên, Swarm được tiến hóa từng bước (Just-In-Time):
+Khi AI-LEAD đề xuất mở thêm một tác tử mới (ví dụ: `AI-BA` hoặc `AI-DATA`), người dùng thực hiện theo 3 bước cực kỳ đơn giản:
 
-```mermaid
-flowchart TD
-    Lead["👑 Giai đoạn 0: AI-LEAD khởi động<br/>(Khóa CONVERSATION_ID_1 vào Registry)"] --> Ingest["Giai đoạn 1: Phỏng vấn PO & Hấp thụ hồ sơ dự án<br/>(Đọc PROJECT_MASTER_SPECIFICATION.md)"]
-    
-    Ingest --> Decision{"Giai đoạn 2: Đánh giá nút thắt kỹ thuật<br/>(Xác định duy nhất 01 vai trò cần kích hoạt)"}
-    
-    Decision -->|"Cần bóc tách yêu cầu"| AskBA["Lead yêu cầu Alex mở 01 tab chat cho AI-BA<br/>Alex cấp mã UUID_BA -> Lead đăng bạ vào Registry"]
-    Decision -->|"Cần thiết kế CSDL"| AskData["Lead yêu cầu Alex mở 01 tab chat cho AI-DATA<br/>Alex cấp mã UUID_DATA -> Lead đăng bạ vào Registry"]
-    
-    AskBA & AskData --> LockIn["Lead xuất câu lệnh Khóa Vai Trò cho con AI mới"]
-    LockIn --> Work["AI mới đọc Registry & tác chiến độc quyền"]
-    Work --> NextMilestone["Hoàn thành cột mốc -> Lead đánh giá và kích hoạt tiếp AI tiếp theo (AUDIT, BACKEND, UI...)"]
+```text
+[BƯỚC 1]: Bấm dấu "+" trên IDE để mở 1 Tab Chat / Cửa Sổ Mới.
+    │
+    ▼
+[BƯỚC 2]: Tại cửa sổ mới đó, gõ đúng câu hỏi:
+    "Conversation ID của phiên chat này là gì?"
+    -> Con AI mới sẽ trả lời: "Mã Conversation ID của tôi là: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+    │
+    ▼
+[BƯỚC 3]: Copy mã UUID đó dán lại vào hộp thoại của AI-LEAD.
+    -> AI-LEAD sẽ ghi vào swarm/AI_SWARM_REGISTRY.json và xuất lệnh Khóa Vai Trò cho con AI mới đó!
 ```
 
 ---
 
-## 📦 III. QUY TRÌNH 4 BƯỚC THỰC THI CHO AI-LEAD
+## 🧭 III. QUY TRÌNH TIẾN HÓA ĐA TÁC TỬ TỪNG BƯỚC (JUST-IN-TIME ONBOARDING)
 
-### Bước 1: Khởi Động Nhạc Trưởng (AI-LEAD Setup)
-1. Tải công cụ nền tảng về thư mục `swarm/` (`swarm-gc.js`, `swarm-sync.js`, `.gitignore`).
-2. Tự lấy mã `Conversation ID` của chính mình và ghi vào `swarm/AI_SWARM_REGISTRY.json` với vai trò `CONVERSATION_ID_1 (AI-LEAD)`.
+```mermaid
+flowchart TD
+    Lead["👑 Giai đoạn 0: AI-LEAD khởi động<br/>(Tạo workspace, .gitignore, khóa CONVERSATION_ID_1)"] --> Infra["Giai đoạn 1: Thiết lập Hạ Tầng & Phỏng vấn<br/>(Kết nối GitHub cá nhân + Hỏi tên, tài liệu, giai đoạn)"]
+    
+    Infra --> Decision{"Giai đoạn 2: Đánh giá nút thắt kỹ thuật"}
+    
+    Decision -->|"Ý tưởng mới / Cần bóc tách User Stories"| StepBA["Lead hướng dẫn mở 1 tab mới cho AI-BA<br/>User cấp UUID_BA -> Lead khóa vai trò AI-BA"]
+    Decision -->|"Có sẵn CSDL / Cần thiết kế DDL 3NF"| StepData["Lead hướng dẫn mở 1 tab mới cho AI-DATA<br/>User cấp UUID_DATA -> Lead khóa vai trò AI-DATA"]
+    
+    StepBA & StepData --> Work["AI mới nhận việc chuyên môn độc quyền"]
+    Work --> Next["Hoàn thành cột mốc -> Lead đề xuất kích hoạt tiếp (AI-AUDIT, AI-BACKEND, AI-UI...)"]
+```
 
-### Bước 2: Phỏng Vấn Ngữ Cảnh Dự Án Cụ Thể (Discovery Interview)
-Vì khung UASOF là trừu tượng, AI-LEAD chủ động đặt 3 câu hỏi cho Alex:
-- *Tên dự án là gì?*
-- *Hồ sơ đặc tả có sẵn ở file nào (ví dụ: `PROJECT_MASTER_SPECIFICATION.md`) hay cần tóm tắt tầm nhìn?*
-- *Giai đoạn hiện tại là gì?*
+---
 
-### Bước 3: Đề Xuất & Yêu Cầu Cấp UUID Từng Bước (JIT UUID Binding)
-Dựa trên câu trả lời của Alex:
-- Nếu dự án cần làm rõ nghiệp vụ $\rightarrow$ AI-LEAD đề xuất kích hoạt **`AI-BA`**.
-- Nếu dự án đã có sẵn code/CSDL cần tái cấu trúc $\rightarrow$ AI-LEAD đề xuất kích hoạt **`AI-DATA`**.
-- AI-LEAD yêu cầu Alex:
-  > *"Xin anh mở 01 hộp thoại chat mới cho [Tên Vai Trò] và gửi mã Conversation ID (UUID) của hộp thoại đó cho tôi!"*
+## 📦 IV. NGUYÊN TẮC QUẢN TRỊ FILE TRONG DỰ ÁN
 
-### Bước 4: Đăng Bạ Bất Biến & Xuất Lệnh Khóa Vai Trò
-1. AI-LEAD nhận mã UUID từ Alex, ghi dòng mapping vào `swarm/AI_SWARM_REGISTRY.json`.
-2. AI-LEAD sinh ra đúng **01 câu prompt định danh** để Alex dán vào hộp thoại mới. Con AI mới sẽ đọc Registry, nhận diện vị trí và kích hoạt chuyên môn độc quyền của mình.
+| Phân Loại | Danh mục Tài nguyên | Quy Tắc Xử Lý |
+| :--- | :--- | :--- |
+| **🟢 Git Production SSOT** | `src/`, `migrations/*.sql`, `schema/`, `docs/`, `swarm/*.json`, `README.md` | **Bắt buộc commit & push lên GitHub** để lưu vết lịch sử |
+| **🔴 Local Runtime Only** | File DDL realtime dump gộp lớn (>1MB), `swarm/swarm_runtime.db`, file chứa mật khẩu `.env` | **CẤM PUSH GIT (Đã đưa vào .gitignore)** |
+| **⚡ Hot Scratchpad** | Thư mục `scratch/`, file payload `*.tmp`, `*.dump` | **Tự hủy sau 48h qua `swarm-gc.js` (100% .gitignore)** |
