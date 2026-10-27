@@ -1,9 +1,15 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "archetype_name": "Universal_Software_Engineering_AI_Swarm_Archetype",
-  "version": "2.1.0",
-  "author": "Alex & Antigravity Swarm Architecture Core",
-  "description": "Bản mẫu (Base Template) Trừu tượng Độc lập Ngữ cảnh cho Biệt đội AI Swarm Tự Tiến Hóa (Dynamic JIT Evolution). Các Slot là Siêu Lớp Năng Lực Trừu Tượng được kích hoạt Just-In-Time theo từng giai đoạn của vòng đời dự án, TUYỆT ĐỐI KHÔNG mở ồ ạt hàng loạt AI cùng một lúc.",
+  "version": "4.0.0",
+  "author": "Alex (Owner) & AI-MASTER-LEAD (Supreme Swarm Architect)",
+  "description": "Bản mẫu Trừu tượng Vạn năng cho Biệt đội AI Swarm Tự Tiến Hóa (UASOF V4.0 Enterprise). Tích hợp 4 Hiến chương Quản trị: DDL Bất biến, Circuit Breaker chống lệch pha, Kiểm toán Nhị phân 100%, và Hòm thư GitOps Liên Dự Án 2 Chiều.",
+  "constitutional_charters": {
+    "ddl_governance": "templates/IMMUTABLE_DDL_GOVERNANCE_CHARTER.json",
+    "circuit_breaker": "templates/SELF_HEALING_CIRCUIT_BREAKER_ENGINE.json",
+    "quality_gate": "templates/BINARY_AUDIT_QUALITY_GATE_STANDARD.json",
+    "cross_project_mailbox": "templates/BIDIRECTIONAL_CROSS_PROJECT_MAILBOX_SPEC.json"
+  },
   "evolution_principles": {
     "paradigm": "Systems Thinking & Object-Oriented Dynamic Swarm Evolution",
     "activation_strategy": "JUST_IN_TIME_SPAWNING",

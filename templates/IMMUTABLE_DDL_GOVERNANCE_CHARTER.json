@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "archetype_id": "UASOF-CHARTER-DDL-V4.0",
+  "title": "Hiến Chương Quản Trị Cơ Sở Dữ Liệu Bất Biến & Không Phá Hủy (Immutable DDL Governance Charter)",
+  "version": "4.0.0",
+  "governance_philosophy": "Zero-Tolerance Non-Destructive Data Architecture (Bảo Toàn Tuyệt Đối Dữ Liệu Doanh Nghiệp)",
+  "enforcement_level": "MANDATORY_CONSTITUTIONAL",
+  "rules": {
+    "prohibited_operations": {
+      "level": "STRICTLY_FORBIDDEN",
+      "statements": [
+        "DROP TABLE",
+        "DROP DATABASE",
+        "TRUNCATE TABLE",
+        "ALTER TABLE ... DROP COLUMN (trừ khi có xác nhận văn bản và migration backup riêng)"
+      ],
+      "rationale": "Ngăn chặn tuyệt đối nguy cơ làm mất dữ liệu sản xuất (Production Live) của doanh nghiệp."
+    },
+    "mandatory_patterns": {
+      "schema_evolution": "Mọi thay đổi CSDL phải được thực hiện bằng ALTER TABLE tuần tự tăng dần (Incremental Non-Destructive Evolution).",
+      "migration_coupling": "Mỗi file Migration nâng cấp (XX_Upgrade_*.sql) BẮT BUỘC phải đi kèm 1 file Migration Rollback (XX_Rollback_*.sql) tương ứng.",
+      "master_data_inheritance": "Tuyệt đối không tự ý sinh mới các nhóm Type/Category/Enum mà phải tra cứu và kế thừa từ Từ điển Master Data SSOT (MasterCategories).",
+      "naming_conventions": {
+        "tables": "PascalCase danh từ số nhiều (ví dụ: CustomerPortalAccounts, OrderItems)",
+        "primary_keys": "PascalCase kết thúc bằng ID (ví dụ: AccountID, OrderID)",
+        "foreign_keys": "Khớp chính xác tên Primary Key của bảng cha (ví dụ: CustomerID liên kết Customers.CustomerID)",
+        "audit_columns": ["CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP", "UpdatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"]
+      }
+    },
+    "verification_gates": {
+      "dry_run_required": true,
+      "rollback_tested": true,
+      "schema_diff_checked": true
+    }
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "archetype_id": "UASOF-STANDARD-BINARY-QUALITY-GATE-V4.0",
+  "title": "Tiêu Chuẩn Kiểm Toán Nhị Phân Tuyệt Đối (Binary Quality Gate Standard)",
+  "version": "4.0.0",
+  "evaluation_mode": "BOOLEAN_DETERMINISTIC",
+  "philosophy": "Loại bỏ hoàn toàn thang điểm phần trăm vùng xám (85%-95%). Chỉ chấp nhận 2 trạng thái: PASS (100% Tuyệt đối) hoặc FAIL (0% - Trả về sửa đổi).",
+  "gates": [
+    {
+      "gate_id": "GATE_1_DATABASE_INTEGRITY",
+      "name": "Toàn Vẹn Kiến Trúc & CSDL",
+      "mandatory_checks": [
+        "Tuân thủ 100% chuẩn 3NF và không có bảng mồ côi (Orphan Tables)",
+        "Khóa ngoại FK có đầy đủ Index hỗ trợ truy vấn",
+        "Có đầy đủ file Migration nâng cấp và Migration Rollback tương ứng",
+        "Tuyệt đối không chứa câu lệnh DROP TABLE hoặc TRUNCATE"
+      ]
+    },
+    {
+      "gate_id": "GATE_2_SECURITY_AND_ZERO_TRUST",
+      "name": "Bảo Mật Zero-Trust & An Toàn Ứng Dụng",
+      "mandatory_checks": [
+        "Không hardcode thông tin nhạy cảm, mật khẩu hoặc API Key trong mã nguồn",
+        "100% truy vấn CSDL dùng Parameterized Query hoặc ORM (chống SQL Injection)",
+        "Tách biệt hoàn toàn dữ liệu nội bộ và dữ liệu khách hàng bên ngoài (Cross-DB Security Views)",
+        "Có cơ chế Rate Limiting chống Brute-Force trên các endpoint xác thực"
+      ]
+    },
+    {
+      "gate_id": "GATE_3_API_AND_CONTRACT_CONFORMITY",
+      "name": "Chuẩn Hóa Hợp Đồng Giao Tiếp API",
+      "mandatory_checks": [
+        "Đầy đủ mã phản hồi HTTP chuẩn (200, 201, 400, 401, 403, 404, 500)",
+        "Payload trả về có cấu trúc nhất quán (status, message, data/errors)",
+        "Có middleware xác thực JWT và kiểm tra trạng thái phiên làm việc hợp lệ"
+      ]
+    },
+    {
+      "gate_id": "GATE_4_CODE_QUALITY_AND_ARCHITECTURE",
+      "name": "Chất Lượng Mã Nguồn & Tinh Gọn",
+      "mandatory_checks": [
+        "Tuân thủ nguyên tắc Đơn trách nhiệm (Single Responsibility Principle)",
+        "Không có vòng lặp phụ thuộc chéo (Circular Dependencies)",
+        "Không chứa console.log debug rác, file tạm, hoặc dependencies thừa thãi"
+      ]
+    },
+    {
+      "gate_id": "GATE_5_DEPLOYMENT_SAFETY_AND_ROLLBACK",
+      "name": "Kỷ Luật Triển Khai & Phục Hồi Thảm Họa",
+      "mandatory_checks": [
+        "Tuyệt đối không sửa code trực tiếp trên môi trường Production Live",
+        "Quy trình deploy có kịch bản snapshot backup tự động trước khi reload",
+        "Có khả năng rollback về phiên bản trước trong vòng dưới 60 giây khi có sự cố"
+      ]
+    }
+  ],
+  "certification_rule": "Một tính năng hoặc phân hệ CHỈ ĐƯỢC PHÉP BÀN GIAO khi toàn bộ 5 Cổng đạt trạng thái PASS (100%). Nếu có dù chỉ 1 tiêu chí vi phạm, trạng thái tổng thể lập tức là FAIL."
+}

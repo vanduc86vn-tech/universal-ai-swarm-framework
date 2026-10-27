@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "archetype_id": "UASOF-SPEC-CROSS-PROJECT-MAILBOX-V4.0",
+  "title": "Quy Chuẩn Hòm Thư Giao Tiếp Liên Dự Án Đối Xứng (Bidirectional Cross-Project Mailbox Spec)",
+  "version": "4.0.0",
+  "design_principle": "Interface Segregation & GitOps Sovereignty (Chủ Quyền Hai Chiều Giữa Các Biệt Đội AI Độc Lập)",
+  "purpose": "Thiết lập hành lang pháp lý kỹ thuật để nhiều Swarm độc lập (ví dụ: Ứng dụng ERP và Hạ tầng VPS) phối hợp qua Git mà không bao giờ xung đột file hay gây ô nhiễm kho mã nguồn.",
+  "mailbox_directory_structure": {
+    "root": "docs/infrastructure_rfcs/",
+    "channels": {
+      "app_to_infra": {
+        "path": "docs/infrastructure_rfcs/app_to_infra_requests/",
+        "write_permission": "EXCLUSIVE_TO_APPLICATION_SWARM",
+        "read_permission": "ALL_SWARMS",
+        "description": "Nơi Swarm Ứng dụng gửi yêu cầu tài nguyên hạ tầng (cấp phát Port, Domain, Nginx Reverse Proxy, CSDL, Cron Event)."
+      },
+      "infra_to_app": {
+        "path": "docs/infrastructure_rfcs/infra_to_app_requests/",
+        "write_permission": "EXCLUSIVE_TO_INFRASTRUCTURE_SWARM",
+        "read_permission": "ALL_SWARMS",
+        "description": "Nơi Swarm Hạ tầng phát tín hiệu kỷ luật, cảnh báo tài nguyên (RAM > 500MB, rò rỉ Connection Pool, vá lỗ hổng bảo mật khẩn cấp)."
+      }
+    },
+    "ledger_file": "docs/infrastructure_rfcs/RFC_TRANSACTION_REGISTRY.json"
+  },
+  "atomic_transaction_rules": [
+    "Mỗi giao dịch RFC chỉ bao gồm đúng 2 file tài liệu: RFC-XXX-REQUEST.md (Đề xuất) và RFC-XXX-RESPONSE.md (Biên bản nghiệm thu).",
+    "Tuyệt đối cấm tạo file rác, file nháp hoặc file thứ 3 vào hòm thư giao tiếp.",
+    "Trạng thái vòng đời của RFC được theo dõi bất biến qua sổ cái: PENDING -> IN_PROGRESS -> COMPLETED -> ARCHIVED."
+  ]
+}
