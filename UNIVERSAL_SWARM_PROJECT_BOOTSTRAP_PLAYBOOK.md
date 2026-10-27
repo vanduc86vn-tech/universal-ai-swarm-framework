@@ -1,74 +1,58 @@
 # 🚀 UNIVERSAL AI SWARM BOOTSTRAP PLAYBOOK (DYNAMIC EVOLUTION)
 ### CẨM NANG KHỞI TẠO TỔNG QUÁT: TỰ TIẾN HÓA ĐA TÁC TỬ THEO VÒNG ĐỜI DỰ ÁN
 **Dành cho Project Owner (Alex) & AI-LEAD thế hệ mới**  
-*Mã tài liệu: `UASOF-BOOTSTRAP-V2.1` | Triết lý: Systems Thinking & Just-In-Time (JIT) Swarm Evolution*
+*Mã tài liệu: `UASOF-BOOTSTRAP-V2.3` | Triết lý: Dynamic UUID Binding & Just-In-Time Swarm Evolution*
 
 ---
 
-## 🧭 I. BẢN ĐỒ TIẾN HÓA TỰ ĐỘNG THEO VÒNG ĐỜI DỰ ÁN
+## 🏛️ I. NGUYÊN LÝ CỐT LÕI: ĐỊNH DANH BẤT BIẾN BẰNG CONVERSATION ID (UUID)
+
+Cơ chế quản trị duy nhất giúp Biệt đội AI Swarm không bao giờ bị "nhập nhằng vai trò", "đa nhân cách" hay "tự đá bóng tự thổi còi" là:
+> **1 HỘP THOẠI CHAT = 1 SESSION CONTAINER = 1 CONVERSATION ID (UUID) DUY NHẤT = 1 VAI TRÒ BẤT BIẾN**
+
+Toàn bộ Swarm vận hành dựa trên file sổ bộ `swarm/AI_SWARM_REGISTRY.json`. Khi bất kỳ AI nào được sinh ra, nó bắt buộc phải được gắn chặt vào một mã UUID thực tế.
+
+---
+
+## 🧭 II. BẢN ĐỒ TIẾN HÓA ĐỘNG TỪNG BƯỚC (DYNAMIC ONBOARDING PROTOCOL)
+
+Thay vì tư duy Thác nước (Waterfall) cứng nhắc mở ồ ạt cả 7 AI ngay ngày đầu tiên, Swarm được tiến hóa từng bước (Just-In-Time):
 
 ```mermaid
 flowchart TD
-    A["👤 Alex mở Hộp thoại 1<br/>(AI-LEAD: Nhạc Trưởng Tối Cao)"] --> B["Giai đoạn 1: Khởi Tạo Không Gian & Git<br/>(Tạo Workspace, nạp .gitignore, nạp Archetype)"]
-    B --> C["Giai đoạn 2: Hấp Thụ Tri Thức Dự Án<br/>(Đọc PROJECT_MASTER_SPECIFICATION.md / PO Vision)"]
-    C --> D{"Giai đoạn 3: Đánh Giá Pha Dự Án & Quyết Định Kích Hoạt JIT"}
+    Lead["👑 Giai đoạn 0: AI-LEAD khởi động<br/>(Khóa CONVERSATION_ID_1 vào Registry)"] --> Ingest["Giai đoạn 1: Phỏng vấn PO & Hấp thụ hồ sơ dự án<br/>(Đọc PROJECT_MASTER_SPECIFICATION.md)"]
     
-    D -->|"Pha Khảo sát & Yêu cầu phức tạp"| E["Kích hoạt DUY NHẤT 01 AI-BA<br/>(Hộp thoại 2: Business Analyst làm rõ User Stories)"]
-    D -->|"Pha Kiến trúc CSDL & DDL"| F["Kích hoạt DUY NHẤT 01 AI-DATA<br/>(Hộp thoại 2: Database Architect thiết kế 3NF)"]
+    Ingest --> Decision{"Giai đoạn 2: Đánh giá nút thắt kỹ thuật<br/>(Xác định duy nhất 01 vai trò cần kích hoạt)"}
     
-    E & F --> G["Hoàn thành cột mốc -> AI-LEAD đánh giá cột mốc tiếp theo"]
-    G --> H["Kích hoạt tuần tự khi cần:<br/>AI-AUDIT (Kiểm toán) -> AI-BACKEND (API) -> AI-UI (Giao diện)"]
-    H --> I["🎉 HỆ THỐNG TỰ TIẾN HÓA HOÀN CHỈNH KHÔNG BỊ RÁC HAY RỐI"]
+    Decision -->|"Cần bóc tách yêu cầu"| AskBA["Lead yêu cầu Alex mở 01 tab chat cho AI-BA<br/>Alex cấp mã UUID_BA -> Lead đăng bạ vào Registry"]
+    Decision -->|"Cần thiết kế CSDL"| AskData["Lead yêu cầu Alex mở 01 tab chat cho AI-DATA<br/>Alex cấp mã UUID_DATA -> Lead đăng bạ vào Registry"]
+    
+    AskBA & AskData --> LockIn["Lead xuất câu lệnh Khóa Vai Trò cho con AI mới"]
+    LockIn --> Work["AI mới đọc Registry & tác chiến độc quyền"]
+    Work --> NextMilestone["Hoàn thành cột mốc -> Lead đánh giá và kích hoạt tiếp AI tiếp theo (AUDIT, BACKEND, UI...)"]
 ```
 
 ---
 
-## 📦 II. CHI TIẾT CÁC GIAI ĐOẠN TRIỂN KHAI THỰC TẾ
+## 📦 III. QUY TRÌNH 4 BƯỚC THỰC THI CHO AI-LEAD
 
-### GIAI ĐOẠN 1: THIẾT LẬP REPOSITORY & WORKSPACE
-1. **Hành động của AI-LEAD**:
-   - Khởi tạo thư mục dự án cục bộ theo chuẩn Clean Architecture:
-     ```
-     <project-name>/
-     ├── .gitignore                  # Chặn rác, chặn scratch/ và các dump > 1MB
-     ├── README.md                   # SSOT giới thiệu dự án & bản đồ điều hướng
-     ├── docs/                       # Tài liệu kiến trúc & nghiệp vụ
-     ├── src/                        # Mã nguồn chính thức (Frontend/Backend)
-     ├── migrations/                 # DDL & SQL migrations theo thứ tự thời gian
-     ├── scratch/                    # Thư mục đệm tạm thời (TTL = 48h)
-     └── swarm/                      # BỘ NÃO ĐIỀU PHỐI AI SWARM
-         ├── UNIVERSAL_AI_SWARM_ARCHETYPE.json   # Tầng 1: Bản mẫu trừu tượng
-         ├── AI_SWARM_REGISTRY.json              # Tầng 2: Đăng bạ phân vai (Cập nhật động)
-         ├── TASK_DISPATCH_BOARD.json            # Hàng đợi tác vụ thời gian thực
-         └── scripts/                            # Scripts điều phối & Dọn rác GC
-     ```
+### Bước 1: Khởi Động Nhạc Trưởng (AI-LEAD Setup)
+1. Tải công cụ nền tảng về thư mục `swarm/` (`swarm-gc.js`, `swarm-sync.js`, `.gitignore`).
+2. Tự lấy mã `Conversation ID` của chính mình và ghi vào `swarm/AI_SWARM_REGISTRY.json` với vai trò `CONVERSATION_ID_1 (AI-LEAD)`.
 
----
+### Bước 2: Phỏng Vấn Ngữ Cảnh Dự Án Cụ Thể (Discovery Interview)
+Vì khung UASOF là trừu tượng, AI-LEAD chủ động đặt 3 câu hỏi cho Alex:
+- *Tên dự án là gì?*
+- *Hồ sơ đặc tả có sẵn ở file nào (ví dụ: `PROJECT_MASTER_SPECIFICATION.md`) hay cần tóm tắt tầm nhìn?*
+- *Giai đoạn hiện tại là gì?*
 
-### GIAI ĐOẠN 2: HẤP THỤ TRI THỨC VÀ BỐI CẢNH DỰ ÁN (DISCOVERY)
-- AI-LEAD tự động đọc các tài liệu có sẵn trong dự án: `PROJECT_MASTER_SPECIFICATION.md`, `README.md` hoặc yêu cầu từ Project Owner.
-- **Nguyên tắc**: AI-LEAD tuyệt đối không tự kiêm nhiệm vai trò kỹ thuật chi tiết. Nhiệm vụ của Lead là **nhìn toàn cảnh (Systems Thinking), định vị giai đoạn hiện tại của dự án**.
+### Bước 3: Đề Xuất & Yêu Cầu Cấp UUID Từng Bước (JIT UUID Binding)
+Dựa trên câu trả lời của Alex:
+- Nếu dự án cần làm rõ nghiệp vụ $\rightarrow$ AI-LEAD đề xuất kích hoạt **`AI-BA`**.
+- Nếu dự án đã có sẵn code/CSDL cần tái cấu trúc $\rightarrow$ AI-LEAD đề xuất kích hoạt **`AI-DATA`**.
+- AI-LEAD yêu cầu Alex:
+  > *"Xin anh mở 01 hộp thoại chat mới cho [Tên Vai Trò] và gửi mã Conversation ID (UUID) của hộp thoại đó cho tôi!"*
 
----
-
-### GIAI ĐOẠN 3: GIAO THỨC TIẾN HÓA ĐỘNG THEO NHU CẦU (JUST-IN-TIME ONBOARDING)
-> [!IMPORTANT]
-> **QUY TẮC VÀNG CHỐNG "HARDCODE 7 SLOTS"**:
-> Không bao giờ mở ồ ạt 6-7 tab chat ngay ngày đầu tiên! Chỉ kích hoạt đúng 01 vai trò tương ứng với nút thắt cổ chai kỹ thuật hiện tại:
-
-1. **Trường hợp 1 (Dự án cần làm rõ nghiệp vụ, User Stories)**:
-   - AI-LEAD đề xuất Alex: *"Thưa anh, dự án đang ở pha khảo sát yêu cầu. Em đề xuất anh mở thêm đúng 01 hộp thoại cho **AI-BA (Business Analyst)** để cùng anh bóc tách tính năng."*
-2. **Trường hợp 2 (Yêu cầu đã rõ, cần thiết kế CSDL)**:
-   - AI-LEAD đề xuất Alex: *"Thưa anh, yêu cầu đã chốt. Em đề xuất anh mở thêm đúng 01 hộp thoại cho **AI-DATA (Database Architect)** để thiết kế 3NF và viết Migrations."*
-3. **Các giai đoạn tiếp theo**:
-   - Khi DDL hoàn tất $\rightarrow$ Kích hoạt `AI-AUDIT` để thẩm định 5 Quality Gates.
-   - Khi CSDL được phê duyệt $\rightarrow$ Kích hoạt `AI-BACKEND` viết API endpoints.
-   - Khi API sẵn sàng $\rightarrow$ Kích hoạt `AI-CLIENT-UI` hoặc `AI-ADMIN-UI` dựng giao diện.
-
----
-
-### GIAI ĐOẠN 4: CẬP NHẬT ĐĂNG BẠ BẤT BIẾN THEO TỪNG VAI TRÒ
-Mỗi khi có một vai trò mới được kích hoạt:
-1. Alex mở 01 tab chat mới, lấy Conversation ID của con AI mới nộp lại cho AI-LEAD.
-2. AI-LEAD cập nhật `swarm/AI_SWARM_REGISTRY.json`, gắn mã UUID mới vào Slot tương ứng.
-3. AI-LEAD phát hành đúng **01 câu lệnh định danh** để Alex dán vào con AI mới. Con AI đó sẽ được khóa chặt vào vai trò độc quyền, không bao giờ xâm lấn quyền hạn của con khác.
+### Bước 4: Đăng Bạ Bất Biến & Xuất Lệnh Khóa Vai Trò
+1. AI-LEAD nhận mã UUID từ Alex, ghi dòng mapping vào `swarm/AI_SWARM_REGISTRY.json`.
+2. AI-LEAD sinh ra đúng **01 câu prompt định danh** để Alex dán vào hộp thoại mới. Con AI mới sẽ đọc Registry, nhận diện vị trí và kích hoạt chuyên môn độc quyền của mình.
