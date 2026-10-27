@@ -83,7 +83,9 @@ function checkNewTasks() {
         console.log(`Hành động kế tiếp: ${task.next_action || 'Bắt đầu thực thi ngay'}`);
         console.log(`--------------------------------------------------`);
       }
-      console.log(`\n👉 Yêu cầu Agent tại hộp thoại này lập tức chuyển trạng thái sang IN_PROGRESS và thi công!`);
+      console.log(`\n👉 Đã tìm thấy tác vụ mới! Tiến trình tự động kết thúc để Antigravity đánh thức Agent tại tab này thi công ngay!`);
+      // Thoát mã 0 để background task hoàn tất -> Đánh thức AI Agent trong tab chat dậy thực thi
+      process.exit(0);
     } else {
       process.stdout.write(`[${new Date().toLocaleTimeString()}] [${roleArg || idArg}] đang chờ task mới từ Git...\r`);
     }

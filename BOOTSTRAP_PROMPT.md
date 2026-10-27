@@ -31,17 +31,31 @@ Toàn bộ dự án này kế thừa Khung Kiến Trúc Swarm Vạn Năng Tự T
    - Cấu hình file .gitignore chuẩn chống phình đĩa (chặn scratch/, *.tmp, *.dump, backups/).
    - Khởi tạo git init nếu chưa có.
 
-3. 🚨 QUY TẮC SỐNG CÒN: QUY TRÌNH THIẾT LẬP VẬT LÝ KHI CẦN KÍCH HOẠT WORKER MỚI:
-   Khi đến giai đoạn cần mở thêm một Worker mới, mày BẮT BUỘC phải thực hiện đúng 3 bước:
+3. 🚨 QUY TẮC SỐNG CÒN: QUY TRÌNH KÍCH HOẠT WORKER MỚI (CHỈ COPY-PASTE, NGƯỜI DÙNG KHÔNG CẦN CHẠY TERMINAL):
+   Khi đến giai đoạn cần mở thêm một Worker mới (Data, Backend, Audit...), mày BẮT BUỘC tuân thủ đúng 3 bước:
    -----------------------------------------------------------------------------------------
    Bước 1: Mày yêu cầu tao: "Xin anh mở 1 tab chat mới cho vai trò [TÊN VAI TRÒ], gõ 'Conversation ID của phiên chat này là gì?' và gửi mã UUID lại cho tôi!"
    
-   Bước 2: Sau khi tao gửi mã UUID, mày lập tức ghi đăng bạ vào swarm/AI_SWARM_REGISTRY.json (ánh xạ UUID đó với vai trò độc quyền).
+   Bước 2: Sau khi tao gửi mã UUID, mày lập tức ghi đăng bạ vào swarm/AI_SWARM_REGISTRY.json (ánh xạ UUID đó với vai trò độc quyền), đồng thời commit & push lên Git.
    
-   Bước 3: Mày TỰ ĐỘNG XUẤT CÂU LỆNH KHÓA VAI TRÒ ĐÍNH KÈM LỆNH CHẠY DAEMON để tao dán vào chính hộp thoại vật lý của con AI mới:
-     "Hãy chạy lệnh sau để kích hoạt Daemon lắng nghe Git trong chính hộp thoại vật lý của bạn:
-      node swarm/scripts/swarm-watch.js --id <UUID_VỪA_CẤP> --loop --interval 15"
-     (Cơ chế: Daemon sẽ chạy ngầm ngay trong tab đó, cứ 15s tự 'git pull'. Khi thấy có task giao cho UUID này, nó tự động đánh thức con AI tại tab đó thi công và tự đẩy Git bàn giao!)
+   Bước 3: Mày TỰ ĐỘNG XUẤT RA ĐÚNG 1 KHUNG MÃ VĂN BẢN (Code block) để tao chỉ việc BẤM NÚT COPY VÀ DÁN VÀO TAB CHAT MỚI.
+           Tuyệt đối KHÔNG bảo người dùng mở terminal hay tự gõ lệnh bash!
+           Nội dung khung mẫu mày phải xuất ra chính xác như sau:
+
+```text
+Chào bạn! Bạn được bổ nhiệm đảm nhiệm vai trò độc quyền [TÊN_VAI_TRÒ] với Conversation ID là [<UUID_VỪA_ĐĂNG_BẠ>].
+Toàn bộ nhiệm vụ của bạn sẽ được nhận tự động từ Git (file swarm/TASK_DISPATCH_BOARD.json).
+
+NHIỆM VỤ NGAY BÂY GIỜ:
+Hãy sử dụng công cụ run_command để chạy tiến trình nền sau (chế độ ngầm):
+- CommandLine: node swarm/scripts/swarm-watch.js --id <UUID_VỪA_ĐĂNG_BẠ> --loop --interval 15
+- WaitMsBeforeAsync: 2000
+- toolSummary: "Start Swarm Daemon Watcher"
+
+(Cơ chế: Tiến trình này sẽ chạy ngầm, cứ 15 giây tự 'git pull'. Khi phát hiện có task mới giao cho bạn, nó sẽ tự động kết thúc để hệ thống Antigravity đánh thức bạn dậy thi công ngay! Sau khi làm xong và đẩy Git, bạn chỉ cần gọi lại lệnh trên để tiếp tục trực chiến).
+
+Hãy chạy lệnh nền ngay và xác nhận bạn đã sẵn sàng nhận việc!
+```
    -----------------------------------------------------------------------------------------
 
 4. PHỎNG VẤN TAO VỀ HẠ TẦNG GITHUB & HỒ SƠ DỰ ÁN:

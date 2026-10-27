@@ -28,30 +28,31 @@ graph TD
 
 ---
 
-## 💡 II. 🚨 QUY TRÌNH THIẾT LẬP VẬT LÝ KHI KÍCH HOẠT WORKER MỚI (ZERO-HARDCODE)
+## 💡 II. 🚨 QUY TRÌNH KÍCH HOẠT WORKER MỚI (CHỈ COPY-PASTE, KHÔNG DÙNG TERMINAL)
 
-Khi `AI-LEAD&BA` thông báo đến giai đoạn cần mở thêm một Worker, quy trình diễn ra không hề có bất kỳ sự hardcode nào:
+Khi `AI-LEAD&BA` xác định đến giai đoạn cần mở thêm một Worker (ví dụ: AI-DATA, AI-BACKEND, AI-AUDIT), người dùng **không cần biết kỹ thuật hay gõ terminal**, chỉ thực hiện 3 thao tác copy-paste đơn giản:
 
-### Bước 1: Mở Hộp Thoại Vật Lý & Lấy Conversation ID (UUID)
-1. Người dùng bấm dấu `+` trên IDE để mở 1 Tab Chat vật lý mới cho Worker đó.
+### Bước 1: Mở Tab Chat Mới & Lấy Conversation ID (UUID)
+1. Bấm dấu `+` trên giao diện chat IDE để mở 1 Tab Chat mới.
 2. Tại tab mới, gõ đúng câu hỏi:
    ```text
    Conversation ID của phiên chat này là gì?
    ```
 3. Con AI mới sẽ trả lời: `Mã Conversation ID của tôi là: <UUID_MỚI>`.
-4. Người dùng copy mã UUID đó dán lại vào hộp thoại của `AI-LEAD&BA`.
+4. Người dùng copy mã UUID đó dán lại vào hộp thoại `AI-LEAD&BA` (Tab 1).
 
-### Bước 2: AI-LEAD&BA Đăng Bạ & Xuất Lệnh Chạy Daemon Động
-1. `AI-LEAD&BA` ghi nhận UUID vào `swarm/AI_SWARM_REGISTRY.json` để khóa cứng vai trò độc quyền.
-2. `AI-LEAD&BA` tự động xuất câu lệnh khởi động Daemon chứa chính mã UUID đó:
-   ```bash
+### Bước 2: AI-LEAD&BA Đăng Bạ & Xuất Khung Prompt Tự Động Kích Hoạt
+1. `AI-LEAD&BA` lập tức ghi nhận UUID vào `swarm/AI_SWARM_REGISTRY.json`, `git commit` và `git push`.
+2. `AI-LEAD&BA` xuất ra **đúng 1 khung văn bản mẫu (Code block)** để người dùng chỉ việc bấm nút "Copy".
+
+### Bước 3: Dán Vào Tab Chat Mới (AI Mới Tự Kích Hoạt Daemon Ngầm)
+1. Người dùng bấm nút **Copy** trên khung của `AI-LEAD&BA`, quay sang Tab chat mới, bấm **Paste** và Enter.
+2. Nội dung đoạn prompt hướng dẫn con AI mới tự động gọi công cụ `run_command` chạy ngầm script daemon:
+   ```text
    node swarm/scripts/swarm-watch.js --id <UUID_MỚI> --loop --interval 15
    ```
-
-### Bước 3: Kích Hoạt Daemon Ngay Trong Hộp Thoại Vật Lý Của Con AI Mới
-1. Người dùng copy câu lệnh mà `AI-LEAD&BA` vừa sinh ra dán vào hộp thoại vật lý của con AI mới.
-2. Con AI mới tự động chạy ngầm script `swarm-watch.js`.
-3. Script tự động phân giải mã `<UUID_MỚI>` từ `AI_SWARM_REGISTRY.json` để biết mình đang giữ vai trò gì, không cần hardcode tên vai trò!
+3. **Tuyệt đối người dùng không cần mở Terminal**: Chính con AI mới trong tab đó sẽ tự gọi công cụ và đưa tiến trình vào chạy ngầm!
+4. Daemon tự động phân giải mã `<UUID_MỚI>` từ `AI_SWARM_REGISTRY.json` để biết vai trò của mình và bắt đầu lắng nghe Git. Khi có task mới, daemon sẽ kết thúc để hệ thống Antigravity **tự động đánh thức con AI dậy thi công ngay lập tức**!
 
 ---
 
