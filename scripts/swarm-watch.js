@@ -115,17 +115,31 @@ function checkNewTasks() {
       // Thoát mã 0 để background task hoàn tất -> Đánh thức AI Agent trong tab chat dậy thực thi
       process.exit(0);
     } else {
-      process.stdout.write(`[${new Date().toLocaleTimeString()}] [${roleArg || idArg}] đang chờ task mới từ Git...\r`);
+      process.stdout.write(`[${new Date().toLocaleTimeString()}] [${roleArg || idArg}] đang chờ task mới từ Git (Chu kỳ: ${currentInterval}s)...\r`);
     }
   } catch (err) {
     console.error('Lỗi trong chu kỳ watch:', err.message);
   }
+
+  // Tự động lên lịch cho chu kỳ tiếp theo dựa trên nhịp tim động từ Registry (Tối đa 600s / 10 phút)
+  if (args.includes('--loop')) {
+    let nextInterval = intervalSec;
+    if (fs.existsSync(registryPath)) {
+      try {
+        const reg = JSON.parse(fs.readFileSync(registryPath, 'utf8'));
+        const regInterval = reg.watch_interval_seconds || reg.heartbeat_policy?.interval_seconds;
+        if (regInterval && typeof regInterval === 'number') {
+          // Ép giới hạn trần: tối thiểu 5s, tối đa 600s (10 phút)
+          nextInterval = Math.min(Math.max(regInterval, 5), 600);
+        }
+      } catch {}
+    }
+    currentInterval = nextInterval;
+    setTimeout(checkNewTasks, currentInterval * 1000);
+  }
 }
+
+let currentInterval = intervalSec;
 
 // Chạy lần đầu ngay lập tức
 checkNewTasks();
-
-// Lặp lại theo chu kỳ intervalSec
-if (args.includes('--loop')) {
-  setInterval(checkNewTasks, intervalSec * 1000);
-}

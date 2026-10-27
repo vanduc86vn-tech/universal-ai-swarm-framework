@@ -59,7 +59,7 @@ Khi `AI-LEAD&BA` xác định đến giai đoạn cần mở thêm một Worker 
 ## 🛰️ III. CƠ CHẾ VẬN HÀNH TỰ ĐỘNG 100% CỦA WORKER DAEMON
 
 Sau khi bước 3 được kích hoạt:
-1. **Tự Động Kéo Git (Auto Polling)**: Cứ mỗi 15 giây, daemon tự động chạy `git pull origin main` để cập nhật trạng thái mới nhất từ repository từ xa.
+1. **Tự Động Kéo Git (Auto Polling)**: Cứ mỗi chu kỳ, daemon tự động chạy `git pull --quiet` để cập nhật trạng thái mới nhất từ repository từ xa.
 2. **Tự Động Nhận Việc (Auto Claim)**: Khi phát hiện trên `swarm/TASK_DISPATCH_BOARD.json` có task được giao cho vai trò hoặc UUID của nó:
    - Daemon tự động phát chuông báo động: `🚨 [PHÁT HIỆN TÍN HIỆU TÁC VỤ MỚI CHO <UUID>]`.
    - Con Worker trong chính tab vật lý đó tự động nhận task `IN_PROGRESS`, tự đọc yêu cầu và bắt tay vào thi công!
@@ -68,3 +68,30 @@ Sau khi bước 3 được kích hoạt:
    - Daemon của Worker kiểm toán ở tab khác tự động bắt được tín hiệu và tự chạy kiểm toán mà người dùng không cần bấm gì cả!
 4. **Báo Cáo Tự Động Về Điểm Chạm Duy Nhất**:
    - `AI-LEAD&BA` ở Tab 1 tự động kéo kết quả từ Git về và báo cáo tóm tắt cho Alex!
+
+---
+
+## 💤 IV. QUY TẮC QUẢN TRỊ VÒNG ĐỜI TAB VẬT LÝ & NHỊP TIM/SLEEP (HEARTBEAT GOVERNANCE)
+
+Để cân bằng giữa **tính phản ứng tức thì của AI** và **tài nguyên mạng / CPU của máy tính**, framework thiết lập chính sách nhịp tim chuẩn mực:
+
+### 1. Chính Sách Nhịp Tim Động & Giới Hạn Ngủ Tối Đa 10 Phút (Max Sleep Policy)
+- **Chế độ Trực chiến (Active Sprint)**: Nhịp tim `15s` - `30s`. Áp dụng khi đang trong phiên làm việc bận rộn, các Worker cần bàn giao code và test chéo liên tục.
+- **Chế độ Chờ (Standby / Energy Saver)**: Nhịp tim `60s` - `300s` (1 - 5 phút). Áp dụng khi đàn AI đang chờ người dùng xem xét, phê duyệt User Stories hoặc đi ăn trưa.
+- **Giới hạn trần tối đa (Hard Ceiling Cap)**: **TỐI ĐA 10 PHÚT (`600s`)**.
+  > ⚠️ **Quy tắc bất biến**: Tuyệt đối không cho Worker ngủ quá 10 phút. Nếu ngủ quá lâu, độ trễ phát hiện task sẽ quá lớn, khiến toàn bộ tiến độ dự án bị nghẽn và người dùng có cảm giác hệ thống bị "chết lâm sàng".
+- **Đồng bộ nhịp tim toàn đàn tự động qua Git**:
+  - Khi người dùng muốn đổi chế độ (Trực chiến 15s hoặc Nghỉ 10p), `AI-LEAD&BA` chỉ cần sửa trường `"watch_interval_seconds"` trong `swarm/AI_SWARM_REGISTRY.json` và đẩy lên Git.
+  - Script `swarm-watch.js` tại mỗi Worker tự động đọc giá trị này sau mỗi chu kỳ để tự điều chỉnh độ dài giấc ngủ mà người dùng không phải gõ lại lệnh ở từng tab!
+
+### 2. Quy Tắc Vòng Đời Tab Vật Lý & Cảnh Báo Khi Tắt (Lifecycle & Shutdown Rule)
+- **Cảnh báo sống còn**: **TUYỆT ĐỐI KHÔNG TẮT TAB WORKER** khi dự án đang trong giai đoạn phát triển.
+- **Chỉ tắt tab khi**: Người dùng chủ động tạm ngừng dự án (Project Freeze) hoặc hoàn thành trọn vẹn Sprint/Milestone.
+- **Quy trình tạm ngừng (Safe Freeze Protocol)**:
+  1. Người dùng báo với `AI-LEAD&BA`: *"Tôi muốn tạm dừng dự án hôm nay"*.
+  2. `AI-LEAD&BA` kiểm tra và xác nhận 100% code, tài liệu, Task Board đã được commit và push lên GitHub an toàn.
+  3. Người dùng có thể yên tâm tắt các tab chat hoặc đóng IDE.
+- **Quy trình kích hoạt lại (Cold Start / Resume Protocol)**:
+  - Khi mở lại máy, người dùng chỉ cần mở lại tab đó và gửi câu lệnh khởi động ngầm 1-dòng:
+    `git pull; node swarm/scripts/swarm-watch.js --id <UUID> --loop`
+  - Worker sẽ lập tức kết nối lại với Git và tiếp tục chu kỳ trực chiến bình thường.

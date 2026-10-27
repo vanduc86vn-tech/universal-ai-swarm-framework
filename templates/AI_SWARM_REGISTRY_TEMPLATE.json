@@ -6,6 +6,13 @@
   "inheritance_status": "COMPILED_AND_LOCKED_IMMUTABLE",
   "last_audited": "<TIMESTAMP>",
   "audited_by": "Alex & AI-LEAD",
+  "heartbeat_policy": {
+    "active_interval_seconds": 15,
+    "standby_interval_seconds": 300,
+    "max_interval_seconds": 600,
+    "current_interval_seconds": 15
+  },
+  "watch_interval_seconds": 15,
   "slot_bindings": [
     {
       "slot": "CONVERSATION_ID_1",
