@@ -1,0 +1,15 @@
+# Logs & Scratchpad (TTL = 48h)
+scratch/
+*.log
+*.tmp
+*.dump
+*after_refactor.json
+*full_entities*.json
+
+# OS files
+Thumbs.db
+.DS_Store
+*.lock
+
+# Node dependencies
+node_modules/

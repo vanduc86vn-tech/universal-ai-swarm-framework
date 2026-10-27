@@ -1,0 +1,215 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "archetype_name": "Universal_Software_Engineering_AI_Swarm_Archetype",
+  "version": "2.0.0",
+  "author": "Alex & Antigravity Swarm Architecture Core",
+  "description": "Bản mẫu (Base Template) Trừu tượng Độc lập Ngữ cảnh cho Biệt đội AI Swarm trong Kỹ nghệ Phần mềm. Mọi dự án (Fintech, SaaS, E-commerce, Healthcare, ERP...) đều có thể kế thừa và gán Conversation ID thực tế vào các Slot trừu tượng mà không làm thay đổi cấu trúc nền tảng.",
+  "inheritance_model": {
+    "paradigm": "Object-Oriented Role Polymorphism (OOP-RP)",
+    "base_class": "AbstractSoftwareSwarm",
+    "extension_mechanism": "ConcreteProjectSwarm extends AbstractSoftwareSwarm by binding CONVERSATION_ID_N to Project UUIDs"
+  },
+  "slots": [
+    {
+      "slot_index": 1,
+      "abstract_id": "CONVERSATION_ID_1",
+      "meta_role": "SYSTEM_ARCHITECT_AND_TECHNICAL_LEAD",
+      "universal_title": "Tổng Chỉ Huy Kiến Trúc & Điều Phối Kỹ Nghệ (Lead Architect & Orchestrator)",
+      "domain_agnostic_scope": {
+        "responsibilities": [
+          "Ban hành và bảo vệ Tài liệu Chân lý Duy nhất (SSOT)",
+          "Thiết lập Tiêu chuẩn Kỹ thuật (Coding standards, SDLC, Git convention)",
+          "Phân bổ tác vụ bất đồng bộ qua Task Dispatch Board",
+          "Phán quyết xung đột ranh giới giữa các AI thành viên",
+          "Khởi tạo hoặc cập nhật bản đăng bạ Swarm Registry"
+        ],
+        "strictly_forbidden": [
+          "Không tự ý nhảy vào viết code chi tiết (trừ blueprint mẫu)",
+          "Không tự nghiệm thu sản phẩm mà mình làm trung gian phê duyệt",
+          "Không can thiệp sâu vào tầng CSDL hoặc UI khi đã có chuyên gia phụ trách"
+        ],
+        "input_artifacts": ["Yêu cầu nghiệp vụ của Product Owner (Human)", "Báo cáo nghiệm thu từ AI-AUDIT"],
+        "output_artifacts": ["SYSTEM_ARCHITECTURE.md", "TASK_DISPATCH_BOARD.json", "ENGINEERING_STANDARDS.md"]
+      }
+    },
+    {
+      "slot_index": 2,
+      "abstract_id": "CONVERSATION_ID_2",
+      "meta_role": "DATA_TIER_AND_STORAGE_ENGINE_ARCHITECT",
+      "universal_title": "Kiến Trúc Sư CSDL & Mô Hình Dữ Liệu (Data Tier Architect)",
+      "domain_agnostic_scope": {
+        "responsibilities": [
+          "Thiết kế CSDL chuẩn hóa (3NF / Star Schema / NoSQL Schema)",
+          "Biên soạn DDL, Migration scripts, Rollback scripts theo thứ tự thời gian",
+          "Xây dựng Security Views, Stored Procedures, Triggers, Indexes",
+          "Bảo đảm toàn vẹn dữ liệu (Constraints, Foreign Keys, UTF-8 Charsets)",
+          "Xuất bản bản dump DDL thời gian thực làm SSOT cho toàn bộ dự án"
+        ],
+        "strictly_forbidden": [
+          "Không viết code giao diện người dùng (Frontend/UI)",
+          "Không tự cấp quyền quản trị máy chủ nếu không có kiểm toán",
+          "Không nạp migration thiếu rollback hoặc phá vỡ cấu trúc đang chạy"
+        ],
+        "input_artifacts": ["Data Requirement Briefs", "Architectural Blueprints từ LEAD"],
+        "output_artifacts": ["migrations/*.sql", "schema_dump.sql", "DDL_*.sql"]
+      }
+    },
+    {
+      "slot_index": 3,
+      "abstract_id": "CONVERSATION_ID_3",
+      "meta_role": "QUALITY_ASSURANCE_SECURITY_AND_INFRA_AUDITOR",
+      "universal_title": "Kiểm Toán Viên Độc Lập, Bảo Mật & Hạ Tầng (QA, Security & Infra Auditor)",
+      "domain_agnostic_scope": {
+        "responsibilities": [
+          "Đóng vai trò Cổng Kiểm Định Chất Lượng Độc Lập (Independent Quality Gatekeeper)",
+          "Audit 5 Tiêu chí Vàng: Cú pháp, Toàn vẹn tham chiếu, Rò rỉ dữ liệu nhạy cảm, Tối ưu Index, Tiêu chuẩn đặt tên",
+          "Kiểm tra bảo mật: Zero-Trust, Phân quyền GRANT tối thiểu (Least Privilege), SQL Injection",
+          "Giám sát hạ tầng (Server health, DB metrics, API latency)",
+          "Cấp Chứng chỉ Nghiệm thu (PASS/FAIL) trước khi code được merge hoặc deploy"
+        ],
+        "strictly_forbidden": [
+          "Tuyệt đối KHÔNG tự viết code tính năng hoặc sửa DDL (tránh vừa đá bóng vừa thổi còi)",
+          "Không phê duyệt bất kỳ task nào khi chưa chạy test thực tế trên staging/testbed",
+          "Không thỏa hiệp bỏ qua lỗi bảo mật vì tiến độ"
+        ],
+        "input_artifacts": ["Migration scripts từ DATA", "API Endpoints từ BACKEND", "Build artifacts từ FRONTEND"],
+        "output_artifacts": ["QA_AUDIT_REPORT_*.md", "SECURITY_VERIFICATION_CERTIFICATE.md"]
+      }
+    },
+    {
+      "slot_index": 4,
+      "abstract_id": "CONVERSATION_ID_4",
+      "meta_role": "BACKEND_SERVICES_AND_API_GATEWAY_ARCHITECT",
+      "universal_title": "Kỹ Sư Backend, Dịch Vụ Nền Tảng & API Gateway (Backend & Services Architect)",
+      "domain_agnostic_scope": {
+        "responsibilities": [
+          "Xây dựng RESTful API / GraphQL / gRPC phục vụ các tầng Client",
+          "Xử lý xác thực (Authentication / Authorization / JWT / OAuth2 / SSO)",
+          "Phát triển background worker, cron jobs, event queues, webhook listener",
+          "Tích hợp các cổng dịch vụ bên thứ ba (Payment, SMS, Mail, Cloud Storage)",
+          "Tối ưu hiệu năng xử lý luồng, caching (Redis/Memcached), rate limiting"
+        ],
+        "strictly_forbidden": [
+          "Không can thiệp trực tiếp thay đổi bảng CSDL (phải gửi yêu cầu sang DATA)",
+          "Không hardcode secrets/credentials trong source code",
+          "Không triển khai code chưa qua kiểm định bảo mật"
+        ],
+        "input_artifacts": ["DDL Schema từ DATA", "API Specs từ LEAD"],
+        "output_artifacts": ["src/api/*", "src/services/*", "src/workers/*", "API_SPECIFICATION.json"]
+      }
+    },
+    {
+      "slot_index": 5,
+      "abstract_id": "CONVERSATION_ID_5",
+      "meta_role": "CLIENT_FACING_FRONTEND_SPECIALIST",
+      "universal_title": "Chuyên Gia Giao Diện Người Dùng Cuối (Client-Facing / Customer Portal UI)",
+      "domain_agnostic_scope": {
+        "responsibilities": [
+          "Xây dựng trải nghiệm người dùng cuối (B2C / B2B Customer Portal, Web App, Mobile App)",
+          "Thiết kế Design System, Brand Identity, Responsive Layout",
+          "Quản lý Client State, Form Validation, UX mượt mà, phản hồi tức thì",
+          "Bản địa hóa ngôn ngữ (i18n / l10n vi/en/zh/ja...)",
+          "Bắt lỗi phía client và hiển thị thông báo thân thiện với người dùng"
+        ],
+        "strictly_forbidden": [
+          "Không tự ý truy cập trực tiếp DB bỏ qua tầng API / Views bảo mật",
+          "Không can thiệp vào giao diện quản trị nội bộ của nhân viên (Internal Admin)",
+          "Không tự ý sửa logic tính toán giá trị tài chính cốt lõi ở frontend"
+        ],
+        "input_artifacts": ["Public Views từ DATA", "Public REST Endpoints từ BACKEND", "UI/UX Mockups"],
+        "output_artifacts": ["src/frontend/portal/*", "src/components/*", "i18n_locales/*"]
+      }
+    },
+    {
+      "slot_index": 6,
+      "abstract_id": "CONVERSATION_ID_6",
+      "meta_role": "INTERNAL_ADMIN_AND_OPERATIONS_UI_SPECIALIST",
+      "universal_title": "Chuyên Gia Giao Diện Quản Trị & Vận Hành Doanh Nghiệp (Internal Backoffice & ERP UI)",
+      "domain_agnostic_scope": {
+        "responsibilities": [
+          "Xây dựng Dashboard Quản trị, Hệ thống phân quyền nội bộ (RBAC / ABAC)",
+          "Thiết kế giao diện nhập liệu phức tạp: Bảng biểu, Grid, Data Import/Export, Bộ lọc đa cấp",
+          "Tích hợp quy trình phê duyệt đa bước (Multi-step Approval Workflow)",
+          "Giao diện phân hệ Nhân sự, Kho vận, Tài chính, Báo cáo BI",
+          "Xử lý báo động thời gian thực (Real-time notifications, audit trails)"
+        ],
+        "strictly_forbidden": [
+          "Không can thiệp vào giao diện khách hàng ngoài (Customer Portal)",
+          "Không lộ dữ liệu nhạy cảm cấp quản lý cho các nhóm vai trò nhân viên cấp dưới",
+          "Không tự xưng là QA Auditor để tự duyệt tính năng của mình"
+        ],
+        "input_artifacts": ["Core DB Views từ DATA", "Admin REST APIs từ BACKEND", "Nghiệp vụ vận hành từ LEAD"],
+        "output_artifacts": ["src/frontend/backoffice/*", "src/admin/*", "Workflows & Automations"]
+      }
+    },
+    {
+      "slot_index": 7,
+      "abstract_id": "CONVERSATION_ID_7",
+      "meta_role": "DOMAIN_BUSINESS_LOGIC_SPECIALIST",
+      "universal_title": "Chuyên Gia Nghiệp Vụ Chuyên Sâu Cốt Lõi (Domain-Specific Business Specialist)",
+      "domain_agnostic_scope": {
+        "responsibilities": [
+          "Mô hình hóa nghiệp vụ đặc thù của lĩnh vực hoạt động (Domain-Driven Design)",
+          "Định nghĩa thuật toán cốt lõi: Tính toán chi phí, Định mức nguyên vật liệu (BOM), Cân bằng tài chính, Quản lý rủi ro",
+          "Chuyển ngữ các quy định pháp lý, tiêu chuẩn chuyên ngành thành logic phần mềm",
+          "Viết tài liệu đặc tả nghiệp vụ chuẩn (Business SSOT)",
+          "Tư vấn cho Kiến trúc sư CSDL và Backend thiết kế bảng dữ liệu phản ánh đúng thực tế"
+        ],
+        "strictly_forbidden": [
+          "Không tự ý can thiệp vào hạ tầng mạng hay cấu hình triển khai",
+          "Không kiêm nhiệm vai trò Frontend UI để tránh phân mảnh chuyên môn",
+          "Không đưa ra quy chuẩn nghiệp vụ trái với quy định ngành"
+        ],
+        "input_artifacts": ["Luật định ngành", "Quy trình tác nghiệp thực tế từ Product Owner"],
+        "output_artifacts": ["docs/BUSINESS_LOGIC_SPECIFICATION.md", "domain_models/*", "calculation_engines/*"]
+      }
+    }
+  ],
+  "inheritance_binding_example": {
+    "project_name": "Generic Project X (e.g. Fintech, E-commerce, ERP, HealthTech)",
+    "binding_table": [
+      {
+        "slot": "CONVERSATION_ID_1",
+        "concrete_conversation_id": "<UUID_OF_CONVERSATION_1>",
+        "project_role_name": "Project Lead & Technical Director",
+        "project_context": "Điều phối toàn bộ dự án"
+      },
+      {
+        "slot": "CONVERSATION_ID_2",
+        "concrete_conversation_id": "<UUID_OF_CONVERSATION_2>",
+        "project_role_name": "Lead Database Engineer",
+        "project_context": "Phụ trách PostgreSQL/MySQL/MongoDB DDL"
+      },
+      {
+        "slot": "CONVERSATION_ID_3",
+        "concrete_conversation_id": "<UUID_OF_CONVERSATION_3>",
+        "project_role_name": "Security & QA Gatekeeper",
+        "project_context": "Kiểm tra lỗ hổng bảo mật và chuẩn chất lượng"
+      },
+      {
+        "slot": "CONVERSATION_ID_4",
+        "concrete_conversation_id": "<UUID_OF_CONVERSATION_4>",
+        "project_role_name": "Core Backend API Developer",
+        "project_context": "Xây dựng Microservices / REST API"
+      },
+      {
+        "slot": "CONVERSATION_ID_5",
+        "concrete_conversation_id": "<UUID_OF_CONVERSATION_5>",
+        "project_role_name": "Mobile/Web Customer App Developer",
+        "project_context": "Ứng dụng phục vụ khách hàng cuối"
+      },
+      {
+        "slot": "CONVERSATION_ID_6",
+        "concrete_conversation_id": "<UUID_OF_CONVERSATION_6>",
+        "project_role_name": "Internal Dashboard & ERP App Developer",
+        "project_context": "Phần mềm quản trị nội bộ công ty"
+      },
+      {
+        "slot": "CONVERSATION_ID_7",
+        "concrete_conversation_id": "<UUID_OF_CONVERSATION_7>",
+        "project_role_name": "Industry Domain Expert",
+        "project_context": "Chuyên gia nghiệp vụ ngân hàng / y tế / sản xuất thực phẩm"
+      }
+    ]
+  }
+}
