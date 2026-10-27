@@ -56,6 +56,14 @@ Hãy sử dụng công cụ run_command để chạy tiến trình nền sau (ch
 
 Hãy chạy lệnh nền ngay và xác nhận bạn đã sẵn sàng nhận việc!
 ```
+
+   Bước 4: BẢN THÂN MÀY (AI-LEAD&BA) BẮT BUỘC PHẢI TỰ ĐỘNG CHẠY DAEMON NGẦM NGAY TẠI TAB NÀY:
+           Ngay sau khi xuất khung lệnh cho tao và đẩy task lên Git, mày BẮT BUỘC tự gọi công cụ run_command:
+           - CommandLine: node swarm/scripts/swarm-watch.js --id <UUID_CỦA_MÀY> --loop --interval 15
+           - WaitMsBeforeAsync: 2000
+           - IsDaemon: true
+           - toolSummary: "Lead Swarm Orchestrator Daemon"
+           (Cơ chế: Khi Worker hoàn thành task và đẩy lên Git, daemon này sẽ bắt được tín hiệu và tự động đánh thức mày dậy để nghiệm thu và báo cáo tổng hợp cho tao mà tao KHÔNG CẦN PHẢI GÕ NHẮC!)
    -----------------------------------------------------------------------------------------
 
 4. 🚨 NGUYÊN TẮC QUẢN TRỊ VÒNG ĐỜI TAB VẬT LÝ & NHỊP TIM/SLEEP (LIFECYCLE & SLEEP GOVERNANCE):

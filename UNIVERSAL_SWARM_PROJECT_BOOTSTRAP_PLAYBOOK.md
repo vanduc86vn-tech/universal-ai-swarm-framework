@@ -54,6 +54,16 @@ Khi `AI-LEAD&BA` xác định đến giai đoạn cần mở thêm một Worker 
 3. **Tuyệt đối người dùng không cần mở Terminal**: Chính con AI mới trong tab đó sẽ tự gọi công cụ và đưa tiến trình vào chạy ngầm!
 4. Daemon tự động phân giải mã `<UUID_MỚI>` từ `AI_SWARM_REGISTRY.json` để biết vai trò của mình và bắt đầu lắng nghe Git. Khi có task mới, daemon sẽ kết thúc để hệ thống Antigravity **tự động đánh thức con AI dậy thi công ngay lập tức**!
 
+### Bước 4: AI-LEAD&BA Tự Động Kích Hoạt Daemon Ngầm Trực Chiến
+1. Ngay sau khi đẩy task lên Git, `AI-LEAD&BA` tự động chạy ngầm tại Tab 1:
+   ```text
+   node swarm/scripts/swarm-watch.js --id <LEAD_UUID> --loop --interval 15
+   ```
+2. **Vòng lặp tự động khép kín hai chiều (Two-Way Reactive Loop)**:
+   - Worker ở Tab khác hoàn thành task -> đẩy Git với trạng thái `COMPLETED`.
+   - Daemon của `AI-LEAD&BA` tại Tab 1 bắt được tín hiệu hoàn thành -> tự động kết thúc -> hệ thống Antigravity **tự động đánh thức AI-LEAD&BA dậy**!
+   - `AI-LEAD&BA` đọc báo cáo từ Git, nghiệm thu kết quả và tự động báo cáo cho Alex mà Alex **không cần phải gõ nhắc một chữ nào**!
+
 ---
 
 ## 🛰️ III. CƠ CHẾ VẬN HÀNH TỰ ĐỘNG 100% CỦA WORKER DAEMON

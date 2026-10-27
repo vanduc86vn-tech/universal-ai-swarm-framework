@@ -91,27 +91,53 @@ function checkNewTasks() {
     if (!fs.existsSync(boardPath)) return;
     const board = JSON.parse(fs.readFileSync(boardPath, 'utf8'));
 
-    // 3. Tìm các task được giao cho vai trò này hoặc UUID này
-    const validStatuses = ['ASSIGNED', 'READY', 'READY_FOR_AUDIT', 'PENDING', 'OPEN', 'TODO'];
+    // 3. Tìm các task được giao cho vai trò này hoặc UUID này (bao gồm cả Worker và Lead&BA)
+    const isLead = roleArg && roleArg.includes('LEAD');
+    const validWorkerStatuses = ['ASSIGNED', 'READY', 'READY_FOR_AUDIT', 'PENDING', 'OPEN', 'TODO'];
+    const validLeadHandoffStatuses = ['COMPLETED', 'READY_FOR_REVIEW', 'READY_FOR_LEAD_REVIEW', 'DELIVERED', 'HANDOFF'];
+
     const pendingTasks = (board.tasks || []).filter(t => {
-      const matchRole = roleArg && (t.assigned_to === roleArg || t.role === roleArg);
-      const matchId = idArg && (t.assigned_conversation_id === idArg || t.assigned_to === idArg);
-      const isPending = validStatuses.includes(t.status);
-      return (matchRole || matchId) && isPending;
+      // A. Khớp tác vụ thông thường cho Worker
+      const matchWorkerRole = roleArg && (t.assigned_to === roleArg || t.role === roleArg);
+      const matchWorkerId = idArg && (t.assigned_conversation_id === idArg || t.assigned_to === idArg);
+      const isPendingWorkerTask = (matchWorkerRole || matchWorkerId) && validWorkerStatuses.includes(t.status);
+
+      // B. Khớp tín hiệu bàn giao kết quả ngược về cho Lead&BA
+      let isLeadHandoff = false;
+      if (isLead) {
+        const isHandoffStatus = validLeadHandoffStatuses.includes(t.status);
+        const notReviewedYet = !t.lead_reviewed && !t.archived;
+        // Bắt khi có bất kỳ Worker nào hoàn thành task cần Lead nghiệm thu/báo cáo sếp
+        const isCompletedWorkerTask = isHandoffStatus && notReviewedYet && t.assigned_to !== roleArg;
+        // Hoặc task chỉ định đích danh Lead
+        const isDirectLeadTask = (
+          t.assigned_to === roleArg || 
+          t.assigned_to === 'AI-LEAD' || 
+          t.handoff_to === roleArg || 
+          t.handoff_to === 'AI-LEAD' ||
+          t.handoff_to === 'AI-LEAD&BA'
+        ) && (validWorkerStatuses.includes(t.status) || isHandoffStatus) && notReviewedYet;
+
+        isLeadHandoff = isCompletedWorkerTask || isDirectLeadTask;
+      }
+
+      return isPendingWorkerTask || isLeadHandoff;
     });
 
     if (pendingTasks.length > 0) {
-      console.log(`\n🚨 [PHÁT HIỆN TÍN HIỆU TÁC VỤ MỚI CHO ${roleArg || idArg}]:`);
+      const signalType = isLead ? 'TÍN HIỆU BÀN GIAO TỪ WORKER CHO LEAD' : `TÍN HIỆU TÁC VỤ MỚI CHO ${roleArg || idArg}`;
+      console.log(`\n🚨 [PHÁT HIỆN ${signalType}]:`);
       for (const task of pendingTasks) {
         console.log(`--------------------------------------------------`);
         console.log(`Mã Task: ${task.task_id} | Trạng thái: ${task.status}`);
-        console.log(`Phân hệ: ${task.module}`);
+        console.log(`Phân hệ: ${task.module || 'N/A'}`);
         console.log(`Tiêu đề: ${task.title}`);
         console.log(`Mô tả: ${task.description || 'Không có'}`);
-        console.log(`Hành động kế tiếp: ${task.next_action || 'Bắt đầu thực thi ngay'}`);
+        if (task.handoff_to) console.log(`Bàn giao cho: ${task.handoff_to}`);
+        console.log(`Hành động kế tiếp: ${task.next_action || 'Bắt đầu thực thi / Tổng hợp báo cáo'}`);
         console.log(`--------------------------------------------------`);
       }
-      console.log(`\n👉 Đã tìm thấy tác vụ mới! Tiến trình tự động kết thúc để Antigravity đánh thức Agent tại tab này thi công ngay!`);
+      console.log(`\n👉 Đã tìm thấy tác vụ/bàn giao mới! Tiến trình tự động kết thúc để Antigravity đánh thức Agent tại tab này làm việc ngay!`);
       // Thoát mã 0 để background task hoàn tất -> Đánh thức AI Agent trong tab chat dậy thực thi
       process.exit(0);
     } else {
