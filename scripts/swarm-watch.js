@@ -14,19 +14,46 @@ const boardPath = path.join(rootDir, 'swarm/TASK_DISPATCH_BOARD.json');
 const registryPath = path.join(rootDir, 'swarm/AI_SWARM_REGISTRY.json');
 
 const args = process.argv.slice(2);
-const idArg = args.find((a, i) => args[i - 1] === '--id');
-let roleArg = args.find((a, i) => args[i - 1] === '--role');
-const intervalSec = parseInt(args.find((a, i) => args[i - 1] === '--interval') || '15', 10);
+let idArg = null;
+let roleArg = null;
+let intervalSec = 15;
+
+for (let i = 0; i < args.length; i++) {
+  const arg = args[i];
+  if (arg === '--id' && args[i + 1]) {
+    idArg = args[++i];
+  } else if (arg.startsWith('--id=')) {
+    idArg = arg.split('=')[1];
+  } else if (arg === '--role' && args[i + 1]) {
+    roleArg = args[++i];
+  } else if (arg.startsWith('--role=')) {
+    roleArg = arg.split('=')[1];
+  } else if (arg === '--interval' && args[i + 1]) {
+    intervalSec = parseInt(args[++i], 10) || 15;
+  } else if (arg.startsWith('--interval=')) {
+    intervalSec = parseInt(arg.split('=')[1], 10) || 15;
+  } else if (!arg.startsWith('--')) {
+    // Phân tích đối số vị trí (Positional argument)
+    if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(arg)) {
+      if (!idArg) idArg = arg;
+    } else if (arg.startsWith('AI-') || !roleArg) {
+      if (!roleArg) roleArg = arg;
+    }
+  }
+}
 
 // Nếu truyền --id mà chưa có --role, tự động tra cứu Registry để giải mã vai trò
 if (idArg && !roleArg && fs.existsSync(registryPath)) {
   try {
     const reg = JSON.parse(fs.readFileSync(registryPath, 'utf8'));
-    const entry = (reg.slot_bindings || reg.active_swarms || []).find(s => 
-      s.concrete_conversation_id === idArg || s.conversation_id === idArg
+    const entries = reg.slot_bindings || reg.active_swarms || (Array.isArray(reg) ? reg : []);
+    const entry = entries.find(s => 
+      s.concrete_conversation_id === idArg || 
+      s.conversation_id === idArg ||
+      s.uuid === idArg
     );
     if (entry) {
-      roleArg = entry.project_assigned_id || entry.immutable_role_id || entry.abstract_meta_role;
+      roleArg = entry.project_assigned_id || entry.role || entry.immutable_role_id || entry.abstract_meta_role;
       console.log(`[REGISTRY LOOKUP]: Đã tự động phân giải Conversation ID [${idArg}] -> Vai trò: [${roleArg}]`);
     }
   } catch (err) {
@@ -45,7 +72,7 @@ if (!targetIdentifier) {
   process.exit(1);
 }
 
-console.log('=== 🛰️ SWARM GITOPS EVENT-DRIVEN DAEMON WATCHER (V3.2) ===');
+console.log('=== 🛰️ SWARM GITOPS EVENT-DRIVEN DAEMON WATCHER (V3.2.3) ===');
 console.log(`Định danh phiên chat (UUID): ${idArg || 'N/A'}`);
 console.log(`Vai trò đảm nhiệm: [${roleArg || 'Tự động bắt theo UUID'}]`);
 console.log(`Tần suất kiểm tra: Mỗi ${intervalSec} giây`);
@@ -53,9 +80,9 @@ console.log(`Trạng thái: Đang chạy ngầm trong hộp thoại vật lý, l
 
 function checkNewTasks() {
   try {
-    // 1. Tự động kéo mã nguồn mới nhất từ Git về (nếu có remote git)
+    // 1. Tự động kéo mã nguồn mới nhất từ Git về (không hardcode nhánh main/master)
     try {
-      execSync('git pull --quiet origin main', { stdio: 'ignore', timeout: 8000 });
+      execSync('git pull --quiet', { stdio: 'ignore', timeout: 8000 });
     } catch {
       // Bỏ qua nếu chưa cấu hình remote hoặc đang offline
     }
@@ -65,10 +92,11 @@ function checkNewTasks() {
     const board = JSON.parse(fs.readFileSync(boardPath, 'utf8'));
 
     // 3. Tìm các task được giao cho vai trò này hoặc UUID này
+    const validStatuses = ['ASSIGNED', 'READY', 'READY_FOR_AUDIT', 'PENDING', 'OPEN', 'TODO'];
     const pendingTasks = (board.tasks || []).filter(t => {
-      const matchRole = roleArg && t.assigned_to === roleArg;
+      const matchRole = roleArg && (t.assigned_to === roleArg || t.role === roleArg);
       const matchId = idArg && (t.assigned_conversation_id === idArg || t.assigned_to === idArg);
-      const isPending = (t.status === 'ASSIGNED' || t.status === 'READY' || t.status === 'READY_FOR_AUDIT');
+      const isPending = validStatuses.includes(t.status);
       return (matchRole || matchId) && isPending;
     });
 
