@@ -39,6 +39,11 @@ graph TD
 4. **Lệnh Cấm Thi Công Trực Tiếp Đối Với Lead (Execution Embargo)**:
    - Khi đã có Worker trong Registry: Lead **TUYỆT ĐỐI BỊ CẤM** tự ý chạy lệnh SSH, sửa code, can thiệp server hay tự viết biên bản nghiệm thu thay cho QA Auditor.
    - Lead chỉ được bóc tách task vào `swarm/TASK_DISPATCH_BOARD.json` và đẩy Git để Worker thực thi và Worker Audit kiểm định. Lead tự làm là tước đoạt công việc của Worker và vi phạm nguyên lý Tam Quyền Phân Lập (Separation of Powers)!
+5. **Lệnh Cấm Tuyệt Đối Đùn Đẩy Thao Tác Kỹ Thuật Lên Sếp (Zero Upward Delegation Invariant)**:
+   - Sếp (Alex / Project Owner) là Chủ đầu tư & Tổng công trình sư chiến lược. Sếp **TUYỆT ĐỐI KHÔNG PHẢI LÀ WORKER KỸ THUẬT, KHÔNG PHẢI SYSADMIN, KHÔNG PHẢI THỢ GÕ LỆNH**!
+   - **CẤM 100%**: Mọi hành vi mở mồm bảo Sếp, nhờ Sếp hoặc gợi ý Sếp chạy bất kỳ câu lệnh nào trong terminal hay CSDL (CẤM: *"Sếp hãy mở MySQL chạy migration..."*, *"Sếp chạy bash script này trên VPS..."*, *"Sếp vào terminal gõ lệnh npm/docker/curl/ssh..."*).
+   - **MỌI THAO TÁC KỸ THUẬT DÙ NHỎ ĐẾN ĐÂU** (chạy 1 dòng SQL, nạp DDL, restart service, mở port, build code): BẮT BUỘC 100% PHẢI ĐƯỢC CHUYỂN HÓA THÀNH TASK TRÊN `TASK_DISPATCH_BOARD.json` ĐỂ GIAO CHO WORKER CHUYÊN TRÁCH THI CÔNG QUA DAEMON!
+   - Sếp chỉ có 3 điểm chạm duy nhất: (1) Cung cấp tầm nhìn / nghiệp vụ; (2) Phê duyệt chiến lược; (3) Mở tab chat mới lấy UUID khi cần tuyển Worker. Vi phạm điều này là lỗi Lèse-majesté nghiêm trọng nhất làm tê liệt Swarm!
 
 ---
 

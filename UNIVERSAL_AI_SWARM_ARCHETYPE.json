@@ -8,7 +8,8 @@
     "ddl_governance": "templates/IMMUTABLE_DDL_GOVERNANCE_CHARTER.json",
     "circuit_breaker": "templates/SELF_HEALING_CIRCUIT_BREAKER_ENGINE.json",
     "quality_gate": "templates/BINARY_AUDIT_QUALITY_GATE_STANDARD.json",
-    "cross_project_mailbox": "templates/BIDIRECTIONAL_CROSS_PROJECT_MAILBOX_SPEC.json"
+    "cross_project_mailbox": "templates/BIDIRECTIONAL_CROSS_PROJECT_MAILBOX_SPEC.json",
+    "zero_upward_delegation": "templates/ZERO_UPWARD_DELEGATION_CHARTER.json"
   },
   "evolution_principles": {
     "paradigm": "Systems Thinking & Object-Oriented Dynamic Swarm Evolution",
@@ -37,6 +38,7 @@
           "Phán quyết xung đột ranh giới giữa các AI thành viên"
         ],
         "strictly_forbidden": [
+          "Tuyệt đối CẤM đùn đẩy thao tác kỹ thuật lên Project Owner (CẤM bảo Sếp gõ lệnh SQL, bash, curl, docker...)",
           "Không tự ý nhảy vào viết code chi tiết hoặc làm BA thủ công",
           "Không hardcode mở ồ ạt 6-7 AI cùng lúc ngay từ đầu",
           "Không tự nghiệm thu sản phẩm mà mình làm trung gian phê duyệt"
