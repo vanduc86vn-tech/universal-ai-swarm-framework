@@ -89,7 +89,8 @@ function resolveIdentity() {
         
         const roleUpper = String(roleArg || '').toUpperCase();
         const metaUpper = String(slot.abstract_meta_role || '').toUpperCase();
-        if (roleUpper.includes('LEAD') || roleUpper.includes('ORCHESTRAT') || roleUpper.includes('BA') || metaUpper.includes('LEAD') || slot.slot === 'CONVERSATION_ID_1') {
+        const isLeadMatch = roleUpper === 'AI-LEAD&BA' || roleUpper.includes('LEAD') || roleUpper.includes('ORCHESTRAT') || metaUpper.includes('LEAD') || slot.slot === 'CONVERSATION_ID_1' || (/(^|[^A-Z])BA([^A-Z]|$)/.test(roleUpper) && !roleUpper.includes('DATA') && !roleUpper.includes('BACKEND'));
+        if (isLeadMatch) {
           isLeadRole = true;
         }
         if (roleUpper.includes('AUDIT') || roleUpper.includes('QA') || metaUpper.includes('AUDIT') || metaUpper.includes('QA') || slot.slot === 'CONVERSATION_ID_3') {
@@ -139,7 +140,7 @@ if (!roleArg && !idArg) {
 const targetRole = roleArg || 'UNKNOWN_ROLE';
 const targetId = idArg || 'UNKNOWN_ID';
 const roleUpper = targetRole.toUpperCase();
-if (!isLeadRole && (roleUpper.includes('LEAD') || roleUpper.includes('ORCHESTRAT') || roleUpper.includes('BA'))) {
+if (!isLeadRole && (roleUpper === 'AI-LEAD&BA' || roleUpper.includes('LEAD') || roleUpper.includes('ORCHESTRAT') || (/(^|[^A-Z])BA([^A-Z]|$)/.test(roleUpper) && !roleUpper.includes('DATA') && !roleUpper.includes('BACKEND')))) {
   isLeadRole = true;
 }
 if (!isQARole && (roleUpper.includes('AUDIT') || roleUpper.includes('QA'))) {
