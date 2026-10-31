@@ -62,6 +62,18 @@ Khi khởi tạo một dự án mới (`PROJECT_ID`), hệ thống **BẮT BUỘ
   - **CẤM LÀM PHIỀN SẾP ALEX!** Cấm hỏi Sếp những câu hỏi kỹ thuật hay nhờ Sếp làm trung gian.
   - Boss dự án bắt buộc đóng gói báo cáo theo chuẩn RFC ([`BOSS_ESCALATION_INTAKE_PROTOCOL.md`](https://github.com/vanduc86vn-tech/swarm-master-ai/blob/main/protocols/BOSS_ESCALATION_INTAKE_PROTOCOL.md)) gửi thẳng lên **SUPER MASTER LEADER** để nhận giải pháp thượng tầng.
 
+### 2.4. ĐIỀU LỆ THÉP: BẮT BUỘC KHỞI CHẠY DAEMON WATCHER & REAPER TRỰC CHIẾN (ISDAEMON: TRUE)
+- **Tử huyệt thực địa:** Các Agent chỉ dùng `send_message` suông rồi ngưng tác vụ mà KHÔNG chạy tiến trình nền $\rightarrow$ khi hạ tầng đứng, phiên chat bị treo hoặc Worker ngủ quên thì toàn bộ Swarm tê liệt vĩnh viễn!
+- **Quy chuẩn bắt buộc:**
+  * Mọi Agent (từ PM đến Worker) khi bắt đầu nhận nhiệm vụ hoặc trực chiến **BẮT BUỘC PHẢI CHẠY DAEMON NGẦM**:
+    `run_command(CommandLine='node swarm/scripts/swarm-watch.js --role <ROLE> --loop', IsDaemon=true)`
+    kết hợp với động cơ tự cứu:
+    `run_command(CommandLine='node swarm/scripts/swarm_self_healing_reaper.js --daemon', IsDaemon=true)`.
+  * **Cơ chế hoạt động:**
+    1. Khi có task mới trên Git / MySQL, `swarm-watch.js` phát hiện và thoát với Exit Code 0 $\rightarrow$ Đánh thức Agent dậy thi công tự động trong hệ thống Antigravity mà không cần con người gõ nhắc!
+    2. `swarm_self_healing_reaper.js` tuần tra mỗi 60s: tự động xóa stale `.git/index.lock` (>30s), kill các tiến trình watcher trùng lặp (giữ lại PID mới nhất), tiêu diệt các lệnh `node -e` chạy ngầm treo quá 45s.
+  * **Kênh `send_message`:** Chỉ đóng vai trò là Fast-Path gõ cửa tức thì để giảm độ trễ, **TUYỆT ĐỐI KHÔNG THAY THẾ CHO DAEMON TRỰC CHIẾN NỀN**. Giao việc mà toàn team không mở Watcher là vi phạm nghiêm trọng kỷ luật tự cứu!
+
 ---
 
 ## 🛡️ MỤC 3: CHUẨN COMMITS GIT & QUẢN TRỊ TOKEN CONTEXT
