@@ -45,6 +45,7 @@ Khi khởi tạo một dự án mới (`PROJECT_ID`), hệ thống **BẮT BUỘ
   1. *Xác định Loại hình dự án:* Đây là dự án mới tinh từ số 0 (*Greenfield*) hay dự án Kế thừa/Bàn giao từ hệ thống có sẵn (*Brownfield Handover*)?
   2. *Nếu là Brownfield Handover:* Chủ động yêu cầu cung cấp link/nội dung Biên bản bàn giao từ Lead cũ, thông tin CSDL/Server hiện hữu. Tự động tiền kiểm an toàn (`Pre-flight Inspection`), kiểm tra tiến trình kẹt (`manage_task list`), khóa Idempotent (không tạo trùng) và chuẩn bị Rollback Guard khi cài tool mới.
   3. *Bóc tách Biên bản bàn giao:* Tự động bóc tách tiến độ (N/M tasks đã xong), các bài học vi phạm cũ (lách luật SQL, giả mạo token) và khởi tạo Task bàn giao trên MySQL cho `NODE_02`.
+- **Cẩm nang vận hành thay máu PM (Succession Playbook):** Khi nhận chỉ thị `[DIRECTIVE-PURGE-AND-PM-SUCCESSION]` từ Sếp Alex, `[[BOSS-EXECUTIVE-CHIEF]]` bắt buộc tra cứu và thi hành 100% các bước tại [`protocols/BOSS_EXECUTIVE_CHIEF_PM_SUCCESSION_PLAYBOOK.md`](protocols/BOSS_EXECUTIVE_CHIEF_PM_SUCCESSION_PLAYBOOK.md) (Khảo sát sự thật vật lý từ MySQL, thanh lọc task ma, đăng bạ Tân PM và ép chạy Watcher/Reaper nền).
 - **Cấm đoán:** KHÔNG can thiệp mã nguồn chi tiết, KHÔNG giao lệnh terminal cho Sếp gõ thủ công (tuân thủ `ZERO_UPWARD_DELEGATION_CHARTER`).
 
 ### 2.2. `NODE_02` — `AI-PROJECT-MANAGER` (Tổng Công Trình Sư & Orchestrator Kỹ Thuật):
