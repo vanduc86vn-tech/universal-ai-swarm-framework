@@ -1,0 +1,47 @@
+# ==============================================================================
+# UNIVERSAL ANTIGRAVITY GLOBAL SYSTEM CONFIGURATION
+# LOCATION: ~/.antigravity/config.yaml
+# SCOPE: SYSTEM-WIDE DEFAULT (SYSTEM TENANT ENGINE)
+# PURPOSE: GOOGLE CLOUD VERTEX AI COST REDUCTION & TOKEN BUDGET CONTROL
+# ==============================================================================
+
+version: "6.1-ENTERPRISE-ABSTRACT"
+system_mode: "PRODUCTION_COST_OPTIMIZED"
+
+# 1. QUẢN LÝ CONTEXT WINDOW & CẮT TẢI DỮ LIỆU ĐẦU RA (PRUNING HIGH TOKEN OUTPUTS)
+context_management:
+  auto_compact_threshold: 50000        # Ngưỡng token cảnh báo nén context tự động
+  context_warn_ratio: 0.70             # Cảnh báo khi chạm 70% dung lượng tối đa của model
+  enable_auto_compact: true
+  
+  # CẮT TẢI LOG VẬT LÝ (Tránh việc terminal/query output hàng chục nghìn dòng làm phình Context)
+  prune_large_outputs: true
+  max_output_tokens_per_tool: 3000     # Tối đa 3,000 tokens cho mỗi kết quả tool execution
+  truncate_strategy: "HEAD_AND_TAIL"   # Trích xuất 50 dòng đầu và 50 dòng cuối log
+
+# 2. PHÂN TẦNG MÔ HÌNH DYNAMIC (MODEL ROUTING TỐI ƯU CHI PHÍ VERTEX AI)
+# Giảm 80% chi phí bằng cách ép Worker chạy Flash/Flash-Lite và chỉ cấp Pro cho Strategist
+model_routing:
+  default_worker_model: "gemini-3.8-flash"
+  default_fallback_model: "gemini-3.5-flash-lite"
+  executive_strategist_model: "gemini-3.8-pro"
+  execution_lead_model: "gemini-3.8-pro"
+
+# 3. TỐI ƯU HÓA CONTEXT CACHING & TTL MANAGEMENT (KHẮC PHỤC LÃNG PHÍ CACHING)
+context_caching:
+  enabled: true
+  min_tokens_for_cache: 32768          # Chỉ tạo KV Cache khi prompt vượt mốc 32k tokens
+  ttl_seconds: 300                     # TTL 5 phút chuẩn để tránh lãng phí chi phí lưu trữ cache
+  reuse_existing_cache: true
+
+# 4. LOẠI BỎ THƯ MỤC NẶNG TOÀN CỤC KHI QUÉT WORKSPACE
+global_ignore_patterns:
+  - "**/node_modules/**"
+  - "**/venv/**"
+  - "**/.git/**"
+  - "**/*.tmp"
+  - "**/*.log"
+  - "**/*.dump"
+  - "**/build/**"
+  - "**/dist/**"
+  - "**/credentials.json"
