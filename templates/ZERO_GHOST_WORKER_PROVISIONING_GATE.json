@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "gate_name": "ZERO_GHOST_WORKER_PROVISIONING_GATE",
+  "version": "1.0.0-ENTERPRISE",
+  "custodian": "SUPER MASTER LEADER & universal-ai-swarm-framework",
+  "rule_description": "Khóa cứng điều kiện tiên quyết (Pre-condition Guard): Cấm tuyệt đối AI-PROJECT-MANAGER chuyển trạng thái Task sang ASSIGNED khi Worker đích chưa được đăng bạ thực tế trong Sys_Swarm_Node_Pool.",
+  
+  "state_machine_guard": {
+    "task_initial_state": "OPEN",
+    "forbidden_transitions": [
+      {
+        "from": "OPEN",
+        "to": "ASSIGNED",
+        "condition_failure": "TARGET_WORKER_NOT_IN_POOL_OR_NOT_READY",
+        "rejection_action": "REJECT_ASSIGNMENT",
+        "error_code": "ERR_GHOST_WORKER_ASSIGNMENT_FORBIDDEN",
+        "message": "Không thể gán Task cho nhân tố ảo! Worker chưa được cấp phát Conversation UUID hoặc chưa có trạng thái READY trong Sys_Swarm_Node_Pool."
+      }
+    ],
+    "mandatory_sequence": [
+      "STAGE_1: PM bóc tách công việc -> Lưu Task ở trạng thái OPEN",
+      "STAGE_2: PM kiểm tra Sys_Swarm_Node_Pool tìm Worker chuyên trách có status='READY'",
+      "STAGE_3: Nếu thiếu Worker -> PM phát tín hiệu yêu cầu BOSS-EXECUTIVE-CHIEF phê duyệt cấp phát Worker Slot",
+      "STAGE_4: Worker mới được đăng bạ (UUID + role + status='READY' + LastHeartbeatAt)",
+      "STAGE_5: PM thực hiện chuyển trạng thái Task sang ASSIGNED + Bắn tin nhắn P2P Mesh PING"
+    ]
+  },
+
+  "sql_verification_query": "SELECT node_id, worker_role, conversation_id, status FROM Sys_Swarm_Node_Pool WHERE project_id = ? AND worker_role = ? AND status = 'READY'"
+}
