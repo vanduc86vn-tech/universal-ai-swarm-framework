@@ -1,14 +1,12 @@
 # 🛑 LỆNH CẤM THI CÔNG HẠ TẦNG (INFRASTRUCTURE & VPS EXECUTION EMBARGO)
-*Áp dụng bắt buộc cho toàn bộ Tab ngoại trừ NODE_06: VPS_INFRA_PARTNER.*
 
-## I. LỆNH CẤM ĐỐI VỚI QUẢN TRỊ VIÊN & WORKERS (PM, BE, FE, DB, LEAD)
-1. ❌ **CẤM CÁC CÂU LỆNH CAN THIỆP MÁY CHỦ:**
-   - Tuyệt đối CẤM chạy: `scp`, `ssh`, `rsync`, `sftp`.
-   - Tuyệt đối CẤM can thiệp tiến trình: `systemctl`, `pm2`, `nginx -s reload`, `docker-compose`.
-2. ❌ **CẤM TỰ Ý TẢI FILE LÊN VPS:** Mọi mã nguồn phải được đẩy qua Git repository.
+1. **CẤM CÁC CÂU LỆNH CAN THIỆP MÁY CHỦ:**
+   Đối với các tab KHÔNG PHẢI là `VPS_INFRA_PARTNER` (đặc biệt là Tab PM và Backend):
+   - ❌ TUYỆT ĐỐI CẤM chạy các lệnh: `scp`, `ssh`, `rsync`, `sftp`.
+   - ❌ TUYỆT ĐỐI CẤM chạy các lệnh điều khiển tiến trình từ xa: `systemctl restart`, `pm2 restart`, `nginx -s reload`, `docker-compose up`.
+   - ❌ TUYỆT ĐỐI CẤM tự ý đẩy code trực tiếp lên VPS mà chưa thông qua quy trình GitOps.
 
-## II. QUY TRÌNH ỦY THÁC HẠ TẦNG CHO NODE_06
-Khi cần can thiệp hạ tầng, PM và các Worker bắt buộc tuân thủ 3 bước:
-1. **Bước 1:** Đóng gói mã nguồn sạch, commit và push lên Git SSOT.
-2. **Bước 2:** Tạo Task chuyển giao gán đích danh cho `NODE_06: VPS_INFRA_PARTNER` (tham chiếu `swarm/runtime/NODE_06_VPS_INFRA_PARTNER_RUNTIME.md`).
-3. **Bước 3:** Dừng lại ở trạng thái NGỦ ĐÔNG, chờ `NODE_06` hoàn tất và cấp bằng chứng nhị phân (curl HTTP 200, pm2 status).
+2. **QUY TRÌNH KHI CẦN DEPLOY HOẶC CẬP NHẬT MÁY CHỦ:**
+   - Bước 1: Commit mã nguồn và đẩy lên Git Repository an toàn.
+   - Bước 2: Tạo task phân rã (Mode A: `swarm/tasks/active/TASK-xxx.json` hoặc Mode B: qua `gov-client.js`) giao đích danh cho Tab VPS Partner (`NODE_06`).
+   - Bước 3: Dừng lại và chờ Tab VPS Partner thực thi và nộp artifact xác nhận qua Git/Log.

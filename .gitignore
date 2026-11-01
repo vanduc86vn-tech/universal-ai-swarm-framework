@@ -1,15 +1,33 @@
-# Logs & Scratchpad (TTL = 48h)
-scratch/
+# Dependencies & Package Managers
+node_modules/
+vendor/
+venv/
+.env
+.env.local
+
+# Logs, PIDs & Locks
 *.log
+*.pid
+locks/
+*.lock
+
+# Temporary, Scratchpad & Cache
+scratch/
 *.tmp
 *.dump
+.cache/
+.antigravity/cache/
+
+# Monolith Backups & Snapshots
+*.monolith.bak
 *after_refactor.json
 *full_entities*.json
 
-# OS files
-Thumbs.db
-.DS_Store
-*.lock
+# Chrome CDP & Browser Testing Artifacts
+.chrome-audit-profile/
+chrome-test*
+chrome_debug.log
 
-# Node dependencies
-node_modules/
+# OS Metadata
+.DS_Store
+Thumbs.db

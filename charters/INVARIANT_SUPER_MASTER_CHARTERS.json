@@ -78,6 +78,11 @@
       "charter_id": "CHARTER_15_ENTERPRISE_THREE_TIER_DEFENSE_AND_ZERO_ATTACK_SURFACE",
       "title": "Hiến Chương Phòng Thủ Đa Tầng Doanh Nghiệp & Đóng Kín Bề Mặt Tấn Công",
       "invariant": "Hạ tầng vận hành Swarm cấp doanh nghiệp (Mode B) bắt buộc triển khai theo mô hình Phòng Thủ 3 Tầng Chiều Sâu: (1) Tầng Agent Laptop duy trì trạng thái Ngủ Đông (Dormant - 0% CPU, 0 Polling), thức tỉnh bằng P2P Fast-Path send_message, tước đoạt hoàn toàn quyền SSH/SCP của AI; (2) Tầng Rìa Ngoại Vi sử dụng Cloudflare Worker giấu kín 100% địa chỉ IP máy chủ thật, xác thực Bearer Token, chống DDoS và cấp SSL tự động; (3) Tầng Tiến Trình Máy Chủ sử dụng PM2 nuôi sống API nội bộ tự hồi sinh sau 0.5s nếu crash, CSDL MySQL bắt buộc đóng kín với Internet (bind-address = 127.0.0.1) để triệt tiêu 100% nguy cơ dò mật khẩu và tấn công brute-force."
+    },
+    {
+      "charter_id": "CHARTER_16_ZERO_REDUNDANT_READ_AND_DYNAMIC_SERVICE_DISCOVERY",
+      "title": "Hiến Chương Tiết Kiệm Ngữ Cảnh Tuyệt Đối & Khám Phá Dịch Vụ Động",
+      "invariant": "Nghiêm cấm Worker tự đọc lại file cấu hình runtime của chính mình khi IDE Antigravity đã tự nạp AGENTS.md và rules vào System Prompt. Mọi thao tác định danh P2P phải sử dụng Dynamic Service Discovery (gov-client.js resolve) với độ trễ < 1ms, triệt tiêu hoàn toàn thói quen quét danh bạ thủ công hoặc hardcode UUID."
     }
   ]
 }

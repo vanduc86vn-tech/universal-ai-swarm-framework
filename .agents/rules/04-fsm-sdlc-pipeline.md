@@ -1,49 +1,54 @@
-# ⚡ DÂY CHUYỀN 5 TẦNG SDLC TỰ ĐỘNG HÓA (FSM PIPELINE & HANDOFF CONTRACT)
-*Áp dụng bắt buộc cho Orchestrator (PM) và mọi Worker trong toàn bộ vòng đời phát triển tính năng.*
+# ⚙️ QUY TRÌNH DÂY CHUYỀN 5 TẦNG & FSM SDLC PIPELINE (STATE MACHINE INVARIANT)
+
+Dây chuyền phát triển phần mềm trong Swarm vận hành như một Máy trạng thái hữu hạn (Finite State Machine - FSM) khép kín gồm 5 Tầng độc lập. Không một tính năng nào được phép vượt cấp hoặc tự duyệt.
 
 ---
 
-## I. MÔ HÌNH CHUYỂN DỊCH TRẠNG THÁI 5 TẦNG (FINITE STATE MACHINE)
+## I. MÔ HÌNH DÂY CHUYỀN 5 TẦNG (5-TIER SDLC PIPELINE)
 
 ```text
- ┌────────────────────────────────────────────────────────────────────────┐
- │ TẦNG 1: BLUEPRINT & WBS 4 CẤP (APEX_STRATEGY / Lead Architect)         │
- │ Deliverable: docs/spec/*.SPEC.md, WBS 4 Cấp trên MySQL                 │
- └──────────────────────────────────┬─────────────────────────────────────┘
-                                    │ Kích hoạt tự động khi Spec đã duyệt
-                                    ▼
- ┌────────────────────────────────────────────────────────────────────────┐
- │ TẦNG 2: DATA ARCHITECTURE 3NF (DATA_TIER / Database Architect)         │
- │ Deliverable: migrations/*.sql, DDL Rollback < 60s, SP/Views            │
- └──────────────────────────────────┬─────────────────────────────────────┘
-                                    │ Kích hoạt tự động khi DDL đã migrate
-                                    ▼
- ┌────────────────────────────────────────────────────────────────────────┐
- │ TẦNG 3: APPLICATION DEVELOPMENT (SERVICE_TIER & PRESENTATION_TIER)     │
- │ Deliverables: src/backend/ Controllers/Services, src/frontend/ UI PWA  │
- └──────────────────────────────────┬─────────────────────────────────────┘
-                                    │ Kích hoạt tự động khi Code hoàn tất
-                                    ▼
- ┌────────────────────────────────────────────────────────────────────────┐
- │ TẦNG 4: ZERO-TRUST AUDIT & SECURITY (AUDIT_TIER / AI-AUDIT-QA)         │
- │ Deliverable: docs/audit/QA_AUDIT_*.md, Quét OWASP, 0% Mock Data        │
- └──────────────────────────────────┬─────────────────────────────────────┘
-                                    │ Kích hoạt tự động khi Audit = PASSED
-                                    ▼
- ┌────────────────────────────────────────────────────────────────────────┐
- │ TẦNG 5: PHYSICAL CHROME CDP VALIDATION (AUDIT_TIER / AI-BROWSER)       │
- │ Deliverables: Chrome DevTools click thật, HTTP 200, ảnh chụp .png      │
- └──────────────────────────────────┬─────────────────────────────────────┘
-                                    │ Hoàn tất toàn bộ chu trình SDLC
-                                    ▼
-                          [COMPLETED & SIGNED OFF]
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ TẦNG 1: STRATEGY & USER STORY (NODE_01: LEAD ARCHITECT & BA)                │
+│ -> Bóc tách yêu cầu nghiệp vụ, Acceptance Criteria, Single Point of Contact │
+└──────────────────────────────────────┬──────────────────────────────────────┘
+                                       ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ TẦNG 2: WBS DECOMPOSITION & SCHEDULING (NODE_02: PROJECT MANAGER)           │
+│ -> Phân mảnh Task, gán Slot Worker (Zero Ghost Worker Gate), cấp Task ID     │
+└──────────────────────────────────────┬──────────────────────────────────────┘
+                                       ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ TẦNG 3: SCHEMA & ARCHITECTURE LOCK (NODE_03: DATABASE ARCHITECT)            │
+│ -> Thiết kế 3NF, xuất bản DDL/Migration, Rollback < 60s, 0 DROP/0 TRUNCATE  │
+└──────────────────────────────────────┬──────────────────────────────────────┘
+                                       ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ TẦNG 4: EXECUTION & CODE PRODUCTION (NODE_05: BACKEND / WORKERS)            │
+│ -> Lập trình tính năng theo schema, nghiêm cấm mock, tuân thủ boundaries    │
+└──────────────────────────────────────┬──────────────────────────────────────┘
+                                       ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ TẦNG 5: INDEPENDENT QUALITY GATE (NODE_04: QA & SECURITY AUDITOR)           │
+│ -> Kiểm tra nhị phân (OWASP, CDP Browser, Zero Mock), ký PASS hoặc REJECT   │
+└─────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## II. HỢP ĐỒNG CHUYỂN GIAO TỰ ĐỘNG (AUTOMATED HANDOFF CONTRACT)
-1. **NGUYÊN TẮC BẤT BIẾN:** Khi Tầng $K$ hoàn thành và đã ký số (`sign-task`) đưa deliverables lên hệ thống, Orchestrator (PM) **BẮT BUỘC TỰ ĐỘNG KÍCH HOẠT TẦNG $K+1$**.
-2. **CẤM NGỒI THỤ ĐỘNG CHỜ BOSS:** PM không được phép chờ Boss nhắc việc nếu các điều kiện tiền đề của Tầng $K+1$ đã thỏa mãn.
-3. **CỔNG CHẶN CHẤT LƯỢNG (QUALITY GATES):**
-   - Nếu Tầng $K$ bị Tòa án Audit (Tầng 4) đánh rớt (`REJECTED`), PM tự động định tuyến Task trả về đúng Worker Tầng $K$ để khắc phục kèm Bệnh án kỹ thuật chi tiết.
-   - Tuyệt đối không cho phép task chưa qua kiểm toán Tầng 4 bước sang nghiệm thu Tầng 5.
+## II. MA TRẬN CHUYỂN DỊCH TRẠNG THÁI TASK (TASK FSM TRANSITIONS)
+
+Mọi Task (dù là Mode A `TASK-xxx.json` hay Mode B `Sys_Project_Tasks`) bắt buộc phải tuân thủ nghiêm ngặt chuỗi chuyển dịch trạng thái sau:
+
+1. `DRAFT`: Đang trong giai đoạn khảo sát, chưa được phân bổ tài nguyên.
+2. `READY_FOR_DEV`: Đã có User Story, WBS và Schema được duyệt.
+3. `ASSIGNED`: Đã gán cho một Worker ID thực sự tồn tại trong danh bạ Swarm (Cấm gán cho nobody).
+4. `IN_PROGRESS`: Worker đã xác nhận nhận việc và bắt đầu thi công.
+5. `DEV_COMPLETE`: Worker đã nộp mã nguồn và bằng chứng thực thi.
+6. `IN_AUDIT`: Chuyển sang cho QA Auditor thẩm định độc lập.
+7. `AUDIT_PASSED`: QA đóng dấu phê duyệt sau khi đối soát kiểm thử thực tế.
+8. `ARCHIVED`: Task hoàn thành, dời sang lưu trữ (Mode A: thư mục `archive/`; Mode B: đánh dấu `is_archived = 1`).
+
+> [!CAUTION]
+> **LỆNH CẤM VƯỢT CẤP (ANTI-BYPASS RULE):**
+> 1. Worker KHÔNG ĐƯỢC tự chuyển trạng thái task từ `DEV_COMPLETE` sang `AUDIT_PASSED`. Chỉ QA (`NODE_04`) mới có quyền này.
+> 2. Nếu QA đánh giá `REJECTED`, task tự động quay ngược về `IN_PROGRESS` kèm biên bản vi phạm `QA_AUDIT_REPORT.md`. Worker phải khắc phục lại từ đầu.

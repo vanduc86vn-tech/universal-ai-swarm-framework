@@ -186,10 +186,34 @@ if (fs.existsSync(srcRuntimeDir)) {
   }
 }
 
-// 4.5. swarm/scripts/swarm-watch.js
-const srcWatch = path.join(sourceRootDir, 'swarm/scripts/swarm-watch.js');
-if (fs.existsSync(srcWatch)) {
-  safeCopyFile(srcWatch, path.join(targetDir, 'swarm/scripts/swarm-watch.js'));
+// 4.5. swarm/scripts/ (swarm-watch.js, gov-client.js, task-partition-manager.js)
+const scriptFiles = ['swarm-watch.js', 'gov-client.js', 'task-partition-manager.js'];
+const destScriptsDir = path.join(targetDir, 'swarm/scripts');
+if (!fs.existsSync(destScriptsDir)) fs.mkdirSync(destScriptsDir, { recursive: true });
+
+for (const sf of scriptFiles) {
+  const srcScript = path.join(sourceRootDir, 'swarm/scripts', sf);
+  if (fs.existsSync(srcScript)) {
+    safeCopyFile(srcScript, path.join(destScriptsDir, sf));
+  }
+}
+
+// 4.6. .gitignore & Vệ sinh rác thư mục (Directory Hygiene)
+const srcGitignore = path.join(sourceRootDir, '.gitignore');
+const destGitignore = path.join(targetDir, '.gitignore');
+if (fs.existsSync(srcGitignore) && !fs.existsSync(destGitignore)) {
+  safeCopyFile(srcGitignore, destGitignore);
+}
+
+// Dọn dẹp profile tạm của Chrome nếu tồn tại
+const chromeProfileDir = path.join(targetDir, '.chrome-audit-profile');
+if (fs.existsSync(chromeProfileDir)) {
+  try {
+    fs.rmSync(chromeProfileDir, { recursive: true, force: true });
+    console.log(`   🧹 [DỌN RÁC]: Đã xóa thư mục tạm Chrome audit profile: .chrome-audit-profile/`);
+  } catch (err) {
+    console.log(`   ⚠️ [LƯU Ý DỌN RÁC]: Không thể xóa .chrome-audit-profile: ${err.message}`);
+  }
 }
 
 // 5. Khởi tạo template Bệnh án Hiện trạng (Health Check Report)
@@ -218,7 +242,7 @@ if (!fs.existsSync(reportPath)) {
 - [ ] Rà soát lỗi cú pháp, API bị đứt gãy, các gói thư viện lỗi thời.
 
 ## 3. LỘ TRÌNH PHẪU THUẬT & REFACTOR
-- Các đầu việc tiếp theo sẽ được bóc tách thành Task ID đưa vào \`swarm/TASK_DISPATCH_BOARD.json\`.
+- Các đầu việc tiếp theo sẽ được bóc tách thành Task ID đưa vào Mode A (\`swarm/tasks/active/TASK-xxx.json\`) hoặc Mode B (CSDL MySQL SSOT \`hdd_swarm_governance\` qua \`gov-client.js\`).
 `;
   fs.writeFileSync(reportPath, reportContent, 'utf8');
   console.log(`   ✅ [ĐÃ XUẤT BẢN]: docs/BROWNFIELD_HEALTH_CHECK_REPORT.md`);
