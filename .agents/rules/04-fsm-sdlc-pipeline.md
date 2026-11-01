@@ -43,6 +43,7 @@ Mọi Task (dù là Mode A `TASK-xxx.json` hay Mode B `Sys_Project_Tasks`) bắt
 2. `READY_FOR_DEV`: Đã có User Story, WBS và Schema được duyệt.
 3. `ASSIGNED`: Đã gán cho một Worker ID thực sự tồn tại trong danh bạ Swarm (Cấm gán cho nobody).
 4. `IN_PROGRESS`: Worker đã xác nhận nhận việc và bắt đầu thi công.
+   - *Biến thể Kế nhiệm (`HANDOVER_PENDING`)*: Kích hoạt khi Worker chạm ngưỡng bão hòa context (> 40k tokens hoặc > 25 turns). Worker xuất `CHK-<TASK_ID>.json` kèm `rejection_list` rồi nhường chỗ cho Tân Worker. Khi Tân Worker đăng bạ tiếp quản (`gov-client register`), trạng thái quay về `IN_PROGRESS`.
 5. `DEV_COMPLETE`: Worker đã nộp mã nguồn và bằng chứng thực thi.
 6. `IN_AUDIT`: Chuyển sang cho QA Auditor thẩm định độc lập.
 7. `AUDIT_PASSED`: QA đóng dấu phê duyệt sau khi đối soát kiểm thử thực tế.

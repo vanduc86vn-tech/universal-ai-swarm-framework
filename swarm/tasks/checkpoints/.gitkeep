@@ -1,0 +1,2 @@
+# Swarm zero-downtime task checkpoints directory
+# Active checkpoints are stored here during succession handovers
