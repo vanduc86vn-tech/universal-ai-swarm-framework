@@ -175,6 +175,17 @@ if (fs.existsSync(srcDdl) && !fs.existsSync(destDdl)) {
   safeCopyFile(srcDdl, destDdl);
 }
 
+// 4.4.3. Tiêm Sổ Tay Tác Chiến Runtime cho từng Role (NODE_01 -> NODE_06)
+const srcRuntimeDir = path.join(sourceRootDir, 'swarm/runtime');
+const destRuntimeDir = path.join(targetDir, 'swarm/runtime');
+if (fs.existsSync(srcRuntimeDir)) {
+  if (!fs.existsSync(destRuntimeDir)) fs.mkdirSync(destRuntimeDir, { recursive: true });
+  const runtimeFiles = fs.readdirSync(srcRuntimeDir).filter(f => f.endsWith('.md'));
+  for (const rf of runtimeFiles) {
+    safeCopyFile(path.join(srcRuntimeDir, rf), path.join(destRuntimeDir, rf));
+  }
+}
+
 // 4.5. swarm/scripts/swarm-watch.js
 const srcWatch = path.join(sourceRootDir, 'swarm/scripts/swarm-watch.js');
 if (fs.existsSync(srcWatch)) {

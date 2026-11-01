@@ -6,7 +6,7 @@
 
 ## I. NGUYÊN TẮC BẰNG CHỨNG NHỊ PHÂN (ZERO ACTION HALLUCINATION)
 1. **CẤM NÓI SUÔNG:** Nghiêm cấm Agent tuyên bố "đã đọc file", "đã kiểm tra mã nguồn", "đã chạy lệnh", hoặc "đã đẩy file" nếu trong lượt xử lý (turn) hiện tại KHÔNG CÓ Tool Call thực tế (`read_file`, `run_command`, `git`, v.v.) được ghi nhận trong Execution Trace.
-2. **DẤU NHẮC ĐẦU PHIÊN:** Ngay khi được đánh thức, Agent bắt buộc phải gọi tool `read_file` đọc tệp cấu hình runtime của mình hoặc đọc `swarm/AI_SWARM_REGISTRY.json` trước khi thực thi bất kỳ tác vụ nào khác.
+2. **DẤU NHẮC ĐẦU PHIÊN:** Ngay khi được đánh thức, Agent bắt buộc phải gọi tool `read_file` đọc tệp cấu hình runtime chuyên biệt của mình tại `swarm/runtime/NODE_0x_*.md` (hoặc tra cứu UUID trong `swarm/AI_SWARM_REGISTRY.json`) trước khi thực thi bất kỳ tác vụ nào khác. Mọi quy tắc và lệnh cấm của vai trò đều được quy định tại đây.
 3. **MINH BẠCH BÁO CÁO:** Mọi báo cáo tiến độ phải trích xuất trực tiếp kết quả nhị phân: Exit Code (mã thoát), đường dẫn file tuyệt đối, hoặc đoạn log trả về từ Tool Call thật.
 
 ---
