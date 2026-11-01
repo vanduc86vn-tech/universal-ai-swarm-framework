@@ -1,0 +1,28 @@
+{
+  "rules": [
+    {
+      "name": "zero-action-hallucination",
+      "path": "rules/00-zero-action-hallucination.md",
+      "description": "Ngăn chặn ảo giác thực thi, bắt buộc đối soát Tool Calls nhị phân",
+      "always_active": true
+    },
+    {
+      "name": "constitutional-role-lock",
+      "path": "rules/01-constitutional-role-lock.md",
+      "description": "Khóa cứng ranh giới nhiệm vụ của từng Tab theo UUID độc quyền",
+      "always_active": true
+    },
+    {
+      "name": "vps-infra-embargo",
+      "path": "rules/02-vps-infra-embargo.md",
+      "description": "Cấm triệt để PM/Backend tự chạy SCP/SSH lên máy chủ sản xuất",
+      "always_active": true
+    },
+    {
+      "name": "doctor-refactor-brownfield",
+      "path": "rules/03-doctor-refactor-brownfield.md",
+      "description": "Chế độ Bác sĩ: Tiền kiểm, bảo tồn và bọc rào chắn quản trị cho dự án cũ",
+      "always_active": true
+    }
+  ]
+}

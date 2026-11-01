@@ -1,0 +1,43 @@
+{
+  "project_name": "SWARM_MASTER_PROJECT",
+  "framework_version": "6.2-Antigravity-Native",
+  "updated_at": "2026-11-01T17:20:00Z",
+  "nodes": {
+    "NODE_01": {
+      "role": "LEAD_ARCHITECT_AND_BA",
+      "conversation_uuid": "",
+      "tab_index": 1,
+      "description": "Điều phối chiến lược, bóc tách User Stories, Single Point of Contact của Sếp Alex"
+    },
+    "NODE_02": {
+      "role": "PROJECT_MANAGER",
+      "conversation_uuid": "",
+      "tab_index": 2,
+      "description": "Quản lý tiến độ, giám sát Task Board 5 tầng, cấm can thiệp code kỹ thuật và hạ tầng"
+    },
+    "NODE_03": {
+      "role": "DATABASE_ARCHITECT",
+      "conversation_uuid": "",
+      "tab_index": 3,
+      "description": "Độc quyền Schema 3NF, Migrations, Rollbacks an toàn 0 DROP/0 TRUNCATE"
+    },
+    "NODE_04": {
+      "role": "QA_AND_SECURITY_AUDITOR",
+      "conversation_uuid": "",
+      "tab_index": 4,
+      "description": "Cổng kiểm toán độc lập 5 Gates, quét OWASP, cấm mock, cấm tự viết mã tính năng"
+    },
+    "NODE_05": {
+      "role": "BACKEND_ENGINEER",
+      "conversation_uuid": "",
+      "tab_index": 5,
+      "description": "Xây dựng REST/GraphQL APIs, xử lý dịch vụ nghiệp vụ nền theo DDL"
+    },
+    "NODE_06": {
+      "role": "VPS_INFRA_PARTNER",
+      "conversation_uuid": "",
+      "tab_index": 6,
+      "description": "Độc quyền thực thi SSH, SCP, cấu hình máy chủ VPS, Nginx, Docker"
+    }
+  }
+}

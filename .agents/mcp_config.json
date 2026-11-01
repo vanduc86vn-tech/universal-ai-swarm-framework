@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "chrome_devtools": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-puppeteer"],
+      "timeoutSeconds": 180
+    }
+  }
+}
