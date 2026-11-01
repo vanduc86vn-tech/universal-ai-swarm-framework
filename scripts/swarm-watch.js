@@ -24,6 +24,10 @@ import { execSync } from 'child_process';
 const rootDir = process.cwd();
 const boardPath = path.join(rootDir, 'swarm/TASK_DISPATCH_BOARD.json');
 const registryPath = path.join(rootDir, 'swarm/AI_SWARM_REGISTRY.json');
+const crossMailboxDirs = [
+  path.join(rootDir, 'docs/cross_project_mailbox/inbox'),
+  path.join(rootDir, 'swarm/mailbox/inbox')
+];
 
 // --- 1. CLI ARGUMENTS PARSING ---
 const args = process.argv.slice(2);
@@ -296,6 +300,40 @@ function checkNewTasks() {
         if (isTargetedToLead && !task.lead_reviewed && (WORKER_ACTIONABLE_STATUSES.includes(task.status) || LEAD_REVIEW_STATUSES.includes(task.status))) {
           triggeredTasks.push({ task, reason: `Tác vụ chỉ định đích danh cho Lead Orchestrator xử lý/nghiệm thu` });
           continue;
+        }
+      }
+    }
+
+    // C2. Quét Hòm Thư Đến Liên Dự Án (Cross-Project Mailbox Ingestion)
+    for (const mboxDir of crossMailboxDirs) {
+      if (fs.existsSync(mboxDir)) {
+        try {
+          const mboxFiles = fs.readdirSync(mboxDir).filter(f => f.endsWith('.json') && !f.endsWith('.processed') && !f.endsWith('.archived'));
+          for (const mFile of mboxFiles) {
+            const mFilePath = path.join(mboxDir, mFile);
+            const mContent = JSON.parse(fs.readFileSync(mFilePath, 'utf8'));
+            const targetRoleM = String(mContent.target_role || mContent.assigned_to || '').toUpperCase();
+            const targetIdM = String(mContent.target_uuid || mContent.assigned_conversation_id || '');
+            
+            const isMatchWorker = (roleArg && targetRoleM === roleUpper) || (idArg && targetIdM === idArg);
+            const isLeadTakeover = isLeadRole && (!targetRoleM || targetRoleM === 'AI-PROJECT-MANAGER' || targetRoleM.includes('LEAD'));
+
+            if (isMatchWorker || isLeadTakeover) {
+              triggeredTasks.push({
+                task: {
+                  task_id: mContent.task_id || mFile.replace('.json', ''),
+                  status: mContent.status || 'INCOMING_RFC',
+                  title: `[CROSS-PROJECT] ${mContent.title || mContent.subject || mFile}`,
+                  module: mContent.source_project || 'FEDERATED_MAILBOX',
+                  assigned_to: mContent.target_role || targetRole,
+                  next_action: `Đọc nội dung RFC tại: ${mFilePath} và ký nhận Task Handshake`
+                },
+                reason: `Nhận được yêu cầu giao việc liên dự án mới từ [${mContent.source_project || 'EXTERNAL_PROJECT'}] qua GitOps Mailbox`
+              });
+            }
+          }
+        } catch (mErr) {
+          // Bỏ qua lỗi đọc mailbox tạm thời để không crash daemon
         }
       }
     }

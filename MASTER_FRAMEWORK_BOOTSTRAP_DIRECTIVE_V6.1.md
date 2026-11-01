@@ -87,6 +87,14 @@ Khi khởi tạo một dự án mới (`PROJECT_ID`), hệ thống **BẮT BUỘ
     - Khi cắm thêm Worker mới ($N+1$), chỉ cần ánh xạ cặp $(Input\_Artifacts \text{ Tầng } K-1 \leftrightarrow Output\_Artifacts \text{ Tầng } K+1)$.
     - Khi Tầng $K$ hoàn thành và có deliverables hợp lệ trên MySQL, PM **BẮT BUỘC TỰ ĐỘNG TỔNG HỢP INPUT VÀ KÍCH HOẠT TẦNG $K+1$** qua Blind TaskID Handshake, **TUYỆT ĐỐI CẤM NGỒI CHỜ CHỈ ĐẠO TỪ SẾP HAY LEAD!**
 
+### 2.6. Đồng Bộ & Điều Phối Sự Kiện Liên Dự Án (Federated Cross-Project Synchronization)
+* Chi tiết đặc tả: Xem [`docs/FEDERATED_CROSS_PROJECT_DISPATCH_AND_WATCHER_SPEC.md`](file:///c:/Data/universal-ai-swarm-framework/docs/FEDERATED_CROSS_PROJECT_DISPATCH_AND_WATCHER_SPEC.md).
+* **Nghiêm cấm "Bẫy Hardcode Chữa Cháy" (Ad-hoc Coupling):** Cấm tuyệt đối việc Partner hoặc PM tự ý mở cổng kết nối chọc thẳng CSDL MySQL/Postgres nội bộ của dự án đối tác.
+* **Mô Hình Giao Thức Kép (Tri-Channel Federated Dispatch):**
+  1. *Slow-Path (Bất biến vật lý):* Ghi file RFC hợp đồng vào hòm thư dùng chung `docs/cross_project_mailbox/` (hoặc qua Zero-Trust Governance API Gateway).
+  2. *Fast-Path (Đánh thức tức thì):* Bắn tin nhắn P2P `send_message` chứa TaskID và Mailbox Reference để đánh thức PM/Partner đối ứng.
+  3. *Multi-Source Watcher Engine:* Daemon `swarm-watch.js` bắt buộc hỗ trợ nạp Provider đa nguồn (Local Board, Incoming Mailbox, và Governance API) để triệt tiêu hoàn toàn điểm mù giữa các kho dự án.
+
 ---
 
 ## 🛡️ MỤC 3: CHUẨN COMMITS GIT & QUẢN TRỊ TOKEN CONTEXT
@@ -123,4 +131,5 @@ Yêu cầu [[BOSS-EXECUTIVE-CHIEF]] thực thi ngay:
 2. Bổ nhiệm NODE_02: AI-PROJECT-MANAGER để quản trị kỹ thuật.
 3. Khóa cứng ZERO GHOST WORKER GATE: Cấm PM giao task sang ASSIGNED cho nobody khi chưa cấp phát Worker trong Sys_Swarm_Node_Pool!
 4. Nếu gặp vướng mắc về kiến trúc hoặc hạ tầng cũ, CẤM LÀM PHIỀN SẾP! Phải lập RFC gửi thẳng lên SUPER MASTER LEADER.
+5. Tuân thủ giao thức điều phối liên dự án: Cấm chọc thẳng DB đối tác; dùng GitOps Mailbox RFC hoặc Governance API kết hợp Fast-Path P2P; mở Daemon Watcher trực chiến 24/7.
 ```

@@ -113,3 +113,16 @@ Hệ thống quản trị Swarm loại bỏ hoàn toàn các phán đoán cảm 
 2. **Nguyên tắc "Không file — Không ảnh — Không nghiệm thu":**
    * Đối với các task Backend/DB: Bắt buộc đính kèm log curl HTTP 200 thật và output DDL.
    * Đối với các task Frontend/UI: Bắt buộc đính kèm file ảnh chụp màn hình `.png` chụp trực tiếp từ trình duyệt Chrome thật qua CDP.
+
+---
+
+## 🌐 IV. ÁP DỤNG HỆ THỐNG 16 BIỆN PHÁP VÀO TƯƠNG TÁC LIÊN DỰ ÁN (CROSS-PROJECT)
+
+Khi hai dự án độc lập (Initiator và Partner) phối hợp:
+1. **Tuân thủ Biện pháp 3 & 13 (Sổ việc riêng & Không đụng độ):** Mỗi dự án duy trì SSOT riêng. Tuyệt đối cấm kết nối socket chọc thẳng vào CSDL nội bộ của đối tác. Mọi yêu cầu được chuyển giao qua GitOps Mailbox RFC (`docs/cross_project_mailbox/`) hoặc REST API Gateway Zero-Trust.
+2. **Tuân thủ Biện pháp 6 & 7 (Hợp đồng thực tế & Không bịa đặt):** Giao việc liên dự án phải có file RFC vật lý, có đầy đủ schema contract, không sử dụng tên giả lập hoặc giả định ngầm.
+3. **Tuân thủ Biện pháp 8 (Kiểm tra chéo 2 đầu):**
+   * *Đầu xuất bản (Initiator):* QA dự án A kiểm tra tính hoàn chỉnh của spec RFC.
+   * *Đầu tiếp nhận (Partner):* QA dự án B đối soát kết quả chạy thực địa trước khi submit hoàn thành.
+4. **Tuân thủ Biện pháp 14 & 15 (Daemon tuần tra ngầm đa nguồn):** Daemon `swarm-watch.js` ở mỗi dự án phải nạp Provider quét cả hộp thư đến liên dự án, tự động đánh thức Agent mà không tiêu tốn token của Sếp.
+
