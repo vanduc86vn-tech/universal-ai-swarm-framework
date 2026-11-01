@@ -1,0 +1,15 @@
+{
+  "task_id": "TASK-INIT-001",
+  "project_id": "LOCAL_PROJECT",
+  "title": "Khởi tạo môi trường và kiểm tra cấu trúc thư mục",
+  "status": "OPEN",
+  "priority": "P0",
+  "assigned_to": "AI-PROJECT-MANAGER",
+  "assigned_conversation_id": "",
+  "created_at": "2026-11-01T18:00:00Z",
+  "deliverables_required": [
+    "Kiểm tra AGENTS.md và cấu hình .agents/rules.json",
+    "Xác nhận danh bạ AI_SWARM_REGISTRY.json"
+  ],
+  "acceptance_criteria": "Tất cả các file cấu hình hợp lệ và nạp đúng ranh giới."
+}

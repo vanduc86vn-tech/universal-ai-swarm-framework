@@ -1,0 +1,14 @@
+{
+  "board_name": "SWARM_PROGRESSIVE_TASK_BOARD",
+  "version": "3.0.0-PARTITIONED",
+  "mode": "MODE_A_PARTITIONED_GITOPS",
+  "last_updated": "2026-11-01T18:00:00Z",
+  "active_tasks_directory": "swarm/tasks/active/",
+  "archive_tasks_directory": "swarm/tasks/archive/",
+  "metrics": {
+    "total_active_tasks": 1,
+    "completed_tasks": 0,
+    "failed_tasks": 0
+  },
+  "notice": "Mô hình Monolithic đã được bãi bỏ. Worker chỉ đọc file task riêng lẻ trong thư mục swarm/tasks/active/."
+}

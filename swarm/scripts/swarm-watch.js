@@ -224,16 +224,28 @@ function checkNewTasks() {
     // B. Kéo Git mới nhất
     syncGitLatest();
 
-    // C. Đọc Task Dispatch Board
-    if (!fs.existsSync(boardPath)) return false;
-    let board;
-    try {
-      board = JSON.parse(fs.readFileSync(boardPath, 'utf8'));
-    } catch {
-      return false;
+    // C. Đọc Task Dispatch Board & Thư mục Active Tasks (Mode A)
+    const tasks = [];
+    if (fs.existsSync(boardPath)) {
+      try {
+        const board = JSON.parse(fs.readFileSync(boardPath, 'utf8'));
+        if (Array.isArray(board.tasks)) {
+          tasks.push(...board.tasks);
+        }
+      } catch {}
     }
 
-    const tasks = board.tasks || [];
+    const activeTasksDir = path.join(rootDir, 'swarm/tasks/active');
+    if (fs.existsSync(activeTasksDir)) {
+      try {
+        const activeFiles = fs.readdirSync(activeTasksDir).filter(f => f.endsWith('.json'));
+        for (const af of activeFiles) {
+          const tData = JSON.parse(fs.readFileSync(path.join(activeTasksDir, af), 'utf8'));
+          tasks.push(tData);
+        }
+      } catch {}
+    }
+
     const triggeredTasks = [];
 
     // FSM State Categories

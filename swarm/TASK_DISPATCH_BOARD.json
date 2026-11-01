@@ -1,6 +1,8 @@
 {
   "project_code": "SWARM_MASTER_PROJECT",
-  "board_version": "2.0.0",
-  "last_synced_at": "2026-11-01T17:20:00Z",
-  "tasks": []
+  "board_version": "3.0.0-DEPRECATED-MONOLITH",
+  "status": "MIGRATED_TO_PARTITIONED_TASKS",
+  "message": "File đơn khối này đã được khai tử để chống tràn Context 460 KB. Vui lòng đọc file riêng lẻ tại swarm/tasks/active/*.json hoặc truy vấn MySQL hdd_swarm_governance.",
+  "active_tasks_dir": "swarm/tasks/active/",
+  "summary_file": "swarm/BOARD_SUMMARY.json"
 }

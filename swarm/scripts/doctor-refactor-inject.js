@@ -132,10 +132,47 @@ if (fs.existsSync(srcRegistry) && !fs.existsSync(destRegistry)) {
 
 const srcBoard = path.join(sourceRootDir, 'swarm/TASK_DISPATCH_BOARD.json');
 const destBoard = path.join(targetDir, 'swarm/TASK_DISPATCH_BOARD.json');
-if (fs.existsSync(srcBoard) && !fs.existsSync(destBoard)) {
+
+// Khai tử file Monolithic nếu phát hiện dung lượng quá 45 KB
+if (fs.existsSync(destBoard)) {
+  const stats = fs.statSync(destBoard);
+  if (stats.size > 45000) {
+    const monolithBak = destBoard + '.monolith.bak';
+    fs.renameSync(destBoard, monolithBak);
+    console.log(`   🚨 [KHAI TỬ FILE ĐƠN KHỐI]: Phát hiện file cũ ${Math.round(stats.size / 1024)} KB (> 45 KB). Đã đổi tên -> ${path.basename(monolithBak)}`);
+    safeCopyFile(srcBoard, destBoard);
+  } else {
+    console.log(`   ⏩ [ĐÃ CÓ TASK BOARD]: Dung lượng an toàn (${stats.size} bytes)`);
+  }
+} else if (fs.existsSync(srcBoard)) {
   safeCopyFile(srcBoard, destBoard);
-} else if (fs.existsSync(destBoard)) {
-  console.log(`   ⏩ [ĐÃ CÓ TASK BOARD]: Giữ nguyên task board hiện hữu`);
+}
+
+// 4.4.1. Khởi tạo cấu trúc Mode A (Partitioned Tasks)
+const activeTasksDir = path.join(targetDir, 'swarm/tasks/active');
+const archiveTasksDir = path.join(targetDir, 'swarm/tasks/archive');
+if (!fs.existsSync(activeTasksDir)) fs.mkdirSync(activeTasksDir, { recursive: true });
+if (!fs.existsSync(archiveTasksDir)) fs.mkdirSync(archiveTasksDir, { recursive: true });
+
+const srcSummary = path.join(sourceRootDir, 'swarm/BOARD_SUMMARY.json');
+const destSummary = path.join(targetDir, 'swarm/BOARD_SUMMARY.json');
+if (fs.existsSync(srcSummary) && !fs.existsSync(destSummary)) {
+  safeCopyFile(srcSummary, destSummary);
+}
+
+const srcSampleTask = path.join(sourceRootDir, 'swarm/tasks/active/TASK-SAMPLE-001.json');
+const destSampleTask = path.join(activeTasksDir, 'TASK-SAMPLE-001.json');
+if (fs.existsSync(srcSampleTask) && !fs.existsSync(destSampleTask)) {
+  safeCopyFile(srcSampleTask, destSampleTask);
+}
+
+// 4.4.2. Cung cấp DDL Enterprise cho Mode B
+const srcDdl = path.join(sourceRootDir, 'docs/database/HDD_SWARM_GOVERNANCE_FULL_DDL.sql');
+const destDdlDir = path.join(targetDir, 'docs/database');
+if (!fs.existsSync(destDdlDir)) fs.mkdirSync(destDdlDir, { recursive: true });
+const destDdl = path.join(destDdlDir, 'HDD_SWARM_GOVERNANCE_FULL_DDL.sql');
+if (fs.existsSync(srcDdl) && !fs.existsSync(destDdl)) {
+  safeCopyFile(srcDdl, destDdl);
 }
 
 // 4.5. swarm/scripts/swarm-watch.js
