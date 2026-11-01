@@ -15,43 +15,11 @@ Trong mô hình ngôn ngữ lớn (LLM), khi một phiên làm việc kéo dài 
 2. **Nguyên lý Bóng đèn & Dòng điện:**
    - **Session chat (Bóng đèn):** Là vật tư tiêu hao. Khi bắt đầu chập chờn, ta vứt bóng đèn cũ và lắp bóng đèn mới sạch 100%.
    - **CSDL & Git (Dòng điện):** Là Nguồn Sự Thật Duy Nhất (SSOT) bất biến. Dòng điện không bao giờ mất đi.
-3. **Mệnh lệnh Tuyệt đối:** **TUYỆT ĐỐI KHÔNG CHAT UỐN NẮN AGENT ĐANG BỊ ẢO GIÁC NẶNG!** Phải áp dụng chính sách 2 cấp độ dưới đây để làm sạch trí nhớ.
+3. **Mệnh lệnh Tuyệt đối:** **TUYỆT ĐỐI KHÔNG CHAT UỐN NẮN AGENT ĐANG BỊ ẢO GIÁC NẶNG!** Phải kích hoạt giao thức kế nhiệm để thay máu bằng một phiên sạch.
 
 ---
 
-## ⚖️ II. CHÍNH SÁCH 2 CẤP ĐỘ: TỰ NÉN TẠI CHỖ (/compact) VS. THAY MÁU MỞ TAB MỚI
-
-Hệ thống cung cấp cho PM và Workers một lộ trình 2 giai đoạn linh hoạt:
-
-```text
-                  NGƯỠNG CẢNH BÁO CONTEXT (35.000 - 45.000 Tokens)
-                                        │
-                    ┌───────────────────┴───────────────────┐
-                    ▼                                       ▼
-       [CẤP ĐỘ 1: TỰ NÉN TẠI CHỖ]                [CẤP ĐỘ 2: THAY MÁU KẾ VỊ]
-       (In-Place Self-Compact)                   (Zero-Downtime Succession)
-       - Giữ nguyên Tab & UUID                   - Mở Tab mới sạch 100%
-       - Chạy: gov-client compact <ROLE>         - Chạy: gov-client checkpoint create
-       - Xuất COMPACT_SNAPSHOT_<NODE>.md         - Chạy: gov-client trigger-succession
-       - Đề xuất Sếp gõ: /compact                - Tân Agent: gov-client register <ROLE>
-       - Tiếp tục làm việc ngay lập tức!         - Tân Agent nuốt checkpoint & thi công
-```
-
-### 1. Cấp độ 1: Tự Nén Tại Chỗ (In-Place Compact via `/compact`) - Cơ hội tự cứu nội phiên
-- **Áp dụng khi:** Context bắt đầu dài (35k - 45k tokens) nhưng logic suy luận của Agent vẫn còn tỉnh táo, không bị lặp lỗi.
-- **Quy trình:**
-  1. Agent gọi lệnh: `node swarm/scripts/gov-client.js compact <ROLE>`
-  2. Lệnh này tự động quét CSDL MySQL / Active Tasks và xuất file snapshot khách quan `swarm/runtime/COMPACT_SNAPSHOT_<NODE>.md`.
-  3. Agent đề xuất Sếp gõ lệnh `/compact` trên thanh chat để Antigravity nén ngữ cảnh lịch sử.
-  4. Sau khi `/compact` hoàn tất, Agent đọc lại snapshot mỏng và tiếp tục chỉ huy công việc ngay trong Tab hiện tại mà không mất công mở tab mới!
-
-### 2. Cấp độ 2: Thay Máu Kế Vị Đầy Đủ (Full Succession Handover) - Giải pháp dứt điểm
-- **Áp dụng khi:** Cấp độ 1 không giải quyết được (Agent đã rơi vào vòng lặp ảo giác $\ge 3$ lần, token $> 55k$, hoặc bị suy thoái chú ý nghiêm trọng).
-- **Quy trình:** Thi hành quy trình 3 bước Checkpoint -> Trigger Succession -> Register ở Mục III.
-
----
-
-## ⚙️ III. QUY TRÌNH 3 BƯỚC KẾ NHIỆM KHÔNG GIÁN ĐOẠN (ZERO-DOWNTIME 3-STEP PIPELINE)
+## ⚙️ II. QUY TRÌNH 3 BƯỚC KẾ NHIỆM KHÔNG GIÁN ĐOẠN (ZERO-DOWNTIME 3-STEP PIPELINE)
 
 ```text
 ┌────────────────────────────────────────────────────────────────────────┐
@@ -114,7 +82,8 @@ Tệp Checkpoint được lưu trữ tại `swarm/tasks/checkpoints/CHK-<TASK_ID
 
 | Tác vụ | Câu lệnh thực thi | Mục đích |
 | :--- | :--- | :--- |
-| **Kích hoạt Kế nhiệm** | `node swarm/scripts/gov-client.js trigger-succession <ROLE> [REASON]` | Xuất manifest hướng dẫn bàn giao cho người kế nhiệm. |
+| **Kích hoạt Kế nhiệm** | `node swarm/scripts/gov-client.js trigger-succession <ROLE> [REASON]` | Xuất manifest hướng dẫn bàn giao cho người kế nhiệm (Bậc 2). |
+| **Tự Nén Tại Chỗ** | `node swarm/scripts/gov-client.js compact-self <ROLE> [NEXT_ACTION]` | Xuất snapshot an toàn trước khi gõ `/compact` để dọn sạch context tại chỗ mà không cần đổi Tab (Bậc 1). |
 | **Tạo Checkpoint** | `node swarm/scripts/gov-client.js checkpoint create <TASK_ID> [JSON\|FILE]` | Đóng băng tiến độ dở dang, chuyển task sang `HANDOVER_PENDING`. |
 | **Đọc Checkpoint** | `node swarm/scripts/gov-client.js checkpoint read <TASK_ID>` | Tân Agent kiểm tra xem có việc dở dang cần tiếp quản hay không. |
 | **Liệt kê Checkpoints** | `node swarm/scripts/gov-client.js checkpoint list` | Rà soát toàn bộ các tiến trình đang bị đóng băng trong hệ thống. |

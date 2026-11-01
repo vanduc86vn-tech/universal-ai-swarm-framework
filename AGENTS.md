@@ -52,3 +52,11 @@
 1. **LỆNH CẤM ĐẨY MÃ NGUỒN LÊN KHO MASTER (UPSTREAM PUSH EMBARGO):** Toàn bộ các tác tử AI tại các Dự án con (Downstream Projects) TUYỆT ĐỐI BỊ CẤM thực hiện lệnh `git push` lên 2 kho Thượng nguồn Master Framework (`swarm-master-ai` và `universal-ai-swarm-framework`).
 2. **QUY TRÌNH ĐỀ XUẤT MỘT CHIỀU (ONE-WAY DOWNSTREAM RFC ONLY):** Khi dự án con đúc kết được bài học thực địa, mẫu kiến trúc mới hoặc bản vá lỗi, Agent CHỈ ĐƯỢC PHÉP tạo hồ sơ đề xuất tại `docs/rfc/RFC-xxx.md` trong nội bộ repo dự án đó.
 3. **THẨM QUYỀN ĐỘC QUYỀN PHÁT HÀNH MASTER:** Quyền tiếp nhận, khử nhiễu cục bộ, tổng quát hóa và biên soạn phát hành lên Master Framework thuộc thẩm quyền ĐỘC QUYỀN của `[[SUPER MASTER LEADER]]` (Tab Kiến Trúc Sư Tối Cao) sau khi có lệnh phê chuẩn tường minh từ Sếp Alex. Tuyệt đối không cho phép "tiền trảm hậu tấu".
+
+---
+
+## VII. QUY TRÌNH VỆ SINH NGỮ CẢNH 2 BẬC (TWO-TIER CONTEXT HYGIENE)
+1. **BẬC 1 - TỰ NÉN TẠI CHỖ (IN-PLACE SELF-COMPACT):**
+   - Khi cửa sổ ngữ cảnh chạm ngưỡng $40.000 - 45.000\text{ tokens}$ hoặc phiên làm việc dài nhưng Agent vẫn tỉnh táo, Agent có quyền xuất snapshot an toàn bằng lệnh `node swarm/scripts/gov-client.js compact-self <ROLE>` và đề xuất Sếp gõ lệnh `/compact` để làm sạch lịch sử mà không cần mở Tab mới hay đổi UUID.
+2. **BẬC 2 - KẾ NHIỆM BẮT BUỘC (SUCCESSION FALLBACK):**
+   - Nếu sau khi compact mà Agent vẫn bị lặp lại lỗi, vi phạm ranh giới hoặc Context Window chạm ngưỡng khẩn cấp $> 50.000 - 60.000\text{ tokens}$ kèm triệu chứng ảo giác (Action Hallucination), Agent BẮT BUỘC phải tạo Checkpoint (`checkpoint create`) và kích hoạt `trigger-succession` để nhường quyền cho Tân Agent ở Tab mới.
