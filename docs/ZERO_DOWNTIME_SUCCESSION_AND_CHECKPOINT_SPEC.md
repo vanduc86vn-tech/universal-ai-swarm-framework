@@ -19,7 +19,37 @@ Trong mô hình ngôn ngữ lớn (LLM), khi một phiên làm việc kéo dài 
 
 ---
 
-## ⚙️ II. QUY TRÌNH 3 BƯỚC KẾ NHIỆM KHÔNG GIÁN ĐOẠN (ZERO-DOWNTIME 3-STEP PIPELINE)
+## 🎯 II. CẶP BÀI TRÙNG BẬC 1: TỰ NÉN TẠI CHỖ (compact-self + /compact)
+
+Nhiều trường hợp Agent vẫn hoàn toàn tỉnh táo và logic tốt, nhưng do thực thi nhiều tác vụ nên Context Window phình to. Khi đó, không nhất thiết phải mở Tab mới mà áp dụng **Cặp Bài Trùng Vệ Sinh Ngữ Cảnh Bậc 1**:
+
+### 1. Bảng So Sánh Bản Chất 2 Thao Tác:
+| Tiêu chí | 1. Worker chạy `compact-self` (Lệnh CLI) | 2. Sếp gõ `/compact` trên ô chat |
+| :--- | :--- | :--- |
+| **Bản chất hành động** | **"Đóng gói hành lý an toàn"** (State Checkpointing). | **"Dọn dẹp căn nhà"** (Memory Garbage Collection). |
+| **Nơi xử lý** | Chạy bằng Node.js script, ghi dữ liệu ra tệp vật lý trên ổ đĩa (`COMPACT-<ROLE>.json`). | Do chính phần mềm **Antigravity IDE** xử lý bằng thuật toán nén lịch sử chat. |
+| **Tác động lên Context Window** | **KHÔNG LÀM GIẢM TOKEN** của tab chat (thậm chí tăng thêm 1 turn chat). | **CẮT GIẢM 70% – 80% DUNG LƯỢNG TOKEN** của tab chat ngay lập tức! |
+| **Mục đích tối thượng** | Đảm bảo **KHÔNG BỊ MẤT DỮ LIỆU/QUÊN VIỆC** khi bị nén. | Làm cho **ĐẦU ÓC CON PM SẠCH SẼ, HẾT BỊ LÚ**. |
+
+### 2. Hiểm Họa "Mất Trí Nhớ" Khi Chỉ Gõ `/compact` Đơn Thuần:
+Nếu Sếp chỉ sang Tab Worker và gõ `/compact` ngay mà **không có bước `compact-self` trước đó**:
+- Thuật toán tóm tắt heuristic tự động của IDE sẽ tóm tắt chung chung kiểu: *"User và Agent đã trao đổi về các task MRP và WBS..."*.
+- Hệ quả là **rụng mất các chi tiết kỹ thuật cốt tử**:
+  * Các mã Task ID cụ thể đang bị nghẽn là gì?
+  * Bước tiếp theo chính xác là lệnh gì?
+  * `rejection_list`: Danh sách các lệnh và phương án đã bị cấm là gì?
+- Kết quả: Agent sau khi nén bị "mất trí nhớ tạm thời", ngơ ngác hỏi lại Sếp hoặc đi bới móc code sai lầm từ đầu.
+
+### 3. Công Thức Phối Hợp 2 Nhịp Hoàn Hảo (The 2-Beat Dance):
+1. **Nhịp 1 — Worker chạy `compact-self`:**
+   - Chốt hạ tệp neo vật lý `swarm/tasks/checkpoints/COMPACT-<ROLE>.json` (< 1 KB) chứa chính xác Task ID, next_action và rejection_list.
+2. **Nhịp 2 — Sếp gõ `/compact`:**
+   - IDE thanh lọc sạch sẽ token rác.
+   - Khi Agent thức dậy sau compact, nó chỉ việc đọc đúng tệp neo này và hoàn thành nhiệm vụ trong 3 giây mà **không rơi một giọt dữ liệu nào**!
+
+---
+
+## ⚙️ III. BẬC 2: QUY TRÌNH KẾ NHIỆM BẮT BUỘC (ZERO-DOWNTIME SUCCESSION PIPELINE)
 
 ```text
 ┌────────────────────────────────────────────────────────────────────────┐

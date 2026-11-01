@@ -493,7 +493,8 @@ function handleCompactSelf(target, nextAction) {
     role: targetNode.role,
     active_task: activeTask,
     next_action: snapshotData.next_action,
-    recommended_action: 'Hãy dùng lệnh /compact của Antigravity IDE để nén ngữ cảnh tại chỗ, giữ nguyên Tab và UUID!'
+    post_compact_directive: `Đọc file ${compactSnapshotFile} để lấy next_action và thi công tiếp ngay lập tức!`,
+    recommended_action: 'Bước 1 đã xong (Hành lý đã đóng gói an toàn). Bước 2: Hãy gõ /compact trên ô chat để dọn dẹp ngữ cảnh!'
   }, null, 2));
 }
 
