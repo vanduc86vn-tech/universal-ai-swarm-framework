@@ -74,6 +74,19 @@ Khi khởi tạo một dự án mới (`PROJECT_ID`), hệ thống **BẮT BUỘ
     2. `swarm_self_healing_reaper.js` tuần tra mỗi 60s: tự động xóa stale `.git/index.lock` (>30s), kill các tiến trình watcher trùng lặp (giữ lại PID mới nhất), tiêu diệt các lệnh `node -e` chạy ngầm treo quá 45s.
   * **Kênh `send_message`:** Chỉ đóng vai trò là Fast-Path gõ cửa tức thì để giảm độ trễ, **TUYỆT ĐỐI KHÔNG THAY THẾ CHO DAEMON TRỰC CHIẾN NỀN**. Giao việc mà toàn team không mở Watcher là vi phạm nghiêm trọng kỷ luật tự cứu!
 
+### 2.5. ĐIỀU LỆ THÉP: TÔ-PÔ ĐỘNG & TỰ ĐỘNG HÓA DÂY CHUYỀN 5 TẦNG (DYNAMIC TOPOLOGY & AUTONOMOUS PIPELINE)
+- **Tử huyệt thực địa:** Khi dự án mở rộng thêm nhiều Worker ($N \ge 3$, DB, BE, UI, QA, Browser...), PM bị quá tải ngữ cảnh và rơi vào trạng thái thụ động ngồi chờ Sếp hoặc Lead chỉ đạo từng bước.
+- **Quy chuẩn bắt buộc (`CHARTER_12` & `UNIVERSAL_SWARM_DYNAMIC_COORDINATION_SPEC.md`):**
+  * PM vận hành như Nhạc trưởng Dây Chuyền 5 Tầng Khép Kín:
+    1. *Tầng 1 (Blueprint & Architecture):* `ARCHITECT` & `DOMAIN_SPECIALIST` xuất bản RFC & Domain Model.
+    2. *Tầng 2 (Data Persistence):* `DATA_TIER_ARCHITECT` xuất bản DDL 3NF, SPs, Migration SAFE (`0 DROP`).
+    3. *Tầng 3 (Implementation):* `BACKEND` & `FRONTEND_UI` xuất bản API Controllers, Services & Giao diện.
+    4. *Tầng 4 (Independent Quality Gate):* `QA_SECURITY_AUDITOR` quét OWASP, cấm mock, cấp biên bản kiểm toán tĩnh.
+    5. *Tầng 5 (Physical E2E Gatekeeper):* `BROWSER_E2E_AUDITOR` mở Chrome CDP thực địa, bắt lỗi UI/Network, chụp ảnh màn hình bằng chứng thực tế. **Thiếu Tầng 5 đối với task có UI $\rightarrow$ Phủ quyết nghiệm thu!**
+  * **Cơ chế Tô-pô Động (Dynamic Hot-Plug Protocol):**
+    - Khi cắm thêm Worker mới ($N+1$), chỉ cần ánh xạ cặp $(Input\_Artifacts \text{ Tầng } K-1 \leftrightarrow Output\_Artifacts \text{ Tầng } K+1)$.
+    - Khi Tầng $K$ hoàn thành và có deliverables hợp lệ trên MySQL, PM **BẮT BUỘC TỰ ĐỘNG TỔNG HỢP INPUT VÀ KÍCH HOẠT TẦNG $K+1$** qua Blind TaskID Handshake, **TUYỆT ĐỐI CẤM NGỒI CHỜ CHỈ ĐẠO TỪ SẾP HAY LEAD!**
+
 ---
 
 ## 🛡️ MỤC 3: CHUẨN COMMITS GIT & QUẢN TRỊ TOKEN CONTEXT
