@@ -67,6 +67,12 @@
       "clause_8_3_THREE_TIER_DEFENSE_MATRIX": "Hạ tầng Mode B khóa cứng 3 tầng phòng thủ: (1) Client Agent trên laptop duy trì Ngủ Đông (Dormant 0% CPU), thức giấc bằng P2P send_message, tước hoàn toàn quyền SSH/SCP; (2) Edge Gateway dùng Cloudflare Worker giấu IP máy chủ, chống DDoS, xác thực Bearer Token; (3) Server Engine dùng PM2 nuôi sống API nội bộ, đóng kín cổng MySQL 3306 khỏi Internet (bind-address = 127.0.0.1).",
       "clause_8_4_ZERO_REDUNDANT_READ": "Antigravity IDE tự động nạp AGENTS.md và .agents/rules/ vào System Prompt. Cấm Worker tự đọc lại file runtime của chính mình khi vừa thức giấc; chỉ đọc đúng file task đơn mảnh được giao hoặc dùng gov-client.js resolve để tra cứu UUID người nhận.",
       "clause_8_5_DYNAMIC_SERVICE_DISCOVERY": "Cung cấp công cụ gov-client.js hỗ trợ Dynamic Service Discovery (< 1ms lookup) và giao tiếp API Zero-SQL, giải phóng Worker khỏi việc hardcode UUID hoặc đọc quét danh bạ thủ công."
+    },
+
+    "ARTICLE_IX_UPSTREAM_SOVEREIGNTY_AND_DOWNSTREAM_EMBARGO": {
+      "clause_9_1_UPSTREAM_PUSH_EMBARGO": "Toàn bộ các tác tử AI hoạt động tại các dự án con (Downstream Projects) TUYỆT ĐỐI BỊ CẤM thực hiện lệnh git push lên các kho Thượng nguồn Master Framework (swarm-master-ai, universal-ai-swarm-framework).",
+      "clause_9_2_ONE_WAY_DOWNSTREAM_RFC": "Mọi bài học thực tế hoặc đề xuất cải tiến từ dự án con chỉ được phép lưu hành dưới dạng RFC nội bộ tại docs/rfc/ trong dự án đó. Không được phép tự ý coi dự án cục bộ là nguồn chân lý để ghi đè lên kho Master.",
+      "clause_9_3_SOVEREIGN_RELEASE_GATE": "Quyền thẩm định, khử nhiễu ô nhiễm cục bộ, tổng quát hóa và biên soạn phát hành lên Master Framework độc quyền thuộc về SUPER MASTER LEADER sau khi có lệnh phê chuẩn tường minh từ Sếp Alex."
     }
   }
 }

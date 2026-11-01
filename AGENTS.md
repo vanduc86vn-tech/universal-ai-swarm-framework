@@ -45,3 +45,10 @@
    - **Mode B (Dự án Doanh Nghiệp có Hạ Tầng MySQL VPS - Enterprise SSOT):** 
      - Nguồn sự thật duy nhất là CSDL MySQL `hdd_swarm_governance` (hoặc qua Zero-Trust REST API Gateway).
      - Agent nhận task siêu nhẹ (< 1 KB, tiêu tốn < 150 tokens) qua câu lệnh SQL có gán index hoặc endpoint `gov-client.js`. Tuyệt đối không lưu task trên Git repo.
+
+---
+
+## VI. KHÓA CỨNG CHỦ QUYỀN THƯỢNG NGUỒN (UPSTREAM SOVEREIGNTY LOCK)
+1. **LỆNH CẤM ĐẨY MÃ NGUỒN LÊN KHO MASTER (UPSTREAM PUSH EMBARGO):** Toàn bộ các tác tử AI tại các Dự án con (Downstream Projects) TUYỆT ĐỐI BỊ CẤM thực hiện lệnh `git push` lên 2 kho Thượng nguồn Master Framework (`swarm-master-ai` và `universal-ai-swarm-framework`).
+2. **QUY TRÌNH ĐỀ XUẤT MỘT CHIỀU (ONE-WAY DOWNSTREAM RFC ONLY):** Khi dự án con đúc kết được bài học thực địa, mẫu kiến trúc mới hoặc bản vá lỗi, Agent CHỈ ĐƯỢC PHÉP tạo hồ sơ đề xuất tại `docs/rfc/RFC-xxx.md` trong nội bộ repo dự án đó.
+3. **THẨM QUYỀN ĐỘC QUYỀN PHÁT HÀNH MASTER:** Quyền tiếp nhận, khử nhiễu cục bộ, tổng quát hóa và biên soạn phát hành lên Master Framework thuộc thẩm quyền ĐỘC QUYỀN của `[[SUPER MASTER LEADER]]` (Tab Kiến Trúc Sư Tối Cao) sau khi có lệnh phê chuẩn tường minh từ Sếp Alex. Tuyệt đối không cho phép "tiền trảm hậu tấu".

@@ -83,6 +83,11 @@
       "charter_id": "CHARTER_16_ZERO_REDUNDANT_READ_AND_DYNAMIC_SERVICE_DISCOVERY",
       "title": "Hiến Chương Tiết Kiệm Ngữ Cảnh Tuyệt Đối & Khám Phá Dịch Vụ Động",
       "invariant": "Nghiêm cấm Worker tự đọc lại file cấu hình runtime của chính mình khi IDE Antigravity đã tự nạp AGENTS.md và rules vào System Prompt. Mọi thao tác định danh P2P phải sử dụng Dynamic Service Discovery (gov-client.js resolve) với độ trễ < 1ms, triệt tiêu hoàn toàn thói quen quét danh bạ thủ công hoặc hardcode UUID."
+    },
+    {
+      "charter_id": "CHARTER_17_STRICT_UPSTREAM_PUSH_EMBARGO_FOR_DOWNSTREAM_WORKERS",
+      "title": "Hiến Chương Cấm Vượt Quyền Đẩy Code Lên Upstream Master Đối Với Dự Án Hạ Nguồn",
+      "invariant": "Nghiêm cấm toàn bộ các tác tử AI tại các dự án hạ nguồn (Downstream Projects) tự ý thực hiện lệnh git push lên các kho Thượng nguồn Master Framework (swarm-master-ai, universal-ai-swarm-framework). Hạ nguồn chỉ được phép tiêu thụ và đề xuất cải tiến qua RFC một chiều. Quyền thẩm định, khử ô nhiễm cục bộ và phát hành lên Master Framework độc quyền thuộc về SUPER MASTER LEADER sau khi có lệnh phê chuẩn tường minh từ Sếp Alex."
     }
   ]
 }
