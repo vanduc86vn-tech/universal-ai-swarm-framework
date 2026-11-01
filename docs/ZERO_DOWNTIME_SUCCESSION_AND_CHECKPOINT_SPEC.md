@@ -85,13 +85,14 @@ Tệp Checkpoint được lưu trữ tại `swarm/tasks/checkpoints/CHK-<TASK_ID
 | **Kích hoạt Kế nhiệm** | `node swarm/scripts/gov-client.js trigger-succession <ROLE> [REASON]` | Xuất manifest hướng dẫn bàn giao cho người kế nhiệm. |
 | **Tạo Checkpoint** | `node swarm/scripts/gov-client.js checkpoint create <TASK_ID> [JSON\|FILE]` | Đóng băng tiến độ dở dang, chuyển task sang `HANDOVER_PENDING`. |
 | **Đọc Checkpoint** | `node swarm/scripts/gov-client.js checkpoint read <TASK_ID>` | Tân Agent kiểm tra xem có việc dở dang cần tiếp quản hay không. |
-| **Tự Đăng Bạ UUID** | `node swarm/scripts/gov-client.js register <ROLE\|NODE_ID> <UUID>` | Tân Agent cập nhật danh bạ và nhận ngay Checkpoint tương ứng. |
-| **Giải phóng Checkpoint**| `node swarm/scripts/gov-client.js checkpoint clear <TASK_ID>` | Xóa checkpoint sau khi đã tiếp quản thành công, đưa task về `IN_PROGRESS`. |
+| **Liệt kê Checkpoints** | `node swarm/scripts/gov-client.js checkpoint list` | Rà soát toàn bộ các tiến trình đang bị đóng băng trong hệ thống. |
+| **Tự Đăng Bạ UUID** | `node swarm/scripts/gov-client.js register <ROLE\|NODE_ID> [UUID]` | Tân Agent cập nhật danh bạ (tự nhận diện qua `ANTIGRAVITY_CONVERSATION_ID` nếu bỏ trống UUID) và nhận ngay Checkpoint tương ứng. |
+| **Giải phóng Checkpoint**| `node swarm/scripts/gov-client.js checkpoint clear <TASK_ID>` | **BẮT BUỘC:** Xóa checkpoint sau khi đã nghiệm thu hoàn tất để tránh việc các phiên tái sinh sau này nuốt lại checkpoint rác cũ. |
 
 ---
 
 ## 🛡️ V. LỢI ÍCH KIẾN TRÚC ĐẠT ĐƯỢC
 
-1. **Giải phóng 100% bàn tay Sếp Alex:** Sếp không cần phải copy paste UUID, không cần nhắc nhở agent làm tiếp việc gì.
+1. **Giải phóng 100% bàn tay Sếp Alex:** Tân Agent tự nhận diện Conversation UUID qua biến môi trường `ANTIGRAVITY_CONVERSATION_ID`, tự kéo checkpoint và tiếp tục thi công. Sếp không cần copy paste hay can thiệp thủ công.
 2. **Tiết kiệm 80% Token & Tránh Lú Lẫn:** Không để context kéo dài vượt trần 50k tokens. Luôn duy trì đội ngũ Worker trong trạng thái nhận thức sắc bén nhất.
 3. **Bảo toàn Tuyệt đối Trạng thái FSM:** Dây chuyền 5 Tầng không bị gián đoạn hay gãy sụp khi có Worker thay máu giữa chừng.

@@ -187,11 +187,27 @@ function handleHealthCheck() {
 }
 
 /**
- * Command: register <ROLE | NODE_ID> <CONVERSATION_UUID>
+ * Command: register <ROLE | NODE_ID> [CONVERSATION_UUID]
  * Allows a newly spawned successor to register its UUID and automatically retrieve pending checkpoints.
+ * If UUID is omitted, automatically resolves from process.env.ANTIGRAVITY_CONVERSATION_ID.
  */
-function handleRegister(target, uuid) {
-  if (!target || !uuid) {
+function handleRegister(target, explicitUuid) {
+  if (!target) {
+    console.error('[USAGE] node gov-client.js register <ROLE | NODE_ID> [CONVERSATION_UUID]');
+    process.exit(1);
+  }
+
+  // Auto-resolve UUID from environment if omitted
+  let resolvedUuid = (explicitUuid || '').trim();
+  if (!resolvedUuid) {
+    resolvedUuid = process.env.ANTIGRAVITY_CONVERSATION_ID ||
+                   process.env.CONVERSATION_ID ||
+                   process.env.AGY_CONVERSATION_ID ||
+                   process.env.SESSION_ID || '';
+  }
+
+  if (!resolvedUuid) {
+    console.error('[ERROR] Conversation UUID not provided and could not be auto-detected from environment (ANTIGRAVITY_CONVERSATION_ID).');
     console.error('[USAGE] node gov-client.js register <ROLE | NODE_ID> <CONVERSATION_UUID>');
     process.exit(1);
   }
@@ -218,7 +234,7 @@ function handleRegister(target, uuid) {
     process.exit(1);
   }
 
-  nodes[matchedNodeId].conversation_uuid = uuid.trim();
+  nodes[matchedNodeId].conversation_uuid = resolvedUuid;
   registry.updated_at = new Date().toISOString();
   fs.writeFileSync(REGISTRY_FILE, JSON.stringify(registry, null, 2), 'utf8');
 
@@ -244,24 +260,47 @@ function handleRegister(target, uuid) {
     status: 'SUCCESS',
     node_id: matchedNodeId,
     role: nodes[matchedNodeId].role,
-    registered_uuid: uuid.trim(),
+    registered_uuid: resolvedUuid,
+    auto_resolved_from_env: !explicitUuid && !!resolvedUuid,
     has_pending_checkpoint: !!pendingCheckpoint,
-    resumed_checkpoint: pendingCheckpoint || null
+    resumed_checkpoint: pendingCheckpoint || null,
+    next_steps: [
+      `1. Thực thi ngay bước: ${pendingCheckpoint ? pendingCheckpoint.next_action : 'Kiểm tra task mới qua get-task'}`,
+      pendingCheckpoint ? `2. [QUAN TRỌNG] Sau khi nghiệm thu hoàn tất, BẮT BUỘC xóa checkpoint: node swarm/scripts/gov-client.js checkpoint clear ${pendingCheckpoint.task_id}` : '2. Duy trì trạng thái sẵn sàng nhận việc.'
+    ]
   }, null, 2));
 }
 
 /**
- * Command: checkpoint <create | read | clear> <TASK_ID> [PAYLOAD_JSON_OR_STRING]
+ * Command: checkpoint <create | read | clear | list> <TASK_ID> [PAYLOAD_JSON_OR_STRING]
  * Zero-downtime task handover checkpoint management.
  */
 function handleCheckpoint(action, taskId, payload) {
-  if (!action || !taskId) {
-    console.error('[USAGE] node gov-client.js checkpoint <create | read | clear> <TASK_ID> [JSON_PAYLOAD]');
+  if (!action) {
+    console.error('[USAGE] node gov-client.js checkpoint <create | read | clear | list> [TASK_ID] [JSON_PAYLOAD]');
     process.exit(1);
   }
 
   if (!fs.existsSync(CHECKPOINTS_DIR)) {
     fs.mkdirSync(CHECKPOINTS_DIR, { recursive: true });
+  }
+
+  if (action === 'list') {
+    const files = fs.readdirSync(CHECKPOINTS_DIR).filter(f => f.endsWith('.json'));
+    const list = files.map(f => {
+      try {
+        return JSON.parse(fs.readFileSync(path.join(CHECKPOINTS_DIR, f), 'utf8'));
+      } catch (e) {
+        return { file: f, error: e.message };
+      }
+    });
+    console.log(JSON.stringify({ count: list.length, checkpoints: list }, null, 2));
+    return;
+  }
+
+  if (!taskId) {
+    console.error('[USAGE] node gov-client.js checkpoint <create | read | clear> <TASK_ID> [JSON_PAYLOAD]');
+    process.exit(1);
   }
 
   const chkFile = path.join(CHECKPOINTS_DIR, `CHK-${taskId}.json`);
@@ -278,9 +317,9 @@ function handleCheckpoint(action, taskId, payload) {
   if (action === 'clear') {
     if (fs.existsSync(chkFile)) {
       fs.unlinkSync(chkFile);
-      console.log(JSON.stringify({ status: 'CLEARED', task_id: taskId }));
+      console.log(JSON.stringify({ status: 'CLEARED', task_id: taskId, message: 'Checkpoint đã được xóa sạch sau khi nghiệm thu.' }, null, 2));
     } else {
-      console.log(JSON.stringify({ status: 'NOT_FOUND', task_id: taskId }));
+      console.log(JSON.stringify({ status: 'NOT_FOUND', task_id: taskId, message: 'Không tìm thấy file checkpoint để xóa.' }, null, 2));
     }
     return;
   }
@@ -376,7 +415,7 @@ function handleTriggerSuccession(target, reason) {
     reason: reason || 'CONTEXT_WINDOW_SATURATION_OR_ATTENTION_DECAY',
     directives_for_successor: [
       `1. Thức giấc trong Tab mới (New Session).`,
-      `2. Chạy: node swarm/scripts/gov-client.js register ${targetNode.id} <NEW_CONVERSATION_UUID>`,
+      `2. Chạy: node swarm/scripts/gov-client.js register ${targetNode.id} (Tự động nhận diện UUID từ ANTIGRAVITY_CONVERSATION_ID, hoặc truyền kèm UUID)`,
       `3. Nếu có checkpoint dở dang, lập tức thi công tiếp next_action mà không làm lại từ đầu.`,
       `4. Khóa cứng quy tắc Zero-Redundant-Read: Không đọc lại file runtime của chính mình.`
     ]
@@ -415,8 +454,8 @@ switch (command) {
 Universal Swarm Governance Client (gov-client.js)
 Usage:
   node gov-client.js resolve <ROLE | NODE_ID>               - Lookup node UUID/config (< 1ms)
-  node gov-client.js register <ROLE | NODE_ID> <UUID>       - Successor dynamic registration
-  node gov-client.js checkpoint <create|read|clear> <TASK>  - Zero-downtime task checkpoint
+  node gov-client.js register <ROLE | NODE_ID> [UUID]       - Successor registration (auto-resolves UUID from env)
+  node gov-client.js checkpoint <create|read|clear|list>    - Zero-downtime task checkpoint management
   node gov-client.js trigger-succession <ROLE> [REASON]     - Initiate succession protocol
   node gov-client.js list-nodes                            - List all nodes and tab mappings
   node gov-client.js get-task [ROLE]                       - Fetch active task for role
