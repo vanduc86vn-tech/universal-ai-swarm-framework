@@ -424,6 +424,100 @@ function handleTriggerSuccession(target, reason) {
   console.log(JSON.stringify(manifest, null, 2));
 }
 
+/**
+ * Command: compact <ROLE | NODE_ID>
+ * In-place self-compacting helper: Generates a lightweight verified context snapshot
+ * and advises the user to run /compact to prune session memory without opening a new tab.
+ */
+function handleCompact(target) {
+  if (!target) {
+    console.error('[USAGE] node gov-client.js compact <ROLE | NODE_ID>');
+    process.exit(1);
+  }
+
+  const registry = loadRegistry();
+  const normalizedTarget = target.trim().toUpperCase();
+  const nodes = registry.nodes || {};
+  let targetNode = null;
+
+  for (const [nodeId, data] of Object.entries(nodes)) {
+    if (nodeId === normalizedTarget || (data.role || '').toUpperCase() === normalizedTarget) {
+      targetNode = { id: nodeId, ...data };
+      break;
+    }
+  }
+
+  if (!targetNode) {
+    console.error(`[ERROR] Node/Role '${target}' not found in registry.`);
+    process.exit(1);
+  }
+
+  // 1. Gather active tasks
+  const activeTasks = [];
+  if (fs.existsSync(ACTIVE_TASKS_DIR)) {
+    const files = fs.readdirSync(ACTIVE_TASKS_DIR).filter(f => f.endsWith('.json'));
+    for (const f of files) {
+      try {
+        const t = JSON.parse(fs.readFileSync(path.join(ACTIVE_TASKS_DIR, f), 'utf8'));
+        const assigned = (t.assigned_to || '').toUpperCase();
+        if (assigned === targetNode.role.toUpperCase() || assigned === targetNode.id) {
+          activeTasks.push({ id: t.task_id || f, title: t.title, status: t.status, priority: t.priority });
+        }
+      } catch (e) {}
+    }
+  }
+
+  // 2. Gather active checkpoints
+  const checkpoints = [];
+  if (fs.existsSync(CHECKPOINTS_DIR)) {
+    const cfFiles = fs.readdirSync(CHECKPOINTS_DIR).filter(f => f.endsWith('.json'));
+    for (const cf of cfFiles) {
+      try {
+        const c = JSON.parse(fs.readFileSync(path.join(CHECKPOINTS_DIR, cf), 'utf8'));
+        if ((c.worker_role || '').toUpperCase() === targetNode.role.toUpperCase()) {
+          checkpoints.push({ task_id: c.task_id, next_action: c.next_action, step_in_progress: c.step_in_progress });
+        }
+      } catch (e) {}
+    }
+  }
+
+  // 3. Write runtime snapshot
+  const snapshotDir = path.join(ROOT_DIR, 'swarm', 'runtime');
+  if (!fs.existsSync(snapshotDir)) fs.mkdirSync(snapshotDir, { recursive: true });
+  const snapshotFile = path.join(snapshotDir, `COMPACT_SNAPSHOT_${targetNode.id}.md`);
+
+  const snapshotContent = `# ⚡ BẢN TÓM TẮT TRẠNG THÁI NỘI PHIÊN (IN-PLACE COMPACT SNAPSHOT)
+- **Node ID**: \`${targetNode.id}\` | **Vai trò**: \`${targetNode.role}\`
+- **Thời điểm tạo**: ${new Date().toISOString()}
+- **Mục đích**: Lưu giữ sự thật khách quan trước khi gõ lệnh \`/compact\` để giải phóng Context Window.
+
+---
+
+### 1. CÁC TÁC VỤ ĐANG PHỤ TRÁCH (${activeTasks.length})
+${activeTasks.length > 0 ? activeTasks.map(t => `- [${t.status}] **${t.id}**: ${t.title} (Priority: ${t.priority})`).join('\n') : '- Hiện không có task nào đang bị nghẽn.'}
+
+### 2. CHECKPOINTS ĐANG TREO (${checkpoints.length})
+${checkpoints.length > 0 ? checkpoints.map(c => `- **Task ${c.task_id}**: Đang làm: "${c.step_in_progress}" -> Bước tiếp: "${c.next_action}"`).join('\n') : '- Không có checkpoint đóng băng.'}
+
+### 3. CHỈ DẪN SAU KHI GÕ /compact
+1. Gõ lệnh \`/compact\` trong khung chat Antigravity để IDE tự động nén lịch sử dài dòng.
+2. Sau khi nén xong, tiếp tục điều phối ngay trong Tab này dựa trên các mục tiêu ở trên.
+3. Nếu task hoàn thành, cập nhật trạng thái và tiếp tục phiên làm việc bình thường!
+`;
+
+  fs.writeFileSync(snapshotFile, snapshotContent, 'utf8');
+
+  console.log(JSON.stringify({
+    status: 'COMPACT_SNAPSHOT_READY',
+    node_id: targetNode.id,
+    role: targetNode.role,
+    snapshot_path: snapshotFile,
+    active_tasks_count: activeTasks.length,
+    checkpoints_count: checkpoints.length,
+    user_action_required: "Sếp hoặc PM hãy gõ lệnh '/compact' trong khung chat để nén ngữ cảnh cũ mà không cần đổi Tab!"
+  }, null, 2));
+}
+
 // CLI Dispatcher
 const [,, command, ...args] = process.argv;
 
@@ -436,6 +530,9 @@ switch (command) {
     break;
   case 'checkpoint':
     handleCheckpoint(args[0], args[1], args[2]);
+    break;
+  case 'compact':
+    handleCompact(args[0]);
     break;
   case 'trigger-succession':
     handleTriggerSuccession(args[0], args[1]);
@@ -456,6 +553,7 @@ Usage:
   node gov-client.js resolve <ROLE | NODE_ID>               - Lookup node UUID/config (< 1ms)
   node gov-client.js register <ROLE | NODE_ID> [UUID]       - Successor registration (auto-resolves UUID from env)
   node gov-client.js checkpoint <create|read|clear|list>    - Zero-downtime task checkpoint management
+  node gov-client.js compact <ROLE | NODE_ID>               - Generate compact snapshot & advise /compact
   node gov-client.js trigger-succession <ROLE> [REASON]     - Initiate succession protocol
   node gov-client.js list-nodes                            - List all nodes and tab mappings
   node gov-client.js get-task [ROLE]                       - Fetch active task for role
