@@ -95,6 +95,17 @@ Khi khởi tạo một dự án mới (`PROJECT_ID`), hệ thống **BẮT BUỘ
   2. *Fast-Path (Đánh thức tức thì):* Bắn tin nhắn P2P `send_message` chứa TaskID và Mailbox Reference để đánh thức PM/Partner đối ứng.
   3. *Multi-Source Watcher Engine:* Daemon `swarm-watch.js` bắt buộc hỗ trợ nạp Provider đa nguồn (Local Board, Incoming Mailbox, và Governance API) để triệt tiêu hoàn toàn điểm mù giữa các kho dự án.
 
+### 2.7. Phòng Thủ 3 Tầng Chiều Sâu & Quản Trị Task Lũy Tiến (Mode A & Mode B)
+* Chi tiết đặc tả: Xem [`docs/ENTERPRISE_THREE_TIER_DEFENSE_AND_PROGRESSIVE_TASK_SPEC.md`](file:///c:/Data/universal-ai-swarm-framework/docs/ENTERPRISE_THREE_TIER_DEFENSE_AND_PROGRESSIVE_TASK_SPEC.md).
+* **Khai Tử File Đơn Khối > 45 KB:** Cấm tuyệt đối Agent đọc các file JSON dồn tích (như file 460 KB cũ), triệt tiêu hoàn toàn nguy cơ suy thoái chú ý (Attention Decay) và Action Hallucination.
+* **Cơ Chế 2 Chế Độ Phục Vụ Task:**
+  1. *Mode A (GitOps Cục Bộ Phân Mảnh):* Mỗi task là 1 file độc lập `< 2 KB` trong `swarm/tasks/active/`. Task xong dời sang `archive/`. File `swarm/BOARD_SUMMARY.json` chỉ chứa KPI tổng quan (< 50 dòng).
+  2. *Mode B (Enterprise MySQL SSOT):* Sử dụng CSDL MySQL `hdd_swarm_governance` (29 Bảng + 11 Views) làm nguồn sự thật duy nhất. Agent nhận task qua REST API với payload siêu nhẹ `< 150 tokens`.
+* **Mô Hình Phòng Thủ 3 Tầng Doanh Nghiệp (Mode B):**
+  - *Tầng 1 (Agent Laptop):* Duy trì trạng thái Ngủ Đông (Dormant - 0% CPU, 0 Polling), thức tỉnh tức thì qua Native Reactive Wakeup `send_message(Recipient, TaskID)`. Tước sạch quyền SSH/SCP của AI.
+  - *Tầng 2 (Cloudflare Gateway):* Giấu kín IP VPS thật, xác thực Bearer Token, chống DDoS, cấp SSL tự động.
+  - *Tầng 3 (VPS Engine & DB):* PM2 nuôi sống API nội bộ tự hồi sinh sau 0.5s; CSDL MySQL đóng kín khỏi Internet (`bind-address = 127.0.0.1`), triệt tiêu 100% bề mặt tấn công brute-force.
+
 ---
 
 ## 🛡️ MỤC 3: CHUẨN COMMITS GIT & QUẢN TRỊ TOKEN CONTEXT

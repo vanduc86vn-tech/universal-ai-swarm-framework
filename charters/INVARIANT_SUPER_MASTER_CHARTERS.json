@@ -57,7 +57,7 @@
     {
       "charter_id": "CHARTER_11_MANDATORY_BACKGROUND_WATCHER_AND_REAPER",
       "title": "Hiến Chương Trực Chiến Daemon Watcher & Reaper Giải Phóng Treo Bắt Buộc",
-      "invariant": "Toàn bộ các Agent trong Swarm (PM và Worker) bắt buộc phải chạy daemon nền swarm-watch.js kết hợp swarm_self_healing_reaper.js với cờ IsDaemon: true. Kênh send_message chỉ là Fast-Path gõ cửa tức thì; tuyệt đối cấm giao việc hoặc trực chiến mà không mở Watcher nền, dẫn đến mất khả năng tự cứu và tê liệt hoàn toàn khi hạ tầng bị đứng."
+      "invariant": "Phân tầng trực chiến theo ngữ cảnh hạ tầng: Ở Mode A (GitOps offline không CSDL), các Agent duy trì daemon nền đa nguồn swarm-watch.js kết hợp swarm_self_healing_reaper.js; ở Mode B (Enterprise MySQL), nghiêm cấm chạy vòng lặp polling vô hạn làm nóng laptop và spam mạng, chuyển 100% sang Native Reactive Wakeup của Antigravity IDE kết hợp P2P Fast-Path và PM2 duy trì API trên VPS."
     },
     {
       "charter_id": "CHARTER_12_DYNAMIC_TOPOLOGY_AND_AUTONOMOUS_PIPELINE",
@@ -73,6 +73,11 @@
       "charter_id": "CHARTER_14_FEDERATED_CROSS_PROJECT_SYNCHRONIZATION",
       "title": "Hiến Chương Điều Phối & Đồng Bộ Sự Kiện Liên Dự Án (Federated Cross-Project Synchronization)",
       "invariant": "Nghiêm cấm hiện tượng chia cắt cục bộ và bẫy kết nối chéo DB vô tổ chức giữa các dự án. Khi điều phối tác vụ liên dự án, bắt buộc áp dụng Giao thức Kép: Slow-Path lưu trữ hợp đồng vật lý (GitOps Mailbox RFC hoặc REST API Gateway Zero-Trust) kết hợp Fast-Path đánh thức tức thì qua P2P Signal. Daemon swarm-watch.js phải vận hành theo Provider Đa Nguồn (Multi-Source Strategy), tuyệt đối không để xảy ra tình trạng một bên giao một bên ngủ quên."
+    },
+    {
+      "charter_id": "CHARTER_15_ENTERPRISE_THREE_TIER_DEFENSE_AND_ZERO_ATTACK_SURFACE",
+      "title": "Hiến Chương Phòng Thủ Đa Tầng Doanh Nghiệp & Đóng Kín Bề Mặt Tấn Công",
+      "invariant": "Hạ tầng vận hành Swarm cấp doanh nghiệp (Mode B) bắt buộc triển khai theo mô hình Phòng Thủ 3 Tầng Chiều Sâu: (1) Tầng Agent Laptop duy trì trạng thái Ngủ Đông (Dormant - 0% CPU, 0 Polling), thức tỉnh bằng P2P Fast-Path send_message, tước đoạt hoàn toàn quyền SSH/SCP của AI; (2) Tầng Rìa Ngoại Vi sử dụng Cloudflare Worker giấu kín 100% địa chỉ IP máy chủ thật, xác thực Bearer Token, chống DDoS và cấp SSL tự động; (3) Tầng Tiến Trình Máy Chủ sử dụng PM2 nuôi sống API nội bộ tự hồi sinh sau 0.5s nếu crash, CSDL MySQL bắt buộc đóng kín với Internet (bind-address = 127.0.0.1) để triệt tiêu 100% nguy cơ dò mật khẩu và tấn công brute-force."
     }
   ]
 }

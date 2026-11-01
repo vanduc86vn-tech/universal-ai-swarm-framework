@@ -76,8 +76,9 @@ swarm-master-ai/
 │       ├── swarm-watch.js                      # Daemon trực chiến tuần tra GitOps đa nguồn
 │       └── doctor-refactor-inject.js           # Engine tự động tiêm bộ khung vào dự án cũ
 ├── charters/
-│   └── INVARIANT_SUPER_MASTER_CHARTERS.json    # 14 Hiến chương Thượng tầng bất biến
+│   └── INVARIANT_SUPER_MASTER_CHARTERS.json    # 15 Hiến chương Thượng tầng bất biến
 ├── docs/
+│   ├── ENTERPRISE_THREE_TIER_DEFENSE_AND_PROGRESSIVE_TASK_SPEC.md # Đặc tả Phòng thủ 3 Tầng & Mode A/B
 │   ├── FEDERATED_CROSS_PROJECT_DISPATCH_AND_WATCHER_SPEC.md
 │   └── UNIVERSAL_16_SAFETY_GOVERNANCE_SPEC.md
 ├── BOOTSTRAP_PROMPT.md                         # Gói lệnh One-Shot cho Tab 1 (2 kịch bản)
