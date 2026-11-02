@@ -33,7 +33,7 @@ Nhiều trường hợp Agent vẫn hoàn toàn tỉnh táo và logic tốt, nh�
 
 ### 2. Hiểm Họa "Mất Trí Nhớ" Khi Chỉ Gõ `/compact` Đơn Thuần:
 Nếu Sếp chỉ sang Tab Worker và gõ `/compact` ngay mà **không có bước `compact-self` trước đó**:
-- Thuật toán tóm tắt heuristic tự động của IDE sẽ tóm tắt chung chung kiểu: *"User và Agent đã trao đổi về các task MRP và WBS..."*.
+- Thuật toán tóm tắt heuristic tự động của IDE sẽ tóm tắt chung chung kiểu: *"User và Agent đã trao đổi về tiến độ dự án và các task WBS..."*.
 - Hệ quả là **rụng mất các chi tiết kỹ thuật cốt tử**:
   * Các mã Task ID cụ thể đang bị nghẽn là gì?
   * Bước tiếp theo chính xác là lệnh gì?

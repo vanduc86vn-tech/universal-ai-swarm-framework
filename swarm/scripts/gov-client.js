@@ -41,6 +41,54 @@ function loadRegistry() {
 }
 
 /**
+ * Universal node matcher: Supports Node IDs (NODE_01), full role names,
+ * with or without 'AI-' prefix, underscores, hyphens, and common aliases (PM, BA, QA, BE, DB).
+ */
+function matchNode(nodes, target) {
+  if (!target || !nodes) return null;
+  const rawTarget = target.trim().toUpperCase();
+  if (nodes[rawTarget]) return rawTarget;
+
+  const clean = (s) => (s || '').toUpperCase().replace(/^AI[-_]/, '').replace(/[-_\s]/g, '');
+  const cleanTarget = clean(rawTarget);
+
+  // Quick aliases
+  if (cleanTarget === 'PM') {
+    for (const [id, d] of Object.entries(nodes)) {
+      if ((d.role || '').toUpperCase().includes('PROJECT_MANAGER')) return id;
+    }
+  }
+  if (cleanTarget === 'QA') {
+    for (const [id, d] of Object.entries(nodes)) {
+      if ((d.role || '').toUpperCase().includes('QA')) return id;
+    }
+  }
+  if (cleanTarget === 'DB') {
+    for (const [id, d] of Object.entries(nodes)) {
+      if ((d.role || '').toUpperCase().includes('DATABASE')) return id;
+    }
+  }
+  if (cleanTarget === 'BE') {
+    for (const [id, d] of Object.entries(nodes)) {
+      if ((d.role || '').toUpperCase().includes('BACKEND')) return id;
+    }
+  }
+  if (cleanTarget === 'BA' || cleanTarget === 'LEAD') {
+    for (const [id, d] of Object.entries(nodes)) {
+      if ((d.role || '').toUpperCase().includes('ARCHITECT') || (d.role || '').toUpperCase().includes('LEAD')) return id;
+    }
+  }
+
+  for (const [nodeId, data] of Object.entries(nodes)) {
+    const cleanRole = clean(data.role);
+    if (cleanRole === cleanTarget || cleanRole.includes(cleanTarget) || cleanTarget.includes(cleanRole)) {
+      return nodeId;
+    }
+  }
+  return null;
+}
+
+/**
  * Command: resolve <ROLE | NODE_ID>
  * Rapid lookup of node configuration and conversation UUID for P2P Fast-Path.
  */
@@ -51,37 +99,20 @@ function handleResolve(target) {
   }
 
   const registry = loadRegistry();
-  const normalizedTarget = target.trim().toUpperCase();
   const nodes = registry.nodes || {};
+  const matchedNodeId = matchNode(nodes, target);
 
-  // 1. Direct match on Node ID (e.g. NODE_01)
-  if (nodes[normalizedTarget]) {
-    const node = nodes[normalizedTarget];
+  if (matchedNodeId) {
+    const node = nodes[matchedNodeId];
     console.log(JSON.stringify({
       found: true,
-      node_id: normalizedTarget,
+      node_id: matchedNodeId,
       role: node.role,
       conversation_uuid: node.conversation_uuid || '',
       tab_index: node.tab_index,
       runtime_manual: node.runtime_manual
     }, null, 2));
     return;
-  }
-
-  // 2. Lookup by role name (case-insensitive substring or exact match)
-  for (const [nodeId, data] of Object.entries(nodes)) {
-    const roleUpper = (data.role || '').toUpperCase();
-    if (roleUpper === normalizedTarget || roleUpper.includes(normalizedTarget)) {
-      console.log(JSON.stringify({
-        found: true,
-        node_id: nodeId,
-        role: data.role,
-        conversation_uuid: data.conversation_uuid || '',
-        tab_index: data.tab_index,
-        runtime_manual: data.runtime_manual
-      }, null, 2));
-      return;
-    }
   }
 
   console.error(JSON.stringify({
@@ -213,21 +244,8 @@ function handleRegister(target, explicitUuid) {
   }
 
   const registry = loadRegistry();
-  const normalizedTarget = target.trim().toUpperCase();
   const nodes = registry.nodes || {};
-  let matchedNodeId = null;
-
-  if (nodes[normalizedTarget]) {
-    matchedNodeId = normalizedTarget;
-  } else {
-    for (const [nodeId, data] of Object.entries(nodes)) {
-      const roleUpper = (data.role || '').toUpperCase();
-      if (roleUpper === normalizedTarget || roleUpper.includes(normalizedTarget)) {
-        matchedNodeId = nodeId;
-        break;
-      }
-    }
-  }
+  const matchedNodeId = matchNode(nodes, target);
 
   if (!matchedNodeId) {
     console.error(`[ERROR] Role or Node '${target}' not found in registry.`);
@@ -238,17 +256,23 @@ function handleRegister(target, explicitUuid) {
   registry.updated_at = new Date().toISOString();
   fs.writeFileSync(REGISTRY_FILE, JSON.stringify(registry, null, 2), 'utf8');
 
-  // Check for pending checkpoints
+  // Dynamic Context Induction (Khám phá và suy luận ngữ cảnh động theo FSM)
+  const roleName = nodes[matchedNodeId].role || '';
+  const isOrchestrator = roleName.toUpperCase().includes('PROJECT_MANAGER') ||
+                         roleName.toUpperCase().includes('ORCHESTRATOR') ||
+                         matchedNodeId === 'NODE_02';
+
+  // 1. Quét tìm Checkpoint dở dang phù hợp với vai trò
   let pendingCheckpoint = null;
   if (!fs.existsSync(CHECKPOINTS_DIR)) {
     fs.mkdirSync(CHECKPOINTS_DIR, { recursive: true });
   } else {
-    const chkFiles = fs.readdirSync(CHECKPOINTS_DIR).filter(f => f.endsWith('.json'));
+    const chkFiles = fs.readdirSync(CHECKPOINTS_DIR).filter(f => f.endsWith('.json') && !f.startsWith('COMPACT-'));
     for (const cf of chkFiles) {
       try {
         const chk = JSON.parse(fs.readFileSync(path.join(CHECKPOINTS_DIR, cf), 'utf8'));
         const assignedRole = (chk.worker_role || '').toUpperCase();
-        if (assignedRole === nodes[matchedNodeId].role.toUpperCase() || assignedRole === matchedNodeId) {
+        if (assignedRole === roleName.toUpperCase() || assignedRole === matchedNodeId || isOrchestrator) {
           pendingCheckpoint = chk;
           break;
         }
@@ -256,19 +280,77 @@ function handleRegister(target, explicitUuid) {
     }
   }
 
-  console.log(JSON.stringify({
+  // 2. Quét tìm tệp tóm tắt bàn giao ngữ cảnh tự sự (Semantic Narrative Handover Doc) nếu có
+  let semanticHandoverDoc = null;
+  const handoverDocsDir = path.join(ROOT_DIR, 'docs', 'handover');
+  if (fs.existsSync(handoverDocsDir)) {
+    const mdFiles = fs.readdirSync(handoverDocsDir).filter(f => f.endsWith('.md'));
+    for (const mf of mdFiles) {
+      const mfUpper = mf.toUpperCase();
+      if (mfUpper.includes(matchedNodeId) || mfUpper.includes(roleName.toUpperCase()) || mfUpper.includes('HANDOVER')) {
+        semanticHandoverDoc = path.join('docs', 'handover', mf).replace(/\\/g, '/');
+        break;
+      }
+    }
+  }
+
+  // 3. Khảo sát danh sách công việc thuộc thẩm quyền
+  const activeTasks = [];
+  if (fs.existsSync(ACTIVE_TASKS_DIR)) {
+    const taskFiles = fs.readdirSync(ACTIVE_TASKS_DIR).filter(f => f.endsWith('.json'));
+    for (const tf of taskFiles) {
+      try {
+        const t = JSON.parse(fs.readFileSync(path.join(ACTIVE_TASKS_DIR, tf), 'utf8'));
+        const assigned = (t.assigned_to || '').toUpperCase();
+        if (isOrchestrator || assigned === roleName.toUpperCase() || assigned === matchedNodeId) {
+          activeTasks.push({
+            task_id: t.task_id || tf.replace('.json', ''),
+            title: t.title,
+            status: t.status,
+            priority: t.priority
+          });
+        }
+      } catch (e) {}
+    }
+  }
+
+  // 4. Sinh chỉ thị điều phối động FSM (Dynamic FSM Action Directive)
+  let fsmDirective = 'STANDBY_READY';
+  let primaryNextAction = 'Sẵn sàng nhận phân bổ tác vụ mới từ điều phối.';
+
+  if (pendingCheckpoint) {
+    fsmDirective = 'RESUME_FROM_CHECKPOINT';
+    primaryNextAction = `Tiếp tục bước dở dang từ checkpoint [${pendingCheckpoint.task_id}]: ${pendingCheckpoint.next_action}`;
+  } else if (isOrchestrator && activeTasks.length > 0) {
+    fsmDirective = 'ORCHESTRATE_ACTIVE_PIPELINE';
+    primaryNextAction = `Rà soát và điều phối ${activeTasks.length} tác vụ đang hoạt động trong pipeline FSM.`;
+  } else if (!isOrchestrator && activeTasks.length > 0) {
+    fsmDirective = 'EXECUTE_ASSIGNED_TASK';
+    primaryNextAction = `Thi công tác vụ được giao: ${activeTasks[0].task_id} (${activeTasks[0].title})`;
+  }
+
+  const responsePayload = {
     status: 'SUCCESS',
     node_id: matchedNodeId,
-    role: nodes[matchedNodeId].role,
+    role: roleName,
     registered_uuid: resolvedUuid,
     auto_resolved_from_env: !explicitUuid && !!resolvedUuid,
-    has_pending_checkpoint: !!pendingCheckpoint,
-    resumed_checkpoint: pendingCheckpoint || null,
-    next_steps: [
-      `1. Thực thi ngay bước: ${pendingCheckpoint ? pendingCheckpoint.next_action : 'Kiểm tra task mới qua get-task'}`,
-      pendingCheckpoint ? `2. [QUAN TRỌNG] Sau khi nghiệm thu hoàn tất, BẮT BUỘC xóa checkpoint: node swarm/scripts/gov-client.js checkpoint clear ${pendingCheckpoint.task_id}` : '2. Duy trì trạng thái sẵn sàng nhận việc.'
+    context_induction: {
+      fsm_directive: fsmDirective,
+      has_pending_checkpoint: !!pendingCheckpoint,
+      active_tasks_count: activeTasks.length,
+      semantic_handover_doc: semanticHandoverDoc,
+      resumed_checkpoint: pendingCheckpoint || null
+    },
+    next_action: primaryNextAction,
+    operational_directives: [
+      `1. Tuân thủ ranh giới độc quyền của vai trò ${roleName} theo Hiến pháp.`,
+      pendingCheckpoint ? `2. Sau khi hoàn thành checkpoint [${pendingCheckpoint.task_id}], bắt buộc xóa tệp neo: node swarm/scripts/gov-client.js checkpoint clear ${pendingCheckpoint.task_id}` : `2. Tra cứu chi tiết tác vụ qua CLI Zero-SQL: node swarm/scripts/gov-client.js get-task`,
+      semanticHandoverDoc ? `3. (Tùy chọn) Đọc tệp bối cảnh sâu: ${semanticHandoverDoc}` : `3. Không tự đọc lại file runtime của chính mình (Zero-Redundant-Read).`
     ]
-  }, null, 2));
+  };
+
+  console.log(JSON.stringify(responsePayload, null, 2));
 }
 
 /**
@@ -390,21 +472,15 @@ function handleTriggerSuccession(target, reason) {
   }
 
   const registry = loadRegistry();
-  const normalizedTarget = target.trim().toUpperCase();
   const nodes = registry.nodes || {};
-  let targetNode = null;
+  const matchedNodeId = matchNode(nodes, target);
 
-  for (const [nodeId, data] of Object.entries(nodes)) {
-    if (nodeId === normalizedTarget || (data.role || '').toUpperCase() === normalizedTarget) {
-      targetNode = { id: nodeId, ...data };
-      break;
-    }
-  }
-
-  if (!targetNode) {
-    console.error(`[ERROR] Node/Role '${target}' not found.`);
+  if (!matchedNodeId) {
+    console.error(`[ERROR] Node/Role '${target}' not found in registry.`);
     process.exit(1);
   }
+
+  const targetNode = { id: matchedNodeId, ...nodes[matchedNodeId] };
 
   const manifest = {
     protocol: 'ZERO_DOWNTIME_SUCCESSION_PROTOCOL',
@@ -436,21 +512,15 @@ function handleCompactSelf(target, nextAction) {
   }
 
   const registry = loadRegistry();
-  const normalizedTarget = target.trim().toUpperCase();
   const nodes = registry.nodes || {};
-  let targetNode = null;
+  const matchedNodeId = matchNode(nodes, target);
 
-  for (const [nodeId, data] of Object.entries(nodes)) {
-    if (nodeId === normalizedTarget || (data.role || '').toUpperCase() === normalizedTarget) {
-      targetNode = { id: nodeId, ...data };
-      break;
-    }
-  }
-
-  if (!targetNode) {
-    console.error(`[ERROR] Node/Role '${target}' not found.`);
+  if (!matchedNodeId) {
+    console.error(`[ERROR] Node/Role '${target}' not found in registry.`);
     process.exit(1);
   }
+
+  const targetNode = { id: matchedNodeId, ...nodes[matchedNodeId] };
 
   if (!fs.existsSync(CHECKPOINTS_DIR)) {
     fs.mkdirSync(CHECKPOINTS_DIR, { recursive: true });
