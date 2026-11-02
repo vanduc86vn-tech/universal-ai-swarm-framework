@@ -649,6 +649,18 @@ switch (command) {
   case 'get-task':
     handleGetTask(args[0]);
     break;
+  case 'migrate-monolith': {
+    const partitionMgr = require('./task-partition-manager.js');
+    if (partitionMgr && typeof partitionMgr.migrateMonolith === 'function') {
+      partitionMgr.migrateMonolith(args[0]);
+    } else {
+      const { execSync } = require('child_process');
+      const scriptPath = path.join(__dirname, 'task-partition-manager.js');
+      const target = args[0] ? `"${args[0]}"` : '';
+      console.log(execSync(`node "${scriptPath}" migrate ${target}`, { encoding: 'utf8' }));
+    }
+    break;
+  }
   case 'health-check':
     handleHealthCheck();
     break;
