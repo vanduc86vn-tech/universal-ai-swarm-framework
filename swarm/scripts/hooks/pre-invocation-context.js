@@ -178,17 +178,33 @@ async function main() {
       lines.push(`• Mô tả vai trò: ${matchedNode.description || 'Theo quy định trong AI_SWARM_REGISTRY.json'}`);
     }
 
-    // 5.1. Detect Cadence Watchdog Tick
+    // 5.1. Detect Cadence Watchdog Tick & Verify Proof-of-Audit Receipt
     const lastInput = String(payload.lastUserInput || '');
     const isCadenceTick = /CADENCE|AUTONOMOUS_CADENCE_TICK|tuần tra chiến lược/i.test(lastInput);
 
     if (isCadenceTick && isLead) {
       lines.push(`⏰ [CHẾ ĐỘ TUẦN TRA CHIẾN LƯỢC TỰ CHỦ (CADENCE WATCHDOG)]`);
-      lines.push(`• Bạn vừa được đánh thức bởi đồng hồ nhịp tim tự chủ (Cron Schedule).`);
-      lines.push(`• NGUYÊN TẮC IM LẶNG TUYỆT ĐỐI (ZERO-NOISE INVARIANT):`);
-      lines.push(`  - Quét CSDL SSOT kiểm tra 3 chỉ số SLA (Task nghẽn > 60m, Worker đói việc, Task thiếu QA proof).`);
-      lines.push(`  - NẾU MỌI THỨ BÌNH THƯỜNG: Bắt buộc KẾT THÚC TURN TRONG IM LẶNG, KHÔNG XUẤT VĂN BẢN CHAT VỚI SẾP! ('No News is Good News').`);
-      lines.push(`  - NẾU CÓ VI PHẠM: Chỉ gửi [SIGNAL: CADENCE_ALARM] cho PM (NODE_02). Tuyệt đối CẤM vượt mặt PM nhắn tin cho Worker!`);
+      
+      const receiptPath = path.join(checkpointsDir, 'CADENCE_INSPECTION_RECEIPT.json');
+      const receipt = readJsonSafe(receiptPath);
+      const isReceiptFresh = receipt && (Date.now() - (receipt.created_at_ms || Date.parse(receipt.timestamp))) < (receipt.ttl_seconds || 300) * 1000;
+
+      if (isReceiptFresh && !receipt.consumed) {
+        lines.push(`• Trạng thái Biên lai Tuần tra: HỢP LỆ (Mã: ${receipt.receipt_id} | Nonce: ${receipt.audit_nonce})`);
+        lines.push(`• Đánh giá SLA SSOT: ${receipt.alarmLevel} (Tổng: ${receipt.totalTasks} | IN_PROGRESS: ${receipt.inProgressCount} | OPEN: ${receipt.openCount} | READY_FOR_AUDIT: ${receipt.readyAuditCount})`);
+        lines.push(`• Phân bổ ổ nghẽn: ${JSON.stringify(receipt.workerBottlenecks || {})}`);
+        lines.push(`• CHỈ THỊ HÀNH ĐỘNG BẮT BUỘC:`);
+        if (receipt.alarmLevel === 'GREEN_NORMAL') {
+          lines.push(`  - MỌI CHỈ SỐ ĐỀU XANH: BẮT BUỘC KẾT THÚC TURN TRONG IM LẶNG (0 token chat). CẤM chat suông làm phiền Sếp! ("No News is Good News").`);
+        } else {
+          lines.push(`  - PHÁT HIỆN VI PHẠM SLA (RED_ALERT): Bắt buộc gửi [SIGNAL: CADENCE_ALARM] cho PM (NODE_02), đính kèm Nonce '${receipt.audit_nonce}' để giải tỏa điểm nghẽn!`);
+        }
+      } else {
+        lines.push(`• CẢNH BÁO: CHƯA CÓ BIÊN LAI KHẢO SÁT HỢP LỆ HOẶC BIÊN LAI ĐÃ HẾT HẠN (> 5 phút)!`);
+        lines.push(`• HÀNH ĐỘNG BẮT BUỘC ĐẦU TIÊN: Bạn BẮT BUỘC phải chạy Tool Call vật lý:`);
+        lines.push(`  node swarm/scripts/anti-fraud-cadence-monitor.js`);
+        lines.push(`  để khảo sát CSDL SSOT và lấy mã xác thực AUDIT_NONCE trước khi đưa ra bất kỳ kết luận nào!`);
+      }
     }
 
     if (checkpointData) {

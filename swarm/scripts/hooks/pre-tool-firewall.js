@@ -108,9 +108,62 @@ async function main() {
       const messageText = String(toolArgs.Message || '');
       const recipientUuid = String(toolArgs.Recipient || '');
 
-      // 1. BẢNG MIỄN TRỪ GIAO THỨC HỢP LỆ (Allowlist Protocols)
+      // 1. KIỂM TOÁN TÍN HIỆU CADENCE_ALARM (PROOF-OF-AUDIT NONCE VERIFICATION)
+      if (/CADENCE_ALARM/i.test(messageText)) {
+        const checkpointsDir = path.join(workspaceRoot, 'swarm', 'tasks', 'checkpoints');
+        const receiptPath = path.join(checkpointsDir, 'CADENCE_INSPECTION_RECEIPT.json');
+        const receipt = readJsonSafe(receiptPath);
+        const isFresh = receipt && (Date.now() - (receipt.created_at_ms || Date.parse(receipt.timestamp))) < (receipt.ttl_seconds || 300) * 1000;
+
+        if (!receipt || !isFresh) {
+          console.log(JSON.stringify({
+            decision: "deny",
+            reason: "[BLOCKED_BY_PHYSICAL_HOOK] Gian lận báo cáo tuần tra (Zero Proof Violation): Bạn chưa chạy lệnh khảo sát nhị phân CSDL SSOT hoặc Biên lai đã quá hạn (> 5 phút). Bắt buộc chạy 'node swarm/scripts/anti-fraud-cadence-monitor.js' trước khi phát tín hiệu báo động!"
+          }));
+          process.exit(0);
+        }
+
+        if (receipt.consumed) {
+          console.log(JSON.stringify({
+            decision: "deny",
+            reason: `[BLOCKED_BY_PHYSICAL_HOOK] Gian lận báo cáo tuần tra (Replay Attack): Mã xác thực Nonce [${receipt.audit_nonce}] đã bị tiêu hủy (đã dùng ở turn trước). Bắt buộc chạy lại lệnh khảo sát để cấp Nonce mới!`
+          }));
+          process.exit(0);
+        }
+
+        // Must include the nonce in the message
+        if (!messageText.includes(receipt.audit_nonce)) {
+          console.log(JSON.stringify({
+            decision: "deny",
+            reason: `[BLOCKED_BY_PHYSICAL_HOOK] Gian lận báo cáo tuần tra (Nonce Mismatch): Tin nhắn báo động thiếu mã xác thực hợp lệ. Bạn bắt buộc phải đính kèm Nonce [${receipt.audit_nonce}] vào tin nhắn để chứng minh dữ liệu có thật từ SSOT!`
+          }));
+          process.exit(0);
+        }
+
+        // Must be sent to PM only (Lead cannot send CADENCE_ALARM to workers)
+        if (isLead && pmUuid && recipientUuid && recipientUuid.toLowerCase() !== pmUuid.toLowerCase()) {
+          console.log(JSON.stringify({
+            decision: "deny",
+            reason: `[BLOCKED_BY_PHYSICAL_HOOK] Hiến pháp vi phạm (Lead Usurpation): Tín hiệu báo động tuần tra [SIGNAL: CADENCE_ALARM] CHỈ ĐƯỢC PHÉP gửi tới PM (NODE_02 - UUID: ${pmUuid})! Cấm gửi trực tiếp cho Worker!`
+          }));
+          process.exit(0);
+        }
+
+        // Burn the nonce (Single-Use Token)
+        receipt.consumed = true;
+        receipt.consumed_at = new Date().toISOString();
+        try {
+          fs.writeFileSync(receiptPath, JSON.stringify(receipt, null, 2), 'utf8');
+        } catch (e) {}
+
+        // Nonce is verified & recipient is PM -> ALLOW immediately!
+        console.log(JSON.stringify({ decision: "allow" }));
+        process.exit(0);
+      }
+
+      // 2. BẢNG MIỄN TRỪ GIAO THỨC HỢP LỆ (Allowlist Protocols)
       const allowlistSignalRegex = /(\[SIGNAL:\s*[A-Z0-9_-]+\]|\[(ADMIN|SYSTEM|ACK|P2P_MESH_ACK|REJECTED_CHAT_OPS|HEARTBEAT|DISCOVERY|PING|PONG|WAKEUP|HANDOVER|COMPACT_DONE|HEALTH_CHECK)\])/i;
-      if (allowlistSignalRegex.test(messageText)) {
+      if (allowlistSignalRegex.test(messageText) && !/CADENCE_ALARM/i.test(messageText)) {
         console.log(JSON.stringify({ decision: "allow" }));
         process.exit(0);
       }

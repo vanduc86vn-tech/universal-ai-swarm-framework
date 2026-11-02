@@ -100,3 +100,15 @@
    - Khi phát hiện vi phạm SLA (Task kẹt > 60m, Worker đói việc, thiếu evidence), Lead CHỈ ĐƯỢC PHÉP gửi tín hiệu `[SIGNAL: CADENCE_ALARM]` kèm Task ID tới PM (`NODE_02`) qua Fast-Path P2P để PM điều phối.
    - Tuyệt đối CẤM Lead lợi dụng phiên thức giấc của nhịp tim để can thiệp hoặc nhắn tin trực tiếp xuống Worker.
 
+---
+
+## XI. KIẾN TRÚC ZERO-TRUST BẰNG CHỨNG MẬT MÃ (PROOF-OF-AUDIT NONCE) & NGẮT MẠCH CSDL
+1. **RÀNG BUỘC CỨNG TẦNG CSDL (DATABASE TRIGGERS):**
+   - **Chống gian lận nghiệm thu:** CSDL MySQL áp dụng trigger `trg_verify_task_completion` cấm tuyệt đối việc Worker tự ý chuyển Task sang `COMPLETED` khi chưa qua `READY_FOR_AUDIT` và thiếu `ProofUrl`, `ProofHash`, `AuditedBy`.
+   - **Tự động ngắt mạch (Dynamic Backpressure):** Trigger `trg_enforce_dynamic_backpressure` tự động từ chối gán việc mới (`ASSIGNED`) cho bất kỳ Worker nào đang có $\ge 5\text{ tasks}$ kẹt ở `IN_PROGRESS`.
+2. **MÃ XÁC THỰC DÙNG MỘT LẦN (SINGLE-USE AUDIT NONCE):**
+   - Khi Lead tuần tra CSDL, script `anti-fraud-cadence-monitor.js` sinh mã `AUDIT_NONCE` (dạng `POA-XXXXXXXX`) đính kèm Biên lai `CADENCE_INSPECTION_RECEIPT.json` với thời hạn hiệu lực 5 phút (TTL 300s).
+   - Hook `PreInvocation` tự động nạp mã Nonce và số liệu thật vào ngữ cảnh trong $< 2\text{ms}$.
+   - Hook `PreToolUse` bắt buộc kiểm tra mã Nonce khi Lead gửi `[SIGNAL: CADENCE_ALARM]`. Nonce bị tiêu hủy (Burn) ngay sau khi gửi thành công; mọi hành vi dùng lại Nonce cũ (Replay Attack) hoặc báo động không có Nonce đều bị IDE chặn đứng tức thì.
+
+
