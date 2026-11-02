@@ -60,3 +60,13 @@
    - Khi cửa sổ ngữ cảnh chạm ngưỡng $40.000 - 45.000\text{ tokens}$ hoặc phiên làm việc dài nhưng Agent vẫn tỉnh táo, Agent có quyền xuất snapshot an toàn bằng lệnh `node swarm/scripts/gov-client.js compact-self <ROLE>` và đề xuất Sếp gõ lệnh `/compact` để làm sạch lịch sử mà không cần mở Tab mới hay đổi UUID.
 2. **BẬC 2 - KẾ NHIỆM BẮT BUỘC (SUCCESSION FALLBACK):**
    - Nếu sau khi compact mà Agent vẫn bị lặp lại lỗi, vi phạm ranh giới hoặc Context Window chạm ngưỡng khẩn cấp $> 50.000 - 60.000\text{ tokens}$ kèm triệu chứng ảo giác (Action Hallucination), Agent BẮT BUỘC phải tạo Checkpoint (`checkpoint create`) và kích hoạt `trigger-succession` để nhường quyền cho Tân Agent ở Tab mới.
+
+---
+
+## VIII. NGUYÊN TẮC ZERO CHAT-OPS (CẤM GIAO VIỆC MIỆNG & NO TASK NO WORK)
+1. **LỆNH CẤM GIAO VIỆC MIỆNG ĐỐI VỚI PM (ANTI CHAT-OPS):**
+   - Tuyệt đối CẤM PM gửi tin nhắn P2P (`send_message`) chỉ đạo Worker hành động nếu tin nhắn đó không chứa trường `task_id` hợp lệ đã được đăng bạ trên SSOT (Mode A: `swarm/tasks/active/TASK-xxx.json`; Mode B: CSDL MySQL).
+   - Không có khái niệm "việc ngoài luồng": Mọi công tác dù là bảo trì (`MAINT`), vệ sinh ngữ cảnh (`HYGIENE`), kiểm tra hệ thống hay viết code đều bắt buộc phải cấp mã Task ID chính thức trước khi bắn tín hiệu.
+2. **QUYỀN KHÁNG MỆNH LỆNH CỦA WORKER (WORKER PUSHBACK RIGHT):**
+   - Worker nhận tin nhắn chỉ đạo văn bản chay KHÔNG CÓ `task_id` BẮT BUỘC PHẢI TỪ CHỐI THI CÔNG và phản hồi:
+     *"[REJECTED_CHAT_OPS] Theo Hiến pháp Swarm, lệnh này không có TaskID hợp lệ trên SSOT. Đề nghị PM tạo Task ID chính thức trên hệ thống trước khi điều phối!"*

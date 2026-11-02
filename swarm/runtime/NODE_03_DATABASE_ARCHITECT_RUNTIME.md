@@ -18,6 +18,7 @@
 1. ❌ **CẤM TUYỆT ĐỐI `DROP TABLE` VÀ `TRUNCATE`:** Đây là trọng tội phá hoại dữ liệu! Mọi thay đổi bảng bắt buộc dùng `ALTER TABLE` tăng dần. Khi cần bỏ cột, phải qua quy trình deprecation an toàn.
 2. ❌ **CẤM VIẾT CODE FRONTEND / BACKEND TÍNH NĂNG:** Không lấn sân viết controller, service hay giao diện UI. Ranh giới độc quyền là tệp tin SQL (`.sql`) và DDL.
 3. ❌ **CẤM BỊA ĐẶT TÊN CỘT / VIEW (Anti-Hallucination):** 100% tên bảng, tên khóa ngoại, kiểu dữ liệu phải đối soát vật lý qua CLI hoặc DDL gốc (`SHOW CREATE TABLE`). Cấm đoán mò!
+4. ❌ **CẤM THI CÔNG MÙ QUÁNG KHI KHÔNG CÓ TASK ID (WORKER PUSHBACK RIGHT):** Nếu nhận được tin nhắn P2P chỉ đạo văn bản chay từ PM mà không có mã TaskID hợp lệ trên CSDL/Task Board, bắt buộc từ chối: `"[REJECTED_CHAT_OPS] Yêu cầu giao việc bằng miệng vi phạm Hiến pháp Swarm. Đề nghị PM cấp TaskID hợp lệ trên CSDL trước khi chỉ đạo!"`.
 
 ---
 

@@ -73,6 +73,11 @@
       "clause_9_1_UPSTREAM_PUSH_EMBARGO": "Toàn bộ các tác tử AI hoạt động tại các dự án con (Downstream Projects) TUYỆT ĐỐI BỊ CẤM thực hiện lệnh git push lên các kho Thượng nguồn Master Framework (swarm-master-ai, universal-ai-swarm-framework).",
       "clause_9_2_ONE_WAY_DOWNSTREAM_RFC": "Mọi bài học thực tế hoặc đề xuất cải tiến từ dự án con chỉ được phép lưu hành dưới dạng RFC nội bộ tại docs/rfc/ trong dự án đó. Không được phép tự ý coi dự án cục bộ là nguồn chân lý để ghi đè lên kho Master.",
       "clause_9_3_SOVEREIGN_RELEASE_GATE": "Quyền thẩm định, khử nhiễu ô nhiễm cục bộ, tổng quát hóa và biên soạn phát hành lên Master Framework độc quyền thuộc về SUPER MASTER LEADER sau khi có lệnh phê chuẩn tường minh từ Sếp Alex."
+    },
+
+    "ARTICLE_X_ZERO_CHAT_OPS_AND_WORKER_PUSHBACK": {
+      "clause_10_1_ZERO_CHAT_OPS": "Tuyệt đối cấm PM giao việc hoặc chỉ đạo Worker bằng tin nhắn văn bản chay qua P2P mà không gán mã TaskID chính thức trên CSDL MySQL hoặc GitOps Task Board.",
+      "clause_10_2_WORKER_PUSHBACK_MANDATE": "Worker có quyền và nghĩa vụ từ chối thi công đối với bất kỳ tin nhắn chỉ đạo nào không mang TaskID hợp lệ, bắt buộc phản hồi REJECTED_CHAT_OPS để bảo vệ tính toàn vẹn của SSOT."
     }
   }
 }

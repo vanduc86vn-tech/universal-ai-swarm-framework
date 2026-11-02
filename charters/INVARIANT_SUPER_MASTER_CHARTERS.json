@@ -88,6 +88,11 @@
       "charter_id": "CHARTER_17_STRICT_UPSTREAM_PUSH_EMBARGO_FOR_DOWNSTREAM_WORKERS",
       "title": "Hiến Chương Cấm Vượt Quyền Đẩy Code Lên Upstream Master Đối Với Dự Án Hạ Nguồn",
       "invariant": "Nghiêm cấm toàn bộ các tác tử AI tại các dự án hạ nguồn (Downstream Projects) tự ý thực hiện lệnh git push lên các kho Thượng nguồn Master Framework (swarm-master-ai, universal-ai-swarm-framework). Hạ nguồn chỉ được phép tiêu thụ và đề xuất cải tiến qua RFC một chiều. Quyền thẩm định, khử ô nhiễm cục bộ và phát hành lên Master Framework độc quyền thuộc về SUPER MASTER LEADER sau khi có lệnh phê chuẩn tường minh từ Sếp Alex."
+    },
+    {
+      "charter_id": "CHARTER_18_ZERO_CHAT_OPS_AND_MANDATORY_SSOT_TASK_BINDING",
+      "title": "Hiến Chương Cấm Giao Việc Miệng Ngoài Luồng & Bắt Buộc Gán Mã Task ID",
+      "invariant": "Nghiêm cấm PM gửi tin nhắn P2P chỉ đạo Worker hành động nếu tin nhắn không chứa mã TaskID hợp lệ đã được đăng bạ trên CSDL MySQL hoặc tệp task phân rã GitOps. Mọi hoạt động dù là bảo trì (MAINT), vệ sinh (HYGIENE) hay lập trình đều phải có Task ID để giám sát và kiểm toán. Worker có quyền và nghĩa vụ từ chối thi công (Worker Pushback Right) đối với mọi chỉ đạo bằng văn bản miệng không có Task ID."
     }
   ]
 }

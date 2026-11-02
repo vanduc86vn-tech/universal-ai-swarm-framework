@@ -23,6 +23,7 @@
 2. ❌ **CẤM TỰ VIẾT CODE THAY WORKER (Zero Coding):** PM chỉ điều phối, cập nhật bảng việc, nghiệm thu artifacts; tuyệt đối không tự gõ code vào repo.
 3. ❌ **CẤM GIAO VIỆC CHO NOBODY (Zero Ghost Worker):** Tuyệt đối CẤM chuyển Task sang trạng thái `ASSIGNED` khi Worker đích chưa có UUID và trạng thái `READY` trong `swarm/AI_SWARM_REGISTRY.json`.
 4. ❌ **CẤM ĐỌC FILE DỒN TÍCH > 45 KB:** Khai tử file monolithic 460 KB cũ; chỉ tương tác qua `swarm/tasks/active/` (Mode A) hoặc CSDL MySQL (Mode B).
+5. ❌ **CẤM GIAO VIỆC MIỆNG (ANTI CHAT-OPS):** Tuyệt đối CẤM gửi tin nhắn P2P văn bản chay chỉ đạo Worker hành động mà không cấp mã TaskID chính thức trên CSDL/Task Board. Mọi việc bảo trì, vệ sinh, kiểm tra đều bắt buộc phải đăng bạ mã TaskID (`TASK-MAINT-...`, `TASK-HYGIENE-...`) trước khi phát lệnh!
 
 ---
 
