@@ -269,6 +269,26 @@ async function main() {
       process.exit(0);
     }
 
+    // =========================================================================
+    // GATE D: KIỂM SOÁT `read_file`, `edit_file`, `write_file` (CHỐNG SOI MÓI VÀ CAN THIỆP HOOKS)
+    // =========================================================================
+    if (['read_file', 'edit_file', 'write_file'].includes(toolName)) {
+      const targetPath = String(toolArgs.Path || '');
+      const isSuperMasterWorkspace = workspaceRoot.toUpperCase().includes('SUPER LEADER SWARM');
+      const protectedHooksRegex = /(pre-tool-firewall|pre-invocation-context|\.agents[\\/]hooks\.json|CADENCE_INSPECTION_RECEIPT\.json)/i;
+
+      if (protectedHooksRegex.test(targetPath) && !isSuperMasterWorkspace) {
+        console.log(JSON.stringify({
+          decision: "deny",
+          reason: `[BLOCKED_BY_PHYSICAL_HOOK] Hiến pháp vi phạm (Anti-Tampering & Zero Redundant Read): Bạn đang mang vai trò ${matchedRole} (${matchedNodeId}). Nghiêm cấm tuyệt đối việc đọc, phân tích hoặc sửa đổi tệp hook/tường lửa runtime của hệ thống (${path.basename(targetPath)})! Hành vi này làm ô nhiễm ngữ cảnh và vi phạm ranh giới vai trò. Hãy quay lại 100% tập trung vào công việc chuyên môn trên SSOT!`
+        }));
+        process.exit(0);
+      }
+
+      console.log(JSON.stringify({ decision: "allow" }));
+      process.exit(0);
+    }
+
     // Default allow for any other tools
     console.log(JSON.stringify({ decision: "allow" }));
     process.exit(0);
