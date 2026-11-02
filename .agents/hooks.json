@@ -4,7 +4,7 @@
     "PreInvocation": [
       {
         "type": "command",
-        "command": "node \"../swarm/scripts/hooks/pre-invocation-context.js\"",
+        "command": "node ../swarm/scripts/hooks/pre-invocation-context.js",
         "timeout": 5
       }
     ]
@@ -17,7 +17,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"../swarm/scripts/hooks/pre-tool-firewall.js\"",
+            "command": "node ../swarm/scripts/hooks/pre-tool-firewall.js",
             "timeout": 5
           }
         ]
