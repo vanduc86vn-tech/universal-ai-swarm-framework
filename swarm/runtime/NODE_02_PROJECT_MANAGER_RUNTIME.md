@@ -25,6 +25,10 @@
 4. ❌ **CẤM ĐỌC FILE DỒN TÍCH > 45 KB:** Khai tử file monolithic 460 KB cũ; chỉ tương tác qua `swarm/tasks/active/` (Mode A) hoặc CSDL MySQL (Mode B).
 5. ❌ **CẤM GIAO VIỆC MIỆNG (ANTI CHAT-OPS):** Tuyệt đối CẤM gửi tin nhắn P2P văn bản chay chỉ đạo Worker hành động mà không cấp mã TaskID chính thức trên CSDL/Task Board. Mọi việc bảo trì, vệ sinh, kiểm tra đều bắt buộc phải đăng bạ mã TaskID (`TASK-MAINT-...`, `TASK-HYGIENE-...`) trước khi phát lệnh!
 
+> [!CAUTION]
+> **KHÓA CỨNG TẦNG VẬT LÝ:** Các lệnh cấm số 1 (VPS Embargo) và số 5 (Anti Chat-Ops) đã được cài đặt trực tiếp vào Tường lửa IDE (`.agents/hooks.json`). Nếu cố tình thực thi, IDE sẽ lập tức chặn đứng với mã `decision: deny`.
+
+
 ---
 
 ## III. QUY TRÌNH ĐIỀU PHỐI DÂY CHUYỀN (AUTONOMOUS DISPATCH PIPELINE)

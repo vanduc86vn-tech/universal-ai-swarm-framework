@@ -127,3 +127,32 @@ Tệp Checkpoint được lưu trữ tại `swarm/tasks/checkpoints/CHK-<TASK_ID
 1. **Giải phóng 100% bàn tay Sếp Alex:** Tân Agent tự nhận diện Conversation UUID qua biến môi trường `ANTIGRAVITY_CONVERSATION_ID`, tự kéo checkpoint và tiếp tục thi công. Sếp không cần copy paste hay can thiệp thủ công.
 2. **Tiết kiệm 80% Token & Tránh Lú Lẫn:** Không để context kéo dài vượt trần 50k tokens. Luôn duy trì đội ngũ Worker trong trạng thái nhận thức sắc bén nhất.
 3. **Bảo toàn Tuyệt đối Trạng thái FSM:** Dây chuyền 5 Tầng không bị gián đoạn hay gãy sụp khi có Worker thay máu giữa chừng.
+
+---
+
+## ⚡ VI. CAN THIỆP TẦNG VẬT LÝ QUA LIFECYCLE HOOKS (`hooks.json`)
+
+Để chấm dứt hoàn toàn tình trạng "dặn dò bằng miệng" (Prompt-only constraints) và giải quyết triệt để bệnh mất trí nhớ sau `/compact`, hệ thống can thiệp trực tiếp vào vòng lặp thực thi của **Antigravity IDE** qua `.agents/hooks.json`.
+
+Bản thiết kế này đã xử lý trọn vẹn **4 Điểm mù Kỹ thuật Nguy hiểm**:
+
+### 1. Xử lý Điểm mù Hiệu năng: Local State Only (< 5ms)
+* **Nguyên tắc:** `PreInvocation` chạy đồng bộ và chặn luồng (blocking) ở mọi turn chat của mọi tab.
+* **Giải pháp:** Tuyệt đối **CẤM query MySQL từ xa** trong hook. Script `pre-invocation-context.js` chỉ đọc tệp JSON mỏ neo cục bộ (`COMPACT-<ROLE>.json` hoặc `TASK-xxx.json`) trên ổ SSD máy tính. Thao tác hoàn tất dưới 5ms, triệt tiêu 100% nguy cơ lag hay đơ IDE.
+
+### 2. Xử lý Điểm mù Môi trường Windows: Safe Fallback Tuyệt Đối
+* **Nguyên tắc:** Windows thực thi hook qua `cmd /c`. Đường dẫn có khoảng trắng (`HDD Sản Xuất`) và ký tự Unicode có thể gây crash.
+* **Giải pháp:** Bao bọc đường dẫn trong dấu nháy kép `node "../swarm/scripts/hooks/pre-invocation-context.js"`. Toàn bộ code Node.js được bọc trong khối `try...catch` cấp cao nhất; nếu có lỗi bất ngờ, script mặc định trả về `{}` (cho PreInvocation) hoặc `{"decision": "allow"}` (cho PreToolUse) với mã thoát 0, không bao giờ làm gián đoạn luồng chat.
+
+### 3. Xử lý Điểm mù P2P Signal: Bảng Miễn Trừ Giao Thức (Allowlist Protocols)
+* **Nguyên tắc:** Không dùng regex thô cứng ép buộc mọi tin nhắn đều phải có chữ `TASK-xxx`, tránh làm tê liệt các tín hiệu nội bộ của đàn AI.
+* **Giải pháp:** Thiết lập Bảng Miễn trừ Giao thức (Allowlist Protocols). Cho phép mọi tin nhắn mang cờ:
+  `[SIGNAL: PING]`, `[SIGNAL: HANDOVER]`, `[SIGNAL: WAKEUP]`, `[SIGNAL: COMPACT_DONE]`, `[SIGNAL: HEALTH_CHECK]`, `[SIGNAL: ACK]`, `[ADMIN]`, `[SYSTEM]`, `[P2P_MESH_ACK]`.
+  Chỉ những tin nhắn chỉ đạo công việc thông thường mới bắt buộc phải chứa `TASK-xxx`.
+
+### 4. Xử lý Điểm mù Phân quyền: Tường Lửa Đa Tool (`send_message|run_command`)
+* **Nguyên tắc:** Ngăn chặn Role Creep khi PM tự ý gõ lệnh hạ tầng hoặc dự án con push lên kho Master.
+* **Giải pháp:** Mở rộng hook `PreToolUse` bắt cả `run_command`:
+  - Nếu Role là PM mà gõ lệnh `ssh`, `scp`, `rsync`, `pm2`, `systemctl`, `docker`: Hook lập tức chặn đứng với mã `{"decision": "deny"}`.
+  - Nếu tác tử dự án con cố tình `git push` lên `swarm-master-ai` hoặc `universal-ai-swarm-framework`: Hook lập tức chặn đứng để bảo vệ chủ quyền kho Master.
+

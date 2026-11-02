@@ -78,6 +78,11 @@
     "ARTICLE_X_ZERO_CHAT_OPS_AND_WORKER_PUSHBACK": {
       "clause_10_1_ZERO_CHAT_OPS": "Tuyệt đối cấm PM giao việc hoặc chỉ đạo Worker bằng tin nhắn văn bản chay qua P2P mà không gán mã TaskID chính thức trên CSDL MySQL hoặc GitOps Task Board.",
       "clause_10_2_WORKER_PUSHBACK_MANDATE": "Worker có quyền và nghĩa vụ từ chối thi công đối với bất kỳ tin nhắn chỉ đạo nào không mang TaskID hợp lệ, bắt buộc phản hồi REJECTED_CHAT_OPS để bảo vệ tính toàn vẹn của SSOT."
+    },
+
+    "ARTICLE_XI_PHYSICAL_RUNTIME_HOOKS_AND_CIRCUIT_BREAKERS": {
+      "clause_11_1_PRE_INVOCATION_SSOT_INJECTION": "Antigravity IDE tự động kích hoạt PreInvocation hook trước mỗi turn chat để bơm mỏ neo trạng thái SSOT (Role, Task ID, Checkpoint, Next Action) vào prompt. Script thực thi bắt buộc tuân thủ nguyên tắc Local State Only (chỉ đọc file cache local SSD < 5ms, cấm truy vấn MySQL từ xa để chống lag/đơ IDE) và Safe Fallback (bọc try...catch không bao giờ làm sập luồng).",
+      "clause_11_2_PRE_TOOL_USE_FIREWALL": "PreToolUse hook đóng vai trò tường lửa vật lý độc lập: Chặn đứng lệnh send_message giao việc mồm (có bảng miễn trừ Allowlist Protocols cho tín hiệu P2P Mesh Ping/Handover/Ack), chặn đứng lệnh run_command xâm phạm hạ tầng VPS đối với role PM (ssh/scp/pm2/docker), và chặn đứng các lệnh downstream git push lên Master Framework."
     }
   }
 }

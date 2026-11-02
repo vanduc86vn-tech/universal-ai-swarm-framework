@@ -1,0 +1,27 @@
+{
+  "ssot-state-injector": {
+    "enabled": true,
+    "PreInvocation": [
+      {
+        "type": "command",
+        "command": "node \"../swarm/scripts/hooks/pre-invocation-context.js\"",
+        "timeout": 5
+      }
+    ]
+  },
+  "physical-firewall": {
+    "enabled": true,
+    "PreToolUse": [
+      {
+        "matcher": "send_message|run_command",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"../swarm/scripts/hooks/pre-tool-firewall.js\"",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}

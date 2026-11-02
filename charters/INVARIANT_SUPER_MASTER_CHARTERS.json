@@ -93,6 +93,11 @@
       "charter_id": "CHARTER_18_ZERO_CHAT_OPS_AND_MANDATORY_SSOT_TASK_BINDING",
       "title": "Hiến Chương Cấm Giao Việc Miệng Ngoài Luồng & Bắt Buộc Gán Mã Task ID",
       "invariant": "Nghiêm cấm PM gửi tin nhắn P2P chỉ đạo Worker hành động nếu tin nhắn không chứa mã TaskID hợp lệ đã được đăng bạ trên CSDL MySQL hoặc tệp task phân rã GitOps. Mọi hoạt động dù là bảo trì (MAINT), vệ sinh (HYGIENE) hay lập trình đều phải có Task ID để giám sát và kiểm toán. Worker có quyền và nghĩa vụ từ chối thi công (Worker Pushback Right) đối với mọi chỉ đạo bằng văn bản miệng không có Task ID."
+    },
+    {
+      "charter_id": "CHARTER_19_PHYSICAL_RUNTIME_HOOKS_AND_CIRCUIT_BREAKERS",
+      "title": "Hiến Chương Can Thiệp Tầng Vật Lý & Cầu Dao Chặn Vi Phạm Độc Lập",
+      "invariant": "Toàn bộ Workspace Swarm bắt buộc thiết lập cơ chế can thiệp tầng vật lý qua .agents/hooks.json của Antigravity IDE. (1) PreInvocation Hook chạy đồng bộ trước mỗi turn chat để bơm trực tiếp trạng thái SSOT (Role, Task ID, Checkpoint, Next Action) vào đầu ngữ cảnh của Model nhằm triệt tiêu vĩnh viễn bệnh mất trí nhớ sau /compact, tuân thủ nghiêm ngặt nguyên tắc Local State Only (chỉ đọc file cache local trên SSD < 5ms, cấm truy vấn MySQL từ xa để chống đóng băng IDE) và Safe Fallback (bọc try...catch không bao giờ làm sập luồng). (2) PreToolUse Hook đóng vai trò Tường Lửa Vật Lý (Circuit Breaker) chặn đứng tức thì lệnh send_message giao việc mồm (có bảng miễn trừ Allowlist Protocols cho tín hiệu Swarm Mesh/Ping/Handover), chặn đứng PM gọi lệnh can thiệp hạ tầng VPS (ssh/scp/pm2/systemctl), và chặn đứng dự án con git push lên Master Framework."
     }
   ]
 }

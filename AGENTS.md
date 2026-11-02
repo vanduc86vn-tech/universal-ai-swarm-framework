@@ -70,3 +70,20 @@
 2. **QUYỀN KHÁNG MỆNH LỆNH CỦA WORKER (WORKER PUSHBACK RIGHT):**
    - Worker nhận tin nhắn chỉ đạo văn bản chay KHÔNG CÓ `task_id` BẮT BUỘC PHẢI TỪ CHỐI THI CÔNG và phản hồi:
      *"[REJECTED_CHAT_OPS] Theo Hiến pháp Swarm, lệnh này không có TaskID hợp lệ trên SSOT. Đề nghị PM tạo Task ID chính thức trên hệ thống trước khi điều phối!"*
+
+---
+
+## IX. CAN THIỆP TẦNG VẬT LÝ RUNTIME (PHYSICAL LIFECYCLE HOOKS)
+1. **CHỐT CHẶN VẬT LÝ TRƯỚC MỖI TURN CHAT (`PreInvocation` Hook):**
+   - Vòng lặp thực thi của Antigravity IDE tự động gọi hook vật lý `.agents/hooks.json` trước mỗi turn chat.
+   - Script `pre-invocation-context.js` bắt buộc thực thi theo nguyên tắc:
+     - **Local State Only:** Chỉ đọc từ tệp mỏ neo/checkpoint cục bộ trên SSD (< 5ms), tuyệt đối CẤM truy vấn MySQL từ xa qua mạng để bảo vệ độ mượt và chống treo đóng băng IDE.
+     - **Safe Fallback:** Bọc khối an toàn `try...catch` ở cấp cao nhất. Mọi lỗi nội bộ phải trả về `{}` để không làm gián đoạn luồng chat của người dùng.
+     - **Bơm Trạng Thái Tự Động:** Bơm trực tiếp vai trò hiến định, Task ID đang active và bước kế tiếp bắt buộc vào đầu turn chat để triệt tiêu vĩnh viễn bệnh mất trí nhớ sau `/compact`.
+2. **TƯỜNG LỬA CHỐNG CHAT-OPS VÀ ROLE CREEP (`PreToolUse` Hook):**
+   - Chặn đứng ở cấp độ IDE các hành vi vi phạm trước khi tool kịp chạy:
+     - **Anti Chat-Ops trên `send_message`:** Chặn đứng các tin nhắn giao việc mồm không chứa mã `TASK-xxx` hợp lệ. Cho phép đi qua nếu tin nhắn thuộc Danh mục Miễn trừ Giao thức (Allowlist Protocols: `[SIGNAL: ...]`, `[ADMIN]`, `[SYSTEM]`, `[ACK]`, `[PING]`, `[PONG]`, `[WAKEUP]`, `[HANDOVER]`, `[COMPACT_DONE]`, `[HEALTH_CHECK]`).
+     - **Zero Role Creep trên `run_command`:** Nếu role là PM, chặn cứng ngay lập tức mọi lệnh can thiệp hạ tầng VPS (`ssh`, `scp`, `rsync`, `pm2`, `systemctl`, `docker`).
+     - **Upstream Sovereignty Lock trên `run_command`:** Chặn đứng mọi tác tử dự án con cố tình `git push` lên kho Master Framework (`swarm-master-ai` và `universal-ai-swarm-framework`).
+     - **Safe Fallback:** Nếu hook gặp sự cố không xác định, mặc định trả về `{"decision": "allow"}` để tránh nghẽn luồng làm việc của hệ thống.
+
