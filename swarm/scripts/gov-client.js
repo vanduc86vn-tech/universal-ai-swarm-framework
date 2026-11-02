@@ -568,6 +568,59 @@ function handleCompactSelf(target, nextAction) {
   }, null, 2));
 }
 
+/**
+ * Command: compact-status
+ * Inspects all nodes in the registry and reports their compact/anchor readiness.
+ * Prevents premature task sign-off and paperwork fallacy.
+ */
+function handleCompactStatus() {
+  const registry = loadRegistry();
+  const nodes = registry.nodes || {};
+  const statusReport = [];
+  let preparedCount = 0;
+  const totalCount = Object.keys(nodes).length;
+
+  for (const [nodeId, data] of Object.entries(nodes)) {
+    const compactFile = path.join(CHECKPOINTS_DIR, `COMPACT-${nodeId}.json`);
+    const hasSnapshot = fs.existsSync(compactFile);
+    let snapshotInfo = null;
+
+    if (hasSnapshot) {
+      preparedCount++;
+      try {
+        const parsed = JSON.parse(fs.readFileSync(compactFile, 'utf8'));
+        snapshotInfo = {
+          saved_at: parsed.timestamp,
+          next_action: parsed.next_action,
+          has_uuid: !!data.conversation_uuid
+        };
+      } catch (e) {
+        snapshotInfo = { error: 'Corrupt snapshot' };
+      }
+    }
+
+    statusReport.push({
+      node_id: nodeId,
+      role: data.role,
+      tab: data.tab_index,
+      has_uuid: !!data.conversation_uuid,
+      compact_anchor_status: hasSnapshot ? 'ANCHOR_PREPARED (READY_FOR_COMPACT)' : 'NOT_PREPARED (STALE_CONTEXT)',
+      snapshot: snapshotInfo
+    });
+  }
+
+  const result = {
+    timestamp: new Date().toISOString(),
+    total_nodes: totalCount,
+    anchors_prepared: preparedCount,
+    readiness_percentage: `${Math.round((preparedCount / (totalCount || 1)) * 100)}%`,
+    all_ready_for_compact: preparedCount === totalCount,
+    node_matrix: statusReport
+  };
+
+  console.log(JSON.stringify(result, null, 2));
+}
+
 // CLI Dispatcher
 const [,, command, ...args] = process.argv;
 
@@ -587,6 +640,9 @@ switch (command) {
   case 'compact-self':
     handleCompactSelf(args[0], args[1]);
     break;
+  case 'compact-status':
+    handleCompactStatus();
+    break;
   case 'list-nodes':
     handleListNodes();
     break;
@@ -605,6 +661,7 @@ Usage:
   node gov-client.js checkpoint <create|read|clear|list>    - Zero-downtime task checkpoint management
   node gov-client.js trigger-succession <ROLE> [REASON]     - Initiate succession protocol
   node gov-client.js compact-self <ROLE> [NEXT_ACTION]      - Create in-place compact snapshot before /compact
+  node gov-client.js compact-status                         - Audit compact anchor status across all nodes
   node gov-client.js list-nodes                            - List all nodes and tab mappings
   node gov-client.js get-task [ROLE]                       - Fetch active task for role
   node gov-client.js health-check                          - Verify directory hygiene & status
