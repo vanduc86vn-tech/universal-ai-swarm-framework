@@ -133,16 +133,21 @@ function migrateMonolith(customPath) {
   let taskList = [];
   if (Array.isArray(rawData)) {
     taskList = rawData;
-  } else if (Array.isArray(rawData.tasks)) {
-    taskList = rawData.tasks;
-  } else if (Array.isArray(rawData.items)) {
-    taskList = rawData.items;
-  } else if (typeof rawData === 'object') {
-    // Có thể là object dạng { "TASK-001": {...}, "TASK-002": {...} }
-    for (const [k, v] of Object.entries(rawData)) {
-      if (v && typeof v === 'object' && (v.task_id || v.title || v.status)) {
-        if (!v.task_id) v.task_id = k;
-        taskList.push(v);
+  } else if (typeof rawData === 'object' && rawData !== null) {
+    // Thu thập từ mọi mảng tiềm năng: tasks, completed_tasks, archived_tasks, history, items
+    if (Array.isArray(rawData.tasks)) taskList.push(...rawData.tasks);
+    if (Array.isArray(rawData.completed_tasks)) taskList.push(...rawData.completed_tasks);
+    if (Array.isArray(rawData.archived_tasks)) taskList.push(...rawData.archived_tasks);
+    if (Array.isArray(rawData.history)) taskList.push(...rawData.history);
+    if (Array.isArray(rawData.items)) taskList.push(...rawData.items);
+
+    // Nếu vẫn rỗng, duyệt qua các key object
+    if (taskList.length === 0) {
+      for (const [k, v] of Object.entries(rawData)) {
+        if (v && typeof v === 'object' && (v.task_id || v.title || v.status)) {
+          if (!v.task_id) v.task_id = k;
+          taskList.push(v);
+        }
       }
     }
   }
