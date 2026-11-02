@@ -87,3 +87,16 @@
      - **Upstream Sovereignty Lock trên `run_command`:** Chặn đứng mọi tác tử dự án con cố tình `git push` lên kho Master Framework (`swarm-master-ai` và `universal-ai-swarm-framework`).
      - **Safe Fallback:** Nếu hook gặp sự cố không xác định, mặc định trả về `{"decision": "allow"}` để tránh nghẽn luồng làm việc của hệ thống.
 
+---
+
+## X. GIAO THỨC NHỊP TIM CHIẾN LƯỢC TỰ CHỦ & NGUYÊN TẮC IM LẶNG TUYỆT ĐỐI (ZERO-NOISE CADENCE)
+1. **THẨM QUYỀN ĐỘC QUYỀN CỦA LEAD (`NODE_01`):**
+   - Chỉ có LEAD_ARCHITECT_AND_BA (`NODE_01`) mới được phép sử dụng công cụ bản địa `schedule` để thiết lập Cron Daemon định kỳ (khuyến nghị `*/15 * * * *` hoặc `*/30 * * * *`) nhằm thực thi nhiệm vụ tuần tra CSDL SSOT tự chủ.
+   - Toàn bộ Worker chuyên môn (`NODE_03` đến `NODE_06`) TUYỆT ĐỐI BỊ CẤM gọi `schedule` chạy cron daemon.
+2. **NGUYÊN TẮC IM LẶNG TUYỆT ĐỐI (ZERO-NOISE INVARIANT - "NO NEWS IS GOOD NEWS"):**
+   - Khi đồng hồ nhịp tim đánh thức Lead mỗi 15 phút, Lead chạy script tuần tra nhị phân (`patrol`).
+   - Nếu toàn bộ các chỉ số SLA đều xanh (không có task nghẽn, không có worker bị đói, không có fraud), Lead BẮT BUỘC KẾT THÚC TURN TRONG IM LẶNG (0 token, 0 tin nhắn chat). TUYỆT ĐỐI CẤM xuất tin nhắn chat suông thông báo "Em vừa quét xong, mọi thứ bình thường" làm phiền và spam màn hình của Sếp Alex.
+3. **BẬC THANG CẢNH BÁO & LỆNH CẤM VƯỢT QUYỀN:**
+   - Khi phát hiện vi phạm SLA (Task kẹt > 60m, Worker đói việc, thiếu evidence), Lead CHỈ ĐƯỢC PHÉP gửi tín hiệu `[SIGNAL: CADENCE_ALARM]` kèm Task ID tới PM (`NODE_02`) qua Fast-Path P2P để PM điều phối.
+   - Tuyệt đối CẤM Lead lợi dụng phiên thức giấc của nhịp tim để can thiệp hoặc nhắn tin trực tiếp xuống Worker.
+

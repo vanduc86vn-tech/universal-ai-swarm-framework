@@ -199,6 +199,23 @@ async function main() {
       process.exit(0);
     }
 
+    // =========================================================================
+    // GATE C: KIỂM SOÁT `schedule` (ĐỘC QUYỀN CADENCE CỦA LEAD/PM, CẤM WORKER)
+    // =========================================================================
+    if (toolName === 'schedule') {
+      const isDaemon = toolArgs.IsDaemon === true;
+      const cronExpr = toolArgs.CronExpression || '';
+      if (!isLead && !isPM && (isDaemon || cronExpr)) {
+        console.log(JSON.stringify({
+          decision: "deny",
+          reason: `[BLOCKED_BY_PHYSICAL_HOOK] Hiến pháp vi phạm (Worker Cadence Prohibition): Bạn là ${matchedRole} (${matchedNodeId}). Worker chỉ vận hành theo cơ chế Reactive Wakeup từ PM (0% CPU Ngủ Đông), tuyệt đối CẤM thiết lập daemon cron tự chủ gây lãng phí tài nguyên hệ thống!`
+        }));
+        process.exit(0);
+      }
+      console.log(JSON.stringify({ decision: "allow" }));
+      process.exit(0);
+    }
+
     // Default allow for any other tools
     console.log(JSON.stringify({ decision: "allow" }));
     process.exit(0);

@@ -98,6 +98,11 @@
       "charter_id": "CHARTER_19_PHYSICAL_RUNTIME_HOOKS_AND_CIRCUIT_BREAKERS",
       "title": "Hiến Chương Can Thiệp Tầng Vật Lý & Cầu Dao Chặn Vi Phạm Độc Lập",
       "invariant": "Toàn bộ Workspace Swarm bắt buộc thiết lập cơ chế can thiệp tầng vật lý qua .agents/hooks.json của Antigravity IDE. (1) PreInvocation Hook chạy đồng bộ trước mỗi turn chat để bơm trực tiếp trạng thái SSOT (Role, Task ID, Checkpoint, Next Action) vào đầu ngữ cảnh của Model nhằm triệt tiêu vĩnh viễn bệnh mất trí nhớ sau /compact, tuân thủ nghiêm ngặt nguyên tắc Local State Only (chỉ đọc file cache local trên SSD < 5ms, cấm truy vấn MySQL từ xa để chống đóng băng IDE) và Safe Fallback (bọc try...catch không bao giờ làm sập luồng). (2) PreToolUse Hook đóng vai trò Tường Lửa Vật Lý (Circuit Breaker) chặn đứng tức thì lệnh send_message giao việc mồm (có bảng miễn trừ Allowlist Protocols cho tín hiệu Swarm Mesh/Ping/Handover), chặn đứng PM gọi lệnh can thiệp hạ tầng VPS (ssh/scp/pm2/systemctl), và chặn đứng dự án con git push lên Master Framework."
+    },
+    {
+      "charter_id": "CHARTER_20_AUTONOMOUS_STRATEGIC_CADENCE_AND_ZERO_NOISE_INVARIANT",
+      "title": "Hiến Chương Nhịp Tim Chiến Lược Tự Chủ & Rào Chặn Chống Spam (Zero-Noise Invariant)",
+      "invariant": "Cơ chế thiết lập đồng hồ nhịp tim tự chủ (schedule cron daemon) độc quyền thuộc thẩm quyền của LEAD_ARCHITECT_AND_BA (NODE_01) để thực thi tuần tra giám sát CSDL SSOT định kỳ (15-30 phút). Khóa cứng 3 Rào Chặn Vật Lý: (1) Nguyên tắc Im Lặng Tuyệt Đối (Zero-Noise Invariant): Nếu kết quả tuần tra nhị phân đạt chuẩn SLA (không có task nghẽn, không có worker đói, không có fraud), Lead bắt buộc rơi về ngủ đông trong im lặng, tuyệt đối CẤM chat suông spam Sếp Alex ('No News is Good News'); (2) Bậc Thang Cảnh Báo Nghiêm Ngặt: Khi phát hiện vi phạm SLA, Lead chỉ được phép bắn [SIGNAL: CADENCE_ALARM] cho PM (NODE_02), tuyệt đối CẤM vượt mặt PM chỉ đạo trực tiếp Worker; (3) Lệnh Cấm Cron Đối Với Worker: Toàn bộ Worker chuyên môn bị cấm gọi schedule thiết lập daemon cron tự chủ, duy trì tuyệt đối trạng thái Ngủ Đông 0% CPU và chỉ thức giấc theo Reactive Wakeup từ PM."
     }
   ]
 }

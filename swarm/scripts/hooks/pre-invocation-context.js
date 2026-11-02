@@ -100,6 +100,7 @@ async function main() {
     const roleName = matchedNode.role || 'UNKNOWN_ROLE';
     const normRole = normalizeRole(roleName);
     const normNode = normalizeRole(matchedNodeId);
+    const isLead = (normRole === 'LEADARCHITECTANDBA' || normRole === 'LEAD' || normNode === 'NODE01');
 
     // 2. Load Role Boundary Matrix (No-LLM Hardware Deterministic Anchor)
     const matrixPath = path.join(__dirname, 'role-boundary-matrix.json');
@@ -170,8 +171,24 @@ async function main() {
       lines.push(`• Ranh giới bất biến: ${roleDef.mandate}`);
       lines.push(`• Lệnh cấm tuyệt đối: ${roleDef.prohibitions}`);
       lines.push(`• Kỷ luật điều phối: ${roleDef.coordination_rule}`);
+      if (roleDef.cadence_policy) {
+        lines.push(`• Chính sách Cadence: ${roleDef.cadence_policy}`);
+      }
     } else {
       lines.push(`• Mô tả vai trò: ${matchedNode.description || 'Theo quy định trong AI_SWARM_REGISTRY.json'}`);
+    }
+
+    // 5.1. Detect Cadence Watchdog Tick
+    const lastInput = String(payload.lastUserInput || '');
+    const isCadenceTick = /CADENCE|AUTONOMOUS_CADENCE_TICK|tuần tra chiến lược/i.test(lastInput);
+
+    if (isCadenceTick && isLead) {
+      lines.push(`⏰ [CHẾ ĐỘ TUẦN TRA CHIẾN LƯỢC TỰ CHỦ (CADENCE WATCHDOG)]`);
+      lines.push(`• Bạn vừa được đánh thức bởi đồng hồ nhịp tim tự chủ (Cron Schedule).`);
+      lines.push(`• NGUYÊN TẮC IM LẶNG TUYỆT ĐỐI (ZERO-NOISE INVARIANT):`);
+      lines.push(`  - Quét CSDL SSOT kiểm tra 3 chỉ số SLA (Task nghẽn > 60m, Worker đói việc, Task thiếu QA proof).`);
+      lines.push(`  - NẾU MỌI THỨ BÌNH THƯỜNG: Bắt buộc KẾT THÚC TURN TRONG IM LẶNG, KHÔNG XUẤT VĂN BẢN CHAT VỚI SẾP! ('No News is Good News').`);
+      lines.push(`  - NẾU CÓ VI PHẠM: Chỉ gửi [SIGNAL: CADENCE_ALARM] cho PM (NODE_02). Tuyệt đối CẤM vượt mặt PM nhắn tin cho Worker!`);
     }
 
     if (checkpointData) {
