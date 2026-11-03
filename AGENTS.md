@@ -111,4 +111,23 @@
    - Hook `PreInvocation` tự động nạp mã Nonce và số liệu thật vào ngữ cảnh trong $< 2\text{ms}$.
    - Hook `PreToolUse` bắt buộc kiểm tra mã Nonce khi Lead gửi `[SIGNAL: CADENCE_ALARM]`. Nonce bị tiêu hủy (Burn) ngay sau khi gửi thành công; mọi hành vi dùng lại Nonce cũ (Replay Attack) hoặc báo động không có Nonce đều bị IDE chặn đứng tức thì.
 
+---
+
+## XII. HIẾN CHƯƠNG CHỦ QUYỀN VÀ HỢP ĐỒNG TÁC CHIẾN LIÊN DỰ ÁN (CROSS-PROJECT FEDERATED SOVEREIGNTY)
+1. **LỆNH CẤM XÂM LƯỢC ĐĨA VẬT LÝ (ZERO CROSS-DISK POISONING):**
+   - Mỗi dự án Swarm là một thực thể có chủ quyền độc lập. TUYỆT ĐỐI CẤM mọi Agent hoặc Script của Dự án X sử dụng I/O đĩa cục bộ (`fs.writeFileSync`, copy, bash) can thiệp hoặc ghi đè file vào thư mục/workspace của Dự án Y.
+   - Mọi giao dịch liên dự án bắt buộc phải đi qua Kênh Giao Tiếp Trung Lập Phi Xâm Lấn:
+     - Kênh Mã Nguồn & Artifacts: **Git Remote chính thức (GitHub/GitLab)** thông qua Branches / Pull Requests.
+     - Kênh Trạng Thái & Hợp Đồng: **Zero-Trust REST API Gateway** hoặc **Shared RFC Mailbox**.
+2. **MA TRẬN HỢP ĐỒNG 3 CHẾ ĐỘ (THE 3-MATRIX FEDERATED TOPOLOGIES):**
+   - **Mode A ⟷ Mode A (GitOps ⟷ GitOps):** Trao đổi qua Git Remote Release Branches/PRs và Shared RFC Mailbox (`swarm/mailbox/`). Không bên nào can thiệp đĩa bên nào.
+   - **Mode A ⟷ Mode B (GitOps ⟷ Enterprise DB):** Bên Mode B mở Zero-Trust REST API Gateway; Bên Mode A dùng Federated Daemon kéo task về tự chuyển hóa thành Partitioned Task nội bộ (`swarm/tasks/active/TASK-xxx.json`), thi công xong nộp bằng chứng nhị phân (`ProofUrl`, `ProofHash`, `Verdict`) qua API để Mode B nghiệm thu.
+   - **Mode B ⟷ Mode B (Enterprise DB ⟷ Enterprise DB):** Trao đổi qua Inter-Service Webhook có chữ ký số HMAC-SHA256 và Two-Phase ACK; tuyệt đối cấm kết nối chuỗi JDBC/MySQL xuyên CSDL.
+3. **VÒNG ĐỜI HỢP ĐỒNG 5 BƯỚC & NGUYÊN TẮC CHỐNG TREO TASK (ANTI-HANG GUARANTEES):**
+   - Mọi tác vụ liên dự án bắt buộc tuân thủ FSM 5 bước: `REQUEST_INITIATED` $\to$ `HANDSHAKE_ACK` (bắt buộc trong 15 phút) $\to$ `IN_PROGRESS` $\to$ `DELIVERY_SUBMITTED` $\to$ `CONSENSUS_COMPLETED`.
+   - Nếu quá SLA 30 phút mà không có cập nhật tiến độ, FSM tự động ngắt mạch (Circuit Breaker) chuyển sang `BLOCKED_SUSPENDED`.
+4. **NGUYÊN TẮC 'BẤT ĐỒNG THUẬN = ROLLBACK TỨC THÌ' & TRỌNG TÀI SẾP ALEX:**
+   - Khi phát hiện lỗi build, migration xung đột hoặc bất đồng dữ liệu, Bên Cung Ứng (Provider) bắt buộc Rollback Git về commit an toàn ngay lập tức để giữ Production sống (0-downtime), đồng thời nộp error log nhị phân để Sếp Alex ra quyết định phân xử dứt điểm; cấm tuyệt đối việc tự ý vá nóng chắp vá trên Production.
+
+
 
