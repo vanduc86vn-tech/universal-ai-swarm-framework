@@ -129,5 +129,17 @@
 4. **NGUYÊN TẮC 'BẤT ĐỒNG THUẬN = ROLLBACK TỨC THÌ' & TRỌNG TÀI SẾP ALEX:**
    - Khi phát hiện lỗi build, migration xung đột hoặc bất đồng dữ liệu, Bên Cung Ứng (Provider) bắt buộc Rollback Git về commit an toàn ngay lập tức để giữ Production sống (0-downtime), đồng thời nộp error log nhị phân để Sếp Alex ra quyết định phân xử dứt điểm; cấm tuyệt đối việc tự ý vá nóng chắp vá trên Production.
 
+---
 
+## XIII. QUY CHUẨN CHỐNG BÁO CÁO ẢO GIÁC NHỊP TIM & BẮT BUỘC NHỊP ĐẬP TỰ CHỦ CHO MODE A (ZERO HUMAN-AS-MESSENGER)
+1. **LỆNH CẤM BÁO CÁO MÀU HỒNG VỀ TRẠNG THÁI (ZERO-VANITY ALIVE INVARIANT):**
+   - Tuyệt đối CẤM Agent tuyên bố "Em thức 100%", "Worker trực chiến 15s sẵn sàng" nếu không có tệp dấu vết nhị phân `swarm/locks/<ROLE>.heartbeat` hoặc `.pid` ghi nhận timestamp trong vòng 60 giây qua Tool Call thật.
+   - Mọi báo cáo cảm tính, tự khen, hoặc hứa hẹn suông ("chúng em xin hứa...", "tuyệt đối không khoác lác...") mà không trích xuất thời gian nhịp tim thật từ hệ điều hành đều bị coi là Vi phạm Hiến pháp cấp P0.
+2. **BẮT BUỘC NHỊP TIM ĐỊNH KỲ CHO DỰ ÁN GITOPS (MANDATORY MODE A CADENCE):**
+   - Tại các dự án phân phối việc qua Git (Mode A), Tab Lead (`NODE_01`) hoặc tiến trình giám sát nền bắt buộc phải duy trì vòng lặp tự động (Native `schedule` cron hoặc daemon `dynamic-cadence-watcher.cjs --daemon`) với tần suất không quá 15 phút.
+   - Tuyệt đối CẤM để Tab dự án ngủ đông liên tục hàng giờ liền dẫn đến tắc nghẽn luồng điều phối liên dự án.
+3. **TRIỆT TIÊU HIỆN TƯỢNG BIẾN SẾP THÀNH BƯU TÁ (ZERO HUMAN-AS-MESSENGER ANTI-PATTERN):**
+   - Hai dự án Swarm khác nhau (ví dụ: Mode A và Mode B) bắt buộc phải giao tiếp thông suốt thông qua Cầu Nối Liên Dự Án (`federated-bridge.cjs`).
+   - Cấm triệt để tình trạng hai bên ngồi trong hai tab chat riêng biệt cãi nhau, đổ lỗi cho nhau và biến Sếp Alex thành người chụp màn hình đưa tin trung gian.
+   - Mọi tiến độ thi công, bàn giao, biên lai kiểm toán phải được bắn thẳng vào API Gateway `/partner-submit` của Mode B kèm mã băm SHA256 và bằng chứng nhị phân để tự động đổi trạng thái task trên CSDL SSOT.
 
