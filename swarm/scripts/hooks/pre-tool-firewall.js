@@ -273,6 +273,22 @@ async function main() {
     // GATE D: KIỂM SOÁT `read_file`, `edit_file`, `write_file` (CHỐNG SOI MÓI VÀ CAN THIỆP HOOKS)
     // =========================================================================
     if (['read_file', 'edit_file', 'write_file'].includes(toolName)) {
+      // 2.1. CHẶN TẠO FILE TASK MỒM / NGOÀI LUỒNG
+      if (['edit_file', 'write_file'].includes(toolName)) {
+        const targetPath = String(toolArgs.Path || '');
+        const baseName = path.basename(targetPath);
+        const isSuperMasterWorkspace = workspaceRoot.toUpperCase().includes('SUPER LEADER SWARM');
+        const adHocTaskFilesRegex = /^(\.?TODO|TASK_TODO|PENDING_TASKS|TASK_LIST|TASKS)\.(md|txt|json)$/i;
+        const isAdHocTasksDir = /[\\/]tasks[\\/](?!active[\\/]|archive[\\/]|checkpoints[\\/])/i.test(targetPath) && /task.*\.md$/i.test(baseName);
+
+        if ((adHocTaskFilesRegex.test(baseName) || isAdHocTasksDir) && !isSuperMasterWorkspace) {
+          console.log(JSON.stringify({
+            decision: "deny",
+            reason: `[BLOCKED_BY_PHYSICAL_HOOK] Hiến pháp vi phạm (Cấm giao task qua file ngoài luồng): Bước đầu tiên là sai thì tất cả đều sai! Mọi công việc phải được tạo và cấp TaskID chính thức trên CSDL MySQL hdd_swarm_governance (qua lệnh 'node swarm/scripts/gov-client.js create-task') hoặc tệp Partitioned chuẩn (swarm/tasks/active/TASK-xxx.json). Tuyệt đối CẤM tự ý tạo file task trôi nổi (${baseName})!`
+          }));
+          process.exit(0);
+        }
+      }
       const targetPath = String(toolArgs.Path || '');
       const isSuperMasterWorkspace = workspaceRoot.toUpperCase().includes('SUPER LEADER SWARM');
       const protectedHooksRegex = /(pre-tool-firewall|pre-invocation-context|\.agents[\\/]hooks\.json|CADENCE_INSPECTION_RECEIPT\.json)/i;

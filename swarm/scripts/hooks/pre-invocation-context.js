@@ -224,6 +224,20 @@ async function main() {
       lines.push(`• Task đang thực hiện: ${activeTask.task_id || activeTask.id || 'N/A'} - ${activeTask.title || activeTask.name || ''} (${activeTask.status || 'IN_PROGRESS'})`);
     }
 
+    
+    // 5.2. Mandatory MySQL Task Binding Injection (PM & Lead Physical Anchor)
+    if (normRole === 'PROJECTMANAGER' || normNode === 'NODE02') {
+      lines.push(`🛑 [LỆNH CẤM NHẬN VIỆC MỒM - ZERO CHAT-OPS & NO TASK NO WORK]`);
+      lines.push(`• BƯỚC ĐẦU TIÊN LÀ SAI THÌ TẤT CẢ ĐỀU SAI: Bạn là PM. Bạn chỉ được phép nhận việc khi Task đã được đăng bạ chính thức trên CSDL MySQL (hdd_swarm_governance).`);
+      lines.push(`• KHÔNG THẤY TASK = KHÔNG NHẬN VIỆC = KHÔNG ĐIỀU PHỐI WORKER!`);
+      lines.push(`• Nếu Trợ lý/Lead gửi tin nhắn chat mồm, tạo file task ngoài luồng, bạn BẮT BUỘC TỪ CHỐI THI CÔNG NGAY với cú pháp: [REJECTED_CHAT_OPS] Lệnh này chưa có TaskID hợp lệ trên CSDL MySQL!`);
+    }
+    if (isLead) {
+      lines.push(`🛑 [LỆNH CẤM GIAO VIỆC MỒM & TẠO FILE TASK LẬU]`);
+      lines.push(`• Bạn là Trợ lý / Lead. Tuyệt đối CẤM giao việc bằng mồm qua send_message hoặc tạo file markdown ngoài luồng.`);
+      lines.push(`• BƯỚC ĐẦU TIÊN BẮT BUỘC: Chạy lệnh 'node swarm/scripts/gov-client.js create-task ...' để tạo Task ID trên CSDL MySQL trước khi gửi tín hiệu cho PM!`);
+    }
+
     lines.push(`• KỶ LUẬT THỰC THI: Tuyệt đối tuân thủ ranh giới vai trò. Nghiêm cấm Chat-Ops mồm. CẤM đọc hay phân tích mã nguồn hook/firewall!`);
 
     const ephemeralMessage = lines.join('\n');

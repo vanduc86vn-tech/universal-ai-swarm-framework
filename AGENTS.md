@@ -143,3 +143,16 @@
    - Cấm triệt để tình trạng hai bên ngồi trong hai tab chat riêng biệt cãi nhau, đổ lỗi cho nhau và biến Sếp Alex thành người chụp màn hình đưa tin trung gian.
    - Mọi tiến độ thi công, bàn giao, biên lai kiểm toán phải được bắn thẳng vào API Gateway `/partner-submit` của Mode B kèm mã băm SHA256 và bằng chứng nhị phân để tự động đổi trạng thái task trên CSDL SSOT.
 
+---
+
+## XIV. KHÓA CỨNG GIAO VIỆC QUA MYSQL SSOT & QUYỀN KHÁNG MỆNH LỆNH CỦA PM (NO TASK NO WORK)
+1. **BƯỚC ĐẦU TIÊN LÀ SAI THÌ TẤT CẢ ĐỀU SAI:**
+   - Mọi công việc trong toàn hệ thống Swarm BẮT BUỘC phải bắt nguồn từ một bản ghi Task chính thức trên CSDL MySQL `hdd_swarm_governance` (Mode B) hoặc Partitioned Task JSON `< 2 KB` (Mode A).
+   - Tuyệt đối CẤM Trợ lý / Lead giao việc bằng tin nhắn mồm, bằng file văn bản tự tạo (`TODO.md`, `PENDING_TASKS.txt`) hoặc qua các kênh ngoài luồng.
+2. **CƠ CHẾ PHẢN VẬT LÝ CỦA PM (PM ZERO-TASK EMBARGO):**
+   - PM (`NODE_02`) thực thi nguyên tắc sắt: **"KHÔNG THẤY TASK TRÊN MYSQL = KHÔNG NHẬN VIỆC = KHÔNG ĐIỀU PHỐI WORKER"**.
+   - Khi nhận được tin nhắn hoặc yêu cầu không chứa Task ID đã đăng bạ trên CSDL, PM bắt buộc phải kích hoạt quyền kháng mệnh lệnh và trả về: `[REJECTED_CHAT_OPS] Theo Hiến pháp, lệnh này chưa được tạo trên CSDL MySQL. Yêu cầu tạo Task ID trước!`.
+3. **CHỐT CHẶN TẦNG VẬT LÝ RUNTIME (HOOKS ENFORCEMENT):**
+   - Hook `PreInvocation` tự động tiêm instruction "NO MYSQL TASK = NO WORK" vào đầu lượt suy luận của PM và Trợ lý.
+   - Hook `PreToolUse` tự động chặn đứng mọi lệnh `send_message` giao việc chay không chứa Task ID hợp lệ và chặn đứng mọi lệnh `write_file`/`edit_file` cố tình tạo file task mồm ngoài luồng.
+
