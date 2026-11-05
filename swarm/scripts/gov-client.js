@@ -624,7 +624,164 @@ function handleCompactStatus() {
 // CLI Dispatcher
 const [,, command, ...args] = process.argv;
 
+
+/**
+ * Command: bootstrap --mode <A|B> --title "<Project Name>" [UUID]
+ * Executed by First Agent during initial project setup.
+ */
+function handleBootstrap(modeArg, titleArg, uuidArg) {
+  let mode = 'A';
+  let title = 'HDD Swarm Project';
+  let uuid = uuidArg || process.env.ANTIGRAVITY_CONVERSATION_ID || '';
+
+  const argsList = process.argv.slice(3);
+  for (let i = 0; i < argsList.length; i++) {
+    if (argsList[i] === '--mode' && argsList[i + 1]) {
+      mode = argsList[i + 1].toUpperCase();
+    }
+    if (argsList[i] === '--title' && argsList[i + 1]) {
+      title = argsList[i + 1];
+    }
+  }
+
+  const selectedMode = mode === 'B' ? 'Mode B (Enterprise SSOT)' : 'Mode A (GitOps)';
+  console.log(`[BOOTSTRAP] Đang khởi tạo Master Framework v3.0 theo ${selectedMode} cho dự án: ${title}...`);
+
+  // Ensure directories exist
+  [ACTIVE_TASKS_DIR, ARCHIVE_TASKS_DIR, CHECKPOINTS_DIR, path.join(ROOT_DIR, 'swarm', 'locks')].forEach(dir => {
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+  });
+
+  // Initialize or update registry
+  let registry = {};
+  if (fs.existsSync(REGISTRY_FILE)) {
+    try { registry = JSON.parse(fs.readFileSync(REGISTRY_FILE, 'utf8')); } catch (e) {}
+  }
+
+  registry.system = 'Antigravity Master Framework v3.0';
+  registry.status = 'INITIALIZED';
+  registry.mode = selectedMode;
+  registry.project_name = title;
+  registry.initialized_at = new Date().toISOString();
+
+  if (!registry.nodes) registry.nodes = {};
+  if (!registry.nodes.NODE_01) {
+    registry.nodes.NODE_01 = { role: "LEAD_ARCHITECT_AND_BA", conversation_uuid: uuid };
+  } else {
+    registry.nodes.NODE_01.conversation_uuid = uuid;
+  }
+
+  fs.writeFileSync(REGISTRY_FILE, JSON.stringify(registry, null, 2), 'utf8');
+
+  // Initialize BOARD_SUMMARY.json
+  if (!fs.existsSync(BOARD_SUMMARY_FILE)) {
+    const summary = {
+      project_name: title,
+      mode: selectedMode,
+      last_updated: new Date().toISOString(),
+      active_tasks_count: 0,
+      completed_tasks_count: 0,
+      active_tasks: []
+    };
+    fs.writeFileSync(BOARD_SUMMARY_FILE, JSON.stringify(summary, null, 2), 'utf8');
+  }
+
+  // Create initial task receipt so stop hook passes cleanly
+  const receiptPath = path.join(ROOT_DIR, 'swarm', 'locks', 'LATEST_TASK_RECEIPT.json');
+  fs.writeFileSync(receiptPath, JSON.stringify({
+    task_id: 'TASK-BOOTSTRAP-INITIALIZED-001',
+    title: 'Khởi tạo thành công Master Framework',
+    worker: 'LEAD_ARCHITECT_AND_BA',
+    timestamp: Date.now()
+  }, null, 2), 'utf8');
+
+  console.log(JSON.stringify({
+    success: true,
+    status: 'SYSTEM_BOOTSTRAPPED',
+    mode: selectedMode,
+    project_name: title,
+    lead_uuid: uuid || 'BOUND_TO_SESSION',
+    active_tasks_directory: ACTIVE_TASKS_DIR,
+    next_step: 'Hệ thống đã sẵn sàng 100%. Sếp có thể bắt đầu giao User Story hoặc bóc tách kế hoạch chiến lược!'
+  }, null, 2));
+}
+
+/**
+ * Command: create-task --title "<Title>" --worker "<Worker>" [--risk <LOW|MED|HIGH>] [--desc "<Description>"]
+ */
+function handleCreateTask() {
+  let title = 'Công việc mới';
+  let worker = 'AI-BACKEND';
+  let risk = 'LOW';
+  let desc = '';
+
+  const argsList = process.argv.slice(3);
+  for (let i = 0; i < argsList.length; i++) {
+    if (argsList[i] === '--title' && argsList[i + 1]) title = argsList[i + 1];
+    if (argsList[i] === '--worker' && argsList[i + 1]) worker = argsList[i + 1];
+    if (argsList[i] === '--risk' && argsList[i + 1]) risk = argsList[i + 1].toUpperCase();
+    if (argsList[i] === '--desc' && argsList[i + 1]) desc = argsList[i + 1];
+  }
+
+  const registry = loadRegistry();
+  const isModeB = registry.mode && registry.mode.includes('Mode B');
+
+  // Generate unique Task ID
+  let nextId = 1;
+  if (fs.existsSync(ACTIVE_TASKS_DIR)) {
+    const existing = fs.readdirSync(ACTIVE_TASKS_DIR).filter(f => f.endsWith('.json'));
+    nextId += existing.length;
+  }
+  const padNum = String(nextId).padStart(3, '0');
+  const taskId = `TASK-${worker.replace(/^AI[-_]/, '').toUpperCase()}-${padNum}`;
+
+  const taskPayload = {
+    task_id: taskId,
+    title: title,
+    description: desc || title,
+    assigned_to: worker,
+    status: 'OPEN',
+    risk_level: risk,
+    created_at: new Date().toISOString()
+  };
+
+  if (!fs.existsSync(ACTIVE_TASKS_DIR)) {
+    fs.mkdirSync(ACTIVE_TASKS_DIR, { recursive: true });
+  }
+
+  // Write partitioned task file
+  const taskFilePath = path.join(ACTIVE_TASKS_DIR, `${taskId}.json`);
+  fs.writeFileSync(taskFilePath, JSON.stringify(taskPayload, null, 2), 'utf8');
+
+  // Update receipt for Stop Hook
+  const locksDir = path.join(ROOT_DIR, 'swarm', 'locks');
+  if (!fs.existsSync(locksDir)) fs.mkdirSync(locksDir, { recursive: true });
+  const receiptPath = path.join(locksDir, 'LATEST_TASK_RECEIPT.json');
+  fs.writeFileSync(receiptPath, JSON.stringify({
+    task_id: taskId,
+    title: title,
+    worker: worker,
+    timestamp: Date.now()
+  }, null, 2), 'utf8');
+
+  console.log(JSON.stringify({
+    success: true,
+    task_id: taskId,
+    file_path: taskFilePath,
+    assigned_to: worker,
+    status: 'OPEN',
+    receipt: 'LATEST_TASK_RECEIPT_ISSUED',
+    message: `[SSOT SUCCESS] Đã tạo thành công ${taskId}. PM có thể bắt đầu điều phối!`
+  }, null, 2));
+}
+
 switch (command) {
+  case 'bootstrap':
+    handleBootstrap();
+    break;
+  case 'create-task':
+    handleCreateTask();
+    break;
   case 'resolve':
     handleResolve(args[0]);
     break;

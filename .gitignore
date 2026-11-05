@@ -1,33 +1,33 @@
-# Dependencies & Package Managers
+# Runtime locks and receipts
+swarm/locks/*.pid
+swarm/locks/*.heartbeat
+swarm/locks/CADENCE_HEARTBEAT.json
+swarm/locks/LATEST_TASK_RECEIPT.json
+swarm/locks/CADENCE_INSPECTION_RECEIPT.json
+
+# Forbidden ad-hoc scratch and backup files
+*.bak*
+*.tmp*
+*.old
+*_bk_*
+TODO.md
+TASK_TODO.md
+PENDING_TASKS.txt
+
+# Node & Python caches
 node_modules/
-vendor/
-venv/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Environment and sensitive keys
 .env
-.env.local
+.env.*.local
+*.pem
+*.key
 
-# Logs, PIDs & Locks
-*.log
-*.pid
-locks/
-*.lock
-
-# Temporary, Scratchpad & Cache
-scratch/
-*.tmp
-*.dump
-.cache/
-.antigravity/cache/
-
-# Monolith Backups & Snapshots
-*.monolith.bak
-*after_refactor.json
-*full_entities*.json
-
-# Chrome CDP & Browser Testing Artifacts
-.chrome-audit-profile/
-chrome-test*
-chrome_debug.log
-
-# OS Metadata
-.DS_Store
-Thumbs.db
+# Antigravity runtime artifacts
+.gemini/

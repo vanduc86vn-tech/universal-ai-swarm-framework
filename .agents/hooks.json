@@ -1,26 +1,36 @@
 {
-  "ssot-state-injector": {
+  "pre-invocation-role-anchor": {
     "enabled": true,
     "PreInvocation": [
       {
         "type": "command",
-        "command": "node ../swarm/scripts/hooks/pre-invocation-context.js",
+        "command": "node .agents/scripts/pre_invocation_anchor.js",
         "timeout": 5
       }
     ]
   },
-  "physical-firewall": {
+  "runtime-physical-firewall": {
     "enabled": true,
     "PreToolUse": [
       {
-        "matcher": "send_message|run_command|schedule",
+        "matcher": "write_file|edit_file|replace_file_content|run_command|send_message",
         "hooks": [
           {
             "type": "command",
-            "command": "node ../swarm/scripts/hooks/pre-tool-firewall.js",
+            "command": "node .agents/scripts/pre_tool_firewall.js",
             "timeout": 5
           }
         ]
+      }
+    ]
+  },
+  "stop-duty-completion-gate": {
+    "enabled": true,
+    "Stop": [
+      {
+        "type": "command",
+        "command": "node .agents/scripts/stop_completion_gate.js",
+        "timeout": 15
       }
     ]
   }

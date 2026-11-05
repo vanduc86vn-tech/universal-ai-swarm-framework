@@ -1,105 +1,39 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "project_id": "HDD-AI-ERP",
-  "version": "6.2-clean",
-  "updated_at": "2026-11-02T05:15:00.000Z",
+  "system": "Antigravity Master Framework v3.0",
+  "status": "UNINITIALIZED",
+  "mode": "PENDING_SELECTION",
+  "project_name": "New Swarm Project",
+  "created_at": "2026-11-05T09:45:00.000Z",
   "nodes": {
     "NODE_01": {
       "role": "LEAD_ARCHITECT_AND_BA",
-      "layer": "APEX_STRATEGY",
-      "display_name": "[[ BOSS-EXECUTIVE-CHIEF ]]",
-      "conversation_uuid": "8a8b4f35-c01b-4b9c-9550-b6efef005bc6",
-      "alias_uuid": "69f75ff4-1972-4a46-ba5b-b29e2cabb83b",
-      "model": "gemini-3.8-flash",
-      "status": "ACTIVE"
+      "conversation_uuid": "",
+      "description": "Tổng Kiến Trúc Sư & BA Trưởng, điểm chạm chiến lược duy nhất của Sếp Alex."
     },
     "NODE_02": {
-      "role": "AI-PROJECT-MANAGER",
-      "layer": "ORCHESTRATOR",
-      "display_name": "AI-PM-HDDERP",
-      "conversation_uuid": "b1e0279d-5783-4091-b8b7-ec23891e5b63",
-      "model": "gemini-3.8-flash",
-      "status": "ACTIVE"
+      "role": "PROJECT_MANAGER",
+      "conversation_uuid": "",
+      "description": "Nhạc Trưởng Điều Phối Dây Chuyền 5 Tầng, quản trị Task Board."
     },
     "NODE_03": {
-      "role": "AI-DATABASE-RESEARCHER",
-      "layer": "DATA_TIER",
-      "display_name": "AI-DATABASE-RESEARCHER",
-      "conversation_uuid": "f1c8d420-b579-4a95-8fba-8fbb6dac55fa",
-      "model": "gemini-3.8-flash",
-      "status": "ACTIVE"
+      "role": "DATABASE_ARCHITECT",
+      "conversation_uuid": "",
+      "description": "Kiến Trúc Sư CSDL 3NF, DDL Migrations và Rollbacks."
     },
     "NODE_04": {
-      "role": "AI-AUDIT-QA",
-      "layer": "AUDIT_TIER",
-      "display_name": "AI-AUDIT-QA",
-      "conversation_uuid": "3cc04cd5-dc2d-4164-a75f-dfb6e14ee0e2",
-      "model": "gemini-3.8-flash",
-      "status": "ACTIVE"
+      "role": "QA_AND_SECURITY_AUDITOR",
+      "conversation_uuid": "",
+      "description": "Kiểm Toán Độc Lập 5 Cổng QA, bảo mật OWASP và đối soát nhị phân."
     },
     "NODE_05": {
-      "role": "AI-BACKEND",
-      "layer": "SERVICE_TIER",
-      "display_name": "AI-BACKEND",
-      "conversation_uuid": "7120d573-8e9a-4950-a2b6-dc20291f8d77",
-      "model": "gemini-3.8-flash",
-      "status": "ACTIVE"
+      "role": "BACKEND_ENGINEER",
+      "conversation_uuid": "",
+      "description": "Kỹ Sư Lập Trình Backend, xây dựng API và xử lý nghiệp vụ theo DDL."
     },
     "NODE_06": {
-      "role": "AI-WEB-MOBILE-UI",
-      "layer": "PRESENTATION_TIER",
-      "display_name": "AI-CLIENT-UI",
-      "conversation_uuid": "f4ed3da6-8e97-46af-ab27-9a65a9119fe4",
-      "model": "gemini-3.8-flash",
-      "status": "ACTIVE"
-    },
-    "NODE_07": {
-      "role": "AI-MANUFACTURING-MRP",
-      "layer": "SERVICE_TIER",
-      "display_name": "AI-MANUFACTURING-MRP",
-      "conversation_uuid": "d072c34d-46ee-4d00-b4b2-c441b70ac58a",
-      "model": "gemini-3.8-flash",
-      "status": "ACTIVE"
-    },
-    "NODE_08": {
-      "role": "AI-CUSTOMER-PORTAL",
-      "layer": "SERVICE_TIER",
-      "display_name": "AI-CUSTOMER-PORTAL",
-      "conversation_uuid": "e834779a-0928-4c26-9d6d-5a6cdcd4855c",
-      "model": "gemini-3.8-flash",
-      "status": "ACTIVE"
-    },
-    "NODE_09": {
-      "role": "AI-VPS-INFRA-PARTNER",
-      "layer": "INFRA_TIER",
-      "display_name": "AI-VPS-INFRA-PARTNER",
-      "conversation_uuid": "a8cd8f01-fd90-4748-94ca-c3dbc0d4bc8c",
-      "model": "gemini-3.8-flash",
-      "status": "ACTIVE"
-    },
-    "NODE_10": {
-      "role": "AI-ENTERPRISE-ARCHITECT",
-      "layer": "PRESENTATION_TIER",
-      "display_name": "AI-ENTERPRISE-ARCHITECT",
-      "conversation_uuid": "531636d2-0fde-4807-afcc-f1e4590e060b",
-      "model": "gemini-3.8-flash",
-      "status": "ACTIVE"
-    },
-    "NODE_11": {
-      "role": "AI-ERP-BENCHMARK-SPECIALIST",
-      "layer": "BENCHMARK_TIER",
-      "display_name": "AI ERP Benchmark Specialist",
-      "conversation_uuid": "f4e96bdb-6425-4370-9e53-f299eec140c8",
-      "model": "gemini-3.8-flash",
-      "status": "ACTIVE"
-    },
-    "NODE_12": {
-      "role": "AI-BROWSER",
-      "layer": "AUDIT_TIER",
-      "display_name": "AI Browser",
-      "conversation_uuid": "9d5278ae-ecb0-4091-938e-e589137f7a4c",
-      "model": "gemini-4-argon",
-      "status": "ACTIVE"
+      "role": "VPS_INFRA_PARTNER",
+      "conversation_uuid": "",
+      "description": "Chuyên Gia Quản Trị Hạ Tầng VPS, thực thi SSH, SCP, PM2, Nginx, Docker."
     }
   }
 }
