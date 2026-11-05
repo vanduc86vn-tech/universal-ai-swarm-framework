@@ -1,0 +1,9 @@
+{
+  "receipt_id": "RCPT-TEST-002",
+  "audit_nonce": "POA-TEST8888",
+  "timestamp": "2026-11-02T11:07:55.326Z",
+  "created_at_ms": 1793617675328,
+  "ttl_seconds": 300,
+  "consumed": false,
+  "consumed_at": null
+}

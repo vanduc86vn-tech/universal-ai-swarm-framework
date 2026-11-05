@@ -4,7 +4,7 @@
     "PreInvocation": [
       {
         "type": "command",
-        "command": "node .agents/scripts/pre_invocation_anchor.js",
+        "command": "node scripts/pre_invocation_anchor.js",
         "timeout": 5
       }
     ]
@@ -17,7 +17,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node .agents/scripts/pre_tool_firewall.js",
+            "command": "node scripts/pre_tool_firewall.js",
             "timeout": 5
           }
         ]
@@ -29,7 +29,7 @@
     "Stop": [
       {
         "type": "command",
-        "command": "node .agents/scripts/stop_completion_gate.js",
+        "command": "node scripts/stop_completion_gate.js",
         "timeout": 15
       }
     ]

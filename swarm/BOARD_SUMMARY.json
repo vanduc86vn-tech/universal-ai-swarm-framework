@@ -1,14 +1,23 @@
 {
-  "board_name": "SWARM_PROGRESSIVE_TASK_BOARD",
-  "version": "3.0.0-PARTITIONED",
+  "board_name": "SWARM_PARTITIONED_TASK_BOARD",
+  "version": "3.2.0-PARTITIONED-GITOPS",
   "mode": "MODE_A_PARTITIONED_GITOPS",
-  "last_updated": "2026-11-01T18:00:00Z",
-  "active_tasks_directory": "swarm/tasks/active/",
-  "archive_tasks_directory": "swarm/tasks/archive/",
+  "last_updated": "2026-11-02T23:03:34.921Z",
   "metrics": {
     "total_active_tasks": 1,
-    "completed_tasks": 0,
-    "failed_tasks": 0
+    "completed_archived_tasks": 0,
+    "worker_workload": {
+      "AI-PROJECT-MANAGER": 1
+    }
   },
-  "notice": "Mô hình Monolithic đã được bãi bỏ. Worker chỉ đọc file task riêng lẻ trong thư mục swarm/tasks/active/."
+  "active_directory": "swarm/tasks/active/",
+  "archive_directory": "swarm/tasks/archive/",
+  "active_tasks": [
+    {
+      "task_id": "TASK-INIT-001",
+      "title": "Khởi tạo môi trường và kiểm tra cấu trúc thư mục",
+      "status": "IN_PROGRESS",
+      "assigned_to": "AI-PROJECT-MANAGER"
+    }
+  ]
 }
