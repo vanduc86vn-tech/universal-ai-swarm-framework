@@ -1,39 +1,39 @@
 {
   "system": "Antigravity Master Framework v3.0",
-  "status": "UNINITIALIZED",
-  "mode": "PENDING_SELECTION",
-  "project_name": "New Swarm Project",
-  "created_at": "2026-11-05T09:45:00.000Z",
+  "status": "INITIALIZED",
+  "mode": "Mode A (GitOps Cục Bộ) & Mode B (Enterprise SSOT)",
+  "project_name": "Antigravity Master Framework",
   "nodes": {
     "NODE_01": {
-      "role": "LEAD_ARCHITECT_AND_BA",
-      "conversation_uuid": "",
-      "description": "Tổng Kiến Trúc Sư & BA Trưởng, điểm chạm chiến lược duy nhất của Sếp Alex."
+      "role": "BOSS_EXECUTIVE_ASSISTANT",
+      "display_name": "[[BOSS-EXECUTIVE-CHIEF]]",
+      "scope": "APEX_STRATEGY",
+      "conversation_uuid": "8a8b4f35-c01b-4b9c-9550-b6efef005bc6",
+      "direct_counterpart": "NODE_02",
+      "directives": "Làm việc trực tiếp duy nhất với Sếp Alex. Bóc tách chiến lược, nạp Task vào SSOT, gửi PING tức thì [SIGNAL:NEW_TASK_ALERT] đánh thức PM."
     },
     "NODE_02": {
       "role": "PROJECT_MANAGER",
+      "display_name": "[[PROJECT-MANAGER]]",
+      "scope": "OPERATIONAL_ORCHESTRATION",
       "conversation_uuid": "",
-      "description": "Nhạc Trưởng Điều Phối Dây Chuyền 5 Tầng, quản trị Task Board."
+      "direct_counterpart": "NODE_01",
+      "directives": "Thức giấc tức thì khi nhận PING từ Trợ lý Boss. Tự động kéo task từ SSOT bằng get-task, điều phối Worker, nghiệm thu 5 trạm."
     },
     "NODE_03": {
-      "role": "DATABASE_ARCHITECT",
-      "conversation_uuid": "",
-      "description": "Kiến Trúc Sư CSDL 3NF, DDL Migrations và Rollbacks."
+      "role": "AI_ARCHITECT",
+      "scope": "SYSTEM_DESIGN",
+      "conversation_uuid": ""
     },
     "NODE_04": {
-      "role": "QA_AND_SECURITY_AUDITOR",
-      "conversation_uuid": "",
-      "description": "Kiểm Toán Độc Lập 5 Cổng QA, bảo mật OWASP và đối soát nhị phân."
+      "role": "AI_BACKEND",
+      "scope": "CORE_SERVICES",
+      "conversation_uuid": ""
     },
     "NODE_05": {
-      "role": "BACKEND_ENGINEER",
-      "conversation_uuid": "",
-      "description": "Kỹ Sư Lập Trình Backend, xây dựng API và xử lý nghiệp vụ theo DDL."
-    },
-    "NODE_06": {
-      "role": "VPS_INFRA_PARTNER",
-      "conversation_uuid": "",
-      "description": "Chuyên Gia Quản Trị Hạ Tầng VPS, thực thi SSH, SCP, PM2, Nginx, Docker."
+      "role": "AI_AUDIT_QA",
+      "scope": "INVARIANT_VERIFICATION",
+      "conversation_uuid": ""
     }
   }
 }

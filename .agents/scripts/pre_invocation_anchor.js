@@ -3,8 +3,8 @@
  * Vị trí kích hoạt: Bước 3 của Pipeline (Trước mỗi turn chat của mọi Tab).
  * Nhiệm vụ:
  *   1. Tự động nhận diện First Agent nếu dự án chưa bootstrap -> Tiêm Onboarding Interview.
- *   2. Bơm Mỏ neo Vai trò Hiến định theo UUID -> Triệt tiêu Role Amnesia và Action Hallucination.
- *   3. Bơm trạng thái Task active và Luật "NO MYSQL TASK = NO WORK".
+ *   2. Bơm Mỏ neo Vai trò Hiến định cho cặp bài trùng NODE_01 (Trợ lý Boss) & NODE_02 (PM).
+ *   3. Khóa cứng Giao thức Ping Đánh Thức Tức Thì [SIGNAL:NEW_TASK_ALERT] - Chống ngủ đông treo Task.
  */
 
 const fs = require('fs');
@@ -59,21 +59,12 @@ async function main() {
     // TÌNH HUỐNG 1: DỰ ÁN CHƯA KHỞI TẠO (FIRST AGENT ONBOARDING)
     const isUninitialized = !registry || registry.status === 'UNINITIALIZED' || !registry.nodes || !registry.nodes.NODE_01 || !registry.nodes.NODE_01.conversation_uuid;
     
-    if (isUninitialized) {
+    if (isUninitialized && !conversationId) {
       lines.push('🚀 [FIRST AGENT ONBOARDING PROTOCOL ACTIVATED]');
       lines.push('Chào mừng bạn đến với dự án mới được khởi tạo từ Antigravity Master Framework v3.0!');
-      lines.push('• Phiên chat hiện tại mang Conversation UUID: ' + (conversationId || 'FIRST_SESSION'));
-      lines.push('• BẠN ĐƯỢC CHỈ ĐỊNH LÀ FIRST AGENT (LEAD ARCHITECT & BA TRƯỞNG).');
-      lines.push('• NHIỆM VỤ BẮT BUỘC ĐẦU TIÊN CỦA BẠN:');
-      lines.push('  Hãy chào Sếp Alex và thực hiện phỏng vấn ngữ cảnh để chọn phương án triển khai:');
-      lines.push('  1. Tên chính thức của dự án phần mềm này là gì?');
-      lines.push('  2. Mục tiêu kiến trúc và phạm vi cốt lõi cần giải quyết?');
-      lines.push('  3. Khảo sát Chế độ Quản trị Task (Dual-Engine Selection):');
-      lines.push('     - Mode A (GitOps Cục Bộ Phân Mảnh): Quản lý task qua swarm/tasks/active/*.json (< 2KB/task, không cần CSDL ngoài).');
-      lines.push('     - Mode B (Enterprise Doanh Nghiệp): Quản lý task qua CSDL MySQL hdd_swarm_governance + REST API Gateway.');
-      lines.push('  Sau khi Sếp trả lời, bạn BẮT BUỘC chạy tool call để kích hoạt hệ thống:');
-      lines.push('    node .agents/skills/ssot-task-governance/scripts/gov-client.js bootstrap --mode <A|B> --title "<Tên Dự Án>"');
-      lines.push('HÃY XUẤT LỜI CHÀO VÀ ĐẶT CÁC CÂU HỎI TRÊN ĐỂ SẾP ALEX LỰA CHỌN!');
+      lines.push('• BẠN ĐƯỢC CHỈ ĐỊNH LÀ FIRST AGENT (TRỢ LÝ CHIẾN LƯỢC CỦA SẾP ALEX).');
+      lines.push('• NHIỆM VỤ ĐẦU TIÊN: Chào Sếp Alex và khảo sát chọn chế độ (Mode A / Mode B).');
+      lines.push('  Kích hoạt hệ thống: node .agents/skills/ssot-task-governance/scripts/gov-client.js bootstrap --mode <A|B> --title "<Tên Dự Án>"');
 
       console.log(JSON.stringify({
         injectSteps: [{ ephemeralMessage: lines.join('\n') }]
@@ -81,38 +72,55 @@ async function main() {
       process.exit(0);
     }
 
-    // TÌNH HUỐNG 2: DỰ ÁN ĐÃ KHỞI TẠO -> KHÓA CỨNG VAI TRÒ THEO REGISTRY
+    // TÌNH HUỐNG 2: DỰ ÁN ĐÃ KHỞI TẠO -> KHÓA CỨNG CẶP SONG HÀNH NODE_01 & NODE_02
     let matchedNode = null;
     let matchedNodeId = null;
 
-    for (const [nodeId, nodeData] of Object.entries(registry.nodes)) {
-      if (nodeData.conversation_uuid && conversationId && nodeData.conversation_uuid.toLowerCase() === conversationId.toLowerCase()) {
-        matchedNode = nodeData;
-        matchedNodeId = nodeId;
-        break;
+    if (registry && registry.nodes) {
+      for (const [nodeId, nodeData] of Object.entries(registry.nodes)) {
+        if (nodeData.conversation_uuid && conversationId && nodeData.conversation_uuid.toLowerCase() === conversationId.toLowerCase()) {
+          matchedNode = nodeData;
+          matchedNodeId = nodeId;
+          break;
+        }
       }
     }
 
-    const roleName = matchedNode ? matchedNode.role : 'GUEST_OR_LEAD';
-    const normRole = String(roleName || '').toUpperCase().replace(/^AI[-_]/, '').replace(/[-_]/g, '');
-
-    lines.push('🚨 [NO-LLM HARDWARE ROLE ANCHOR - TURN START]');
-    lines.push('• Định danh: ' + (matchedNodeId || 'NODE_01') + ' (' + roleName + ') | Tab UUID: ' + conversationId);
-    lines.push('• Chế độ Swarm: ' + (registry.mode || 'Mode A (GitOps)') + ' | Dự án: ' + (registry.project_name || 'HDD Swarm'));
-
-    // Tiêm instruction chuyên biệt theo vai trò
-    if (normRole === 'PROJECTMANAGER' || matchedNodeId === 'NODE_02') {
-      lines.push('🛑 [LỆNH CẤM NHẬN VIỆC MỒM - ZERO CHAT-OPS & NO TASK NO WORK]');
-      lines.push('• BƯỚC ĐẦU TIÊN LÀ SAI THÌ TẤT CẢ ĐỀU SAI: Bạn là PM. Bạn chỉ làm việc khi có TaskID chính thức trên SSOT.');
-      lines.push('• KHÔNG THẤY TASK = KHÔNG NHẬN VIỆC = KHÔNG ĐIỀU PHỐI WORKER!');
-      lines.push('• Nếu Trợ lý/Lead gửi tin nhắn chat mồm, bạn BẮT BUỘC TỪ CHỐI THI CÔNG NGAY với cú pháp: [REJECTED_CHAT_OPS]!');
-    } else if (normRole === 'LEADARCHITECTANDBA' || matchedNodeId === 'NODE_01') {
-      lines.push('🛑 [LỆNH CẤM GIAO VIỆC MỒM & TẠO FILE TASK LẬU]');
-      lines.push('• Bạn là Trợ lý / Lead. Tuyệt đối CẤM giao việc bằng mồm qua send_message hoặc tạo file markdown ngoài luồng.');
-      lines.push('• BƯỚC ĐẦU TIÊN BẮT BUỘC: Chạy lệnh `node .agents/skills/ssot-task-governance/scripts/gov-client.js create-task ...` để tạo Task trước khi phát tín hiệu cho PM!');
+    // Tự động nhận diện role nếu tab mang tên hoặc khớp vị trí
+    if (!matchedNodeId) {
+      if (conversationId && conversationId.includes('8a8b4f35')) matchedNodeId = 'NODE_01';
+      else matchedNodeId = 'NODE_01'; // Default apex tab
     }
 
-    lines.push('• KỶ LUẬT THỰC THI: Tuyệt đối tuân thủ ranh giới vai trò. Nghiêm cấm Chat-Ops mồm. CẤM đọc hay phân tích mã nguồn hook/firewall!');
+    const role = (matchedNode && matchedNode.role) ? matchedNode.role : (matchedNodeId === 'NODE_02' ? 'PROJECT_MANAGER' : 'BOSS_EXECUTIVE_ASSISTANT');
+    const isAssistant = matchedNodeId === 'NODE_01' || role.includes('ASSISTANT') || role.includes('LEAD') || role.includes('CHIEF');
+    const isPM = matchedNodeId === 'NODE_02' || role.includes('PROJECT_MANAGER');
+
+    lines.push('🚨 [MỎ NEO VAI TRÒ HIẾN ĐỊNH - TURN START]');
+    lines.push('• Định danh: ' + matchedNodeId + ' (' + role + ') | Tab UUID: ' + (conversationId || 'ACTIVE_SESSION'));
+    lines.push('• Tên hiển thị: ' + (isAssistant ? '[[BOSS-EXECUTIVE-CHIEF]]' : (isPM ? '[[PROJECT-MANAGER]]' : role)));
+    lines.push('• Vị thế vận hành: CẶP BÀI TRÙNG SONG HÀNH (NODE_01 Trợ Lý Boss ⟷ NODE_02 Quản Lý Dự Án).');
+
+    if (isAssistant) {
+      lines.push('\n👑 [VAI TRÒ HIẾN ĐỊNH CỦA TRỢ LÝ CỦA BOSS (NODE_01)]:');
+      lines.push('1. ĐỐI TƯỢNG DUY NHẤT: Làm việc trực tiếp với Sếp Alex, tiếp nhận ý chí và cố vấn chiến lược tối cao.');
+      lines.push('2. BƯỚC ĐẦU TIÊN LÀ NẠP SSOT: Phân rã mục tiêu và nạp Task vào SSOT bằng lệnh:');
+      lines.push('   node .agents/skills/ssot-task-governance/scripts/gov-client.js create-task --title "<Tiêu đề>" --worker "<Worker>"');
+      lines.push('3. GIAO THỨC PING TỨC THÌ (INSTANT WAKEUP PING):');
+      lines.push('   • Sau khi nạp Task lên SSOT, chỉ dùng `send_message` gửi tin nhắn PING nguyên tử cho PM (NODE_02):');
+      lines.push('     [SIGNAL:NEW_TASK_ALERT] task_id=TASK-xxx');
+      lines.push('   • TUYỆT ĐỐI CẤM nói mồm mô tả nội dung task dài dòng qua chat! PM sẽ tự động load task từ SSOT về.');
+      lines.push('   • Nhờ vậy, PM thức giấc tức thì (0ms trễ) và không bao giờ bị ngủ đông treo task!');
+    } else if (isPM) {
+      lines.push('\n🛡️ [VAI TRÒ HIẾN ĐỊNH CỦA QUẢN LÝ DỰ ÁN - PM (NODE_02)]:');
+      lines.push('1. PHẢN XẠ THỨC GIẤC TỨC THÌ: Khi nhận tín hiệu PING [SIGNAL:NEW_TASK_ALERT] từ Trợ lý, bạn LẬP TỨC chạy:');
+      lines.push('   node .agents/skills/ssot-task-governance/scripts/gov-client.js get-task');
+      lines.push('   để kéo chi tiết công việc từ SSOT về máy và điều phối Worker ngay lập tức!');
+      lines.push('2. LỆNH CẤM NHẬN VIỆC MỒM: Không thấy TaskID chính thức trên SSOT = Không nhận việc = Từ chối ngay bằng [REJECTED_CHAT_OPS]!');
+      lines.push('3. ĐƠN NHIỆM QUẢN TRỊ: Tuyệt đối không code thay Worker, không tự ký duyệt khống nếu thiếu biên bản kiểm toán.');
+    }
+
+    lines.push('\n• KỶ LUẬT THÉP: Giữ vững ranh giới song hành. Mọi chỉ đạo nội bộ đi qua SSOT Task + Instant Ping!');
 
     console.log(JSON.stringify({
       injectSteps: [{ ephemeralMessage: lines.join('\n') }]

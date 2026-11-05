@@ -1,11 +1,11 @@
 /**
  * 🛡️ PRE-TOOL PHYSICAL FIREWALL (ANTIGRAVITY LIFECYCLE HOOK)
- * Vị trí kích hoạt: Bước 5 của Pipeline (Trước khi thực thi toolCall).
- * Nhiệm vụ:
- *   1. Chặn tạo file rác (.bak, .tmp, _old) và file task mồm (TODO.md, PENDING_TASKS.txt).
- *   2. Chặn Chat-Ops trên send_message nếu tin nhắn không chứa mã TaskID SSOT.
- *   3. Chặn Role Creep: PM cấm gõ lệnh hạ tầng SSH/SCP/PM2/docker.
- *   4. Chặn Upstream Push Embargo đối với dự án con.
+ * Vị trí kích hoạt: Bước 5 của Pipeline.
+ * Khóa cứng:
+ *   1. Chặn tạo file rác (.bak, .tmp, TODO.md).
+ *   2. Chặn chat-ops: NODE_01 gửi cho NODE_02 CHỈ ĐƯỢC PING nguyên tử [SIGNAL:NEW_TASK_ALERT] task_id=TASK-xxx.
+ *      Chặn mọi tin nhắn chat mồm giải thích dài dòng!
+ *   3. Chặn PM chạy lệnh hạ tầng VPS (Zero Role Creep).
  */
 
 const fs = require('fs');
@@ -68,17 +68,23 @@ async function main() {
       }
     }
 
-    const isPM = matchedRole === 'PROJECT_MANAGER' || matchedNodeId === 'NODE_02';
-    const isLead = matchedRole === 'LEAD_ARCHITECT_AND_BA' || matchedNodeId === 'NODE_01';
-
     // =========================================================================
     // GATE 1: KIỂM SOÁT THAO TÁC FILE (CHỐNG FILE RÁC & TASK MỒM)
     // =========================================================================
-    if (['write_file', 'edit_file', 'replace_file_content', 'write_to_file'].includes(toolName)) {
-      const targetPath = String(toolArgs.Path || toolArgs.path || '');
+    if (['write_file', 'edit_file', 'replace_file_content', 'write_to_file', 'multi_replace_file_content'].includes(toolName)) {
+      const targetPath = String(toolArgs.Path || toolArgs.path || '').replace(/\\/g, '/');
       const baseName = path.basename(targetPath).toLowerCase();
 
-      // 1.1. Chặn file rác (.bak, .tmp, _old)
+      // Chặn sửa đề thi test_oracle_invariants.py
+      if (targetPath.includes('test_oracle_invariants.py')) {
+        console.log(JSON.stringify({
+          decision: "deny",
+          reason: "[BLOCKED_BY_FIREWALL] ĐỀ THI ĐÃ ĐÓNG BĂNG! Bạn không được phép sửa tests/test_oracle_invariants.py để gian lận. Hãy quay về sửa code trong src/hdd_core/!"
+        }));
+        process.exit(0);
+      }
+
+      // Chặn file rác .bak, .tmp, _old
       if (/(\.bak\d*|\.tmp|_old|\.bk)$/i.test(baseName)) {
         console.log(JSON.stringify({
           decision: "deny",
@@ -87,74 +93,63 @@ async function main() {
         process.exit(0);
       }
 
-      // 1.2. Chặn tạo file task mồm (TODO.md, PENDING_TASKS.txt)
+      // Chặn file task mồm
       if (/^(todo|task_todo|pending_tasks|tasks)\.(md|txt)$/i.test(baseName)) {
         console.log(JSON.stringify({
           decision: "deny",
-          reason: "[BLOCKED_BY_FIREWALL] LỆNH CẤM GIAO TASK QUA FILE MỒM: Bước đầu tiên là sai thì tất cả đều sai! Mọi công việc phải được tạo và cấp TaskID chính thức trên SSOT (qua lệnh 'node .agents/skills/ssot-task-governance/scripts/gov-client.js create-task') hoặc tệp Partitioned chuẩn (swarm/tasks/active/TASK-xxx.json). Cấm tự tạo " + baseName + "!"
+          reason: "[BLOCKED_BY_FIREWALL] LỆNH CẤM GIAO TASK QUA FILE MỒM: Bước đầu tiên là sai thì tất cả đều sai! Mọi công việc phải được tạo và cấp TaskID chính thức trên SSOT qua lệnh 'node .agents/skills/ssot-task-governance/scripts/gov-client.js create-task'. Cấm tạo " + baseName + "!"
         }));
         process.exit(0);
       }
     }
 
     // =========================================================================
-    // GATE 2: KIỂM SOÁT `send_message` (CHỐNG CHAT-OPS GIAO VIỆC MỒM)
+    // GATE 2: KIỂM SOÁT send_message (GIAO THỨC PING TỨC THÌ NỘI BỘ)
     // =========================================================================
     if (toolName === 'send_message') {
-      const messageText = String(toolArgs.Message || '');
-      const recipientUuid = String(toolArgs.Recipient || '');
+      const messageText = String(toolArgs.Message || '').trim();
 
-      // Allowlist tín hiệu giao thức
-      const allowlistSignalRegex = /(\[SIGNAL:\s*[A-Z0-9_-]+\]|\[(ADMIN|SYSTEM|ACK|P2P_MESH_ACK|REJECTED_CHAT_OPS|HEARTBEAT|DISCOVERY|PING|PONG|WAKEUP|HANDOVER|COMPACT_DONE|HEALTH_CHECK)\])/i;
+      // Cho phép tín hiệu Ping tức thì chuẩn [SIGNAL:NEW_TASK_ALERT] task_id=TASK-xxx
+      const isInstantTaskAlert = /^\[SIGNAL:\s*NEW_TASK_ALERT\]\s*(task_id\s*=|TASK-)/i.test(messageText);
+      if (isInstantTaskAlert) {
+        // Kiểm tra độ dài: Ping thì phải ngắn gọn nguyên tử (< 150 ký tự), cấm chat mồm giải thích task
+        if (messageText.length > 200) {
+          console.log(JSON.stringify({
+            decision: "deny",
+            reason: "[BLOCKED_CHAT_OPS] TIN NHẮN PING QUÁ DÀI: Bạn đang cố tình giải thích nội dung task qua chat! Theo Hiến pháp, Trợ lý CHỈ PING báo có task bằng cú pháp nguyên tử: [SIGNAL:NEW_TASK_ALERT] task_id=TASK-xxx để PM tự kéo chi tiết từ SSOT về. Cấm nói mồm mô tả nội dung task!"
+          }));
+          process.exit(0);
+        }
+        console.log(JSON.stringify({ decision: "allow" }));
+        process.exit(0);
+      }
+
+      // Cho phép các tín hiệu hệ thống khác
+      const allowlistSignalRegex = /^(\[SIGNAL:\s*[A-Z0-9_-]+\]|\[(ADMIN|SYSTEM|ACK|P2P_MESH_ACK|REJECTED_CHAT_OPS|HEARTBEAT|DISCOVERY|PING|PONG|WAKEUP|HANDOVER|COMPACT_DONE|HEALTH_CHECK)\])/i;
       if (allowlistSignalRegex.test(messageText)) {
         console.log(JSON.stringify({ decision: "allow" }));
         process.exit(0);
       }
 
-      // Chặn Lead vượt mặt PM điều phối trực tiếp xuống Worker
-      if (isLead && pmUuid && recipientUuid && recipientUuid.toLowerCase() !== pmUuid.toLowerCase()) {
-        console.log(JSON.stringify({
-          decision: "deny",
-          reason: "[BLOCKED_BY_FIREWALL] Hiến pháp vi phạm (Lead Usurpation): Bạn là Lead Architect. Tuyệt đối CẤM gửi tin nhắn điều phối trực tiếp xuống Worker! Mọi chỉ đạo phải gửi tới PM (NODE_02 - UUID: " + pmUuid + ") kèm TaskID hợp lệ!"
-        }));
-        process.exit(0);
-      }
-
-      // Bắt buộc phải có mã TaskID
-      const taskIdRegex = /(\bTASK-[A-Z0-9_-]+\b|("task_id"\s*:)|(\btask_id\b)|(\bTASK_ID\b))/i;
-      if (taskIdRegex.test(messageText)) {
-        console.log(JSON.stringify({ decision: "allow" }));
-        process.exit(0);
-      }
-
+      // Nếu không có cờ tín hiệu hoặc chat mồm dài dòng
       console.log(JSON.stringify({
         decision: "deny",
-        reason: "[BLOCKED_BY_FIREWALL] Hiến pháp vi phạm (Anti Chat-Ops): Bạn đang giao việc mồm! Bước đầu tiên là sai thì tất cả đều sai. Tin nhắn chỉ đạo bắt buộc phải kèm mã Task ID (TASK-xxx) đã đăng bạ trên SSOT hoặc mang cờ tín hiệu hợp lệ ([SIGNAL:...])!"
+        reason: "[BLOCKED_BY_FIREWALL] Hiến pháp vi phạm (Anti Chat-Ops): Bạn đang giao việc mồm! Khi đã nạp Task vào SSOT, Trợ lý CHỈ ĐƯỢC dùng send_message để PING tức thì: [SIGNAL:NEW_TASK_ALERT] task_id=TASK-xxx. Cấm chat văn bản giải thích task làm loãng ngữ cảnh và gây ngủ đông!"
       }));
       process.exit(0);
     }
 
     // =========================================================================
-    // GATE 3: KIỂM SOÁT `run_command` (CHỐNG ROLE CREEP & UPSTREAM PUSH)
+    // GATE 3: KIỂM SOÁT run_command (CHỐNG ROLE CREEP)
     // =========================================================================
     if (toolName === 'run_command') {
       const cmd = String(toolArgs.CommandLine || '');
+      const isPM = matchedRole === 'PROJECT_MANAGER' || matchedNodeId === 'NODE_02';
 
-      // PM cấm chạy lệnh hạ tầng VPS
       if (isPM && /\b(ssh|scp|rsync|systemctl|service|pm2|docker|docker-compose|kubectl)\b/i.test(cmd)) {
         console.log(JSON.stringify({
           decision: "deny",
-          reason: "[BLOCKED_BY_FIREWALL] Hiến pháp vi phạm (Zero Role Creep): Bạn là PM. Tuyệt đối CẤM PM chạy lệnh hạ tầng VPS (" + cmd.split(' ')[0] + ")! Hãy tạo Task giao cho VPS_INFRA_PARTNER!"
-        }));
-        process.exit(0);
-      }
-
-      // Chặn dự án con git push lên master framework
-      const isSuperMaster = workspaceRoot.toUpperCase().includes('SUPER LEADER SWARM');
-      if (!isSuperMaster && /\bgit\s+push\b.*(swarm-master-ai|universal-ai-swarm-framework)/i.test(cmd)) {
-        console.log(JSON.stringify({
-          decision: "deny",
-          reason: "[BLOCKED_BY_FIREWALL] Hiến pháp vi phạm (Upstream Sovereignty Lock): Tác tử dự án con bị cấm tuyệt đối git push lên kho Master Framework!"
+          reason: "[BLOCKED_BY_FIREWALL] Hiến pháp vi phạm (Zero Role Creep): Bạn là PM. Tuyệt đối CẤM PM chạy lệnh hạ tầng trực tiếp! Hãy tạo Task giao cho Worker chuyên trách!"
         }));
         process.exit(0);
       }
