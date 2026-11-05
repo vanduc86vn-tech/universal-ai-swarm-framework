@@ -72,7 +72,7 @@ async function main() {
       lines.push('     - Mode A (GitOps Cục Bộ Phân Mảnh): Quản lý task qua swarm/tasks/active/*.json (< 2KB/task, không cần CSDL ngoài).');
       lines.push('     - Mode B (Enterprise Doanh Nghiệp): Quản lý task qua CSDL MySQL hdd_swarm_governance + REST API Gateway.');
       lines.push('  Sau khi Sếp trả lời, bạn BẮT BUỘC chạy tool call để kích hoạt hệ thống:');
-      lines.push('    node swarm/scripts/gov-client.js bootstrap --mode <A|B> --title "<Tên Dự Án>"');
+      lines.push('    node .agents/skills/ssot-task-governance/scripts/gov-client.js bootstrap --mode <A|B> --title "<Tên Dự Án>"');
       lines.push('HÃY XUẤT LỜI CHÀO VÀ ĐẶT CÁC CÂU HỎI TRÊN ĐỂ SẾP ALEX LỰA CHỌN!');
 
       console.log(JSON.stringify({
@@ -109,7 +109,7 @@ async function main() {
     } else if (normRole === 'LEADARCHITECTANDBA' || matchedNodeId === 'NODE_01') {
       lines.push('🛑 [LỆNH CẤM GIAO VIỆC MỒM & TẠO FILE TASK LẬU]');
       lines.push('• Bạn là Trợ lý / Lead. Tuyệt đối CẤM giao việc bằng mồm qua send_message hoặc tạo file markdown ngoài luồng.');
-      lines.push('• BƯỚC ĐẦU TIÊN BẮT BUỘC: Chạy lệnh `node swarm/scripts/gov-client.js create-task ...` để tạo Task trước khi phát tín hiệu cho PM!');
+      lines.push('• BƯỚC ĐẦU TIÊN BẮT BUỘC: Chạy lệnh `node .agents/skills/ssot-task-governance/scripts/gov-client.js create-task ...` để tạo Task trước khi phát tín hiệu cho PM!');
     }
 
     lines.push('• KỶ LUẬT THỰC THI: Tuyệt đối tuân thủ ranh giới vai trò. Nghiêm cấm Chat-Ops mồm. CẤM đọc hay phân tích mã nguồn hook/firewall!');

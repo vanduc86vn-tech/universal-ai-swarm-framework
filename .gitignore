@@ -1,33 +1,29 @@
-# Runtime locks and receipts
-swarm/locks/*.pid
-swarm/locks/*.heartbeat
-swarm/locks/CADENCE_HEARTBEAT.json
-swarm/locks/LATEST_TASK_RECEIPT.json
-swarm/locks/CADENCE_INSPECTION_RECEIPT.json
+# Python & Environment
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
 
-# Forbidden ad-hoc scratch and backup files
+# Backup & Temp Garbage (Strict Block)
 *.bak*
 *.tmp*
-*.old
-*_bk_*
+*_old*
+*.bk*
 TODO.md
 TASK_TODO.md
 PENDING_TASKS.txt
 
-# Node & Python caches
+# Secrets & Environment Variables
+.env
+.env.*
+*.secret
+
+# Node.js
 node_modules/
 npm-debug.log*
 yarn-debug.log*
-yarn-error.log*
-__pycache__/
-*.py[cod]
-.pytest_cache/
 
-# Environment and sensitive keys
-.env
-.env.*.local
-*.pem
-*.key
-
-# Antigravity runtime artifacts
-.gemini/
+# OS Clutter
+.DS_Store
+Thumbs.db

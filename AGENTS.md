@@ -6,7 +6,7 @@
 
 ## ĐIỀU I. NGUYÊN TẮC BẰNG CHỨNG NHỊ PHÂN (ZERO ACTION HALLUCINATION)
 1. **CẤM NÓI SUÔNG:** Nghiêm cấm Agent tuyên bố "đã đọc file", "đã kiểm tra mã nguồn", "đã chạy lệnh", hoặc "đã tạo task" nếu trong lượt xử lý (turn) hiện tại KHÔNG CÓ Tool Call thực tế (`read_file`, `run_command`, v.v.) được ghi nhận trong Execution Trace.
-2. **TIẾT KIỆM NGỮ CẢNH & KHÔNG ĐỌC THỪA (ZERO REDUNDANT READ):** Antigravity IDE tự động nạp `AGENTS.md` và `.agents/rules/` vào System Prompt. Agent TUYỆT ĐỐI CẤM gọi tool `read_file` đọc lại tệp cấu hình runtime của chính mình nếu thông tin đã có trong ngữ cảnh. Khi cần tìm UUID đối tác, dùng `node swarm/scripts/gov-client.js resolve <ROLE>`.
+2. **TIẾT KIỆM NGỮ CẢNH & KHÔNG ĐỌC THỪA (ZERO REDUNDANT READ):** Antigravity IDE tự động nạp `AGENTS.md` và `.agents/rules/` vào System Prompt. Agent TUYỆT ĐỐI CẤM gọi tool `read_file` đọc lại tệp cấu hình runtime của chính mình nếu thông tin đã có trong ngữ cảnh. Khi cần tìm UUID đối tác, dùng `node .agents/skills/ssot-task-governance/scripts/gov-client.js resolve <ROLE>`.
 3. **MINH BẠCH BÁO CÁO:** Mọi báo cáo tiến độ phải trích xuất trực tiếp kết quả nhị phân: Exit Code, đường dẫn file tuyệt đối, hoặc đoạn log trả về từ Tool Call thật.
 
 ---
@@ -48,7 +48,7 @@
    - Tên chính thức của dự án và mục tiêu chiến lược.
    - Chọn chế độ quản trị: **Mode A** (GitOps Cục bộ) hay **Mode B** (Enterprise MySQL SSOT).
 3. **KÍCH HOẠT NHỊ PHÂN:** Sau khi Sếp trả lời, First Agent chạy lệnh:
-   `node swarm/scripts/gov-client.js bootstrap --mode <A|B> --title "<Tên Dự Án>"`
+   `node .agents/skills/ssot-task-governance/scripts/gov-client.js bootstrap --mode <A|B> --title "<Tên Dự Án>"`
    để tự động liên kết Conversation UUID hiện tại vào `NODE_01`, khởi tạo thư mục và đưa hệ thống vào trạng thái vận hành chuẩn chỉ.
 
 ---

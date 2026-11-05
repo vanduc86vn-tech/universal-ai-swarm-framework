@@ -91,7 +91,7 @@ async function main() {
       if (/^(todo|task_todo|pending_tasks|tasks)\.(md|txt)$/i.test(baseName)) {
         console.log(JSON.stringify({
           decision: "deny",
-          reason: "[BLOCKED_BY_FIREWALL] LỆNH CẤM GIAO TASK QUA FILE MỒM: Bước đầu tiên là sai thì tất cả đều sai! Mọi công việc phải được tạo và cấp TaskID chính thức trên SSOT (qua lệnh 'node swarm/scripts/gov-client.js create-task') hoặc tệp Partitioned chuẩn (swarm/tasks/active/TASK-xxx.json). Cấm tự tạo " + baseName + "!"
+          reason: "[BLOCKED_BY_FIREWALL] LỆNH CẤM GIAO TASK QUA FILE MỒM: Bước đầu tiên là sai thì tất cả đều sai! Mọi công việc phải được tạo và cấp TaskID chính thức trên SSOT (qua lệnh 'node .agents/skills/ssot-task-governance/scripts/gov-client.js create-task') hoặc tệp Partitioned chuẩn (swarm/tasks/active/TASK-xxx.json). Cấm tự tạo " + baseName + "!"
         }));
         process.exit(0);
       }
