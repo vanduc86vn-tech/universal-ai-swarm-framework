@@ -78,7 +78,7 @@ async function main() {
         // TỊCH THU QUYỀN DỪNG! BẮT BUỘC AGENT PHẢI TẠO TASK TRƯỚC KHI TRẢ LỜI SẾP
         console.log(JSON.stringify({
           decision: "continue",
-          reason: "🛑 [STOP GATE BẺ GÃY QUYỀN DỪNG]: BƯỚC ĐẦU TIÊN LÀ SAI THÌ TẤT CẢ ĐỀU SAI! Bạn vừa nhận chỉ thị công việc nhưng CHƯA CHẠY LỆNH TẠO TASK TRÊN SSOT! Quyền kết thúc bị tịch thu. Bắt buộc phải chạy lệnh nhị phân: `node swarm/scripts/gov-client.js create-task ...` để đăng ký Task vào SSOT trước khi buông bút báo cáo Sếp Alex!"
+          reason: "🛑 [STOP GATE BẺ GÃY QUYỀN DỪNG]: BƯỚC ĐẦU TIÊN LÀ SAI THÌ TẤT CẢ ĐỀU SAI! Bạn vừa nhận chỉ thị công việc nhưng CHƯA CHẠY LỆNH TẠO TASK TRÊN SSOT! Quyền kết thúc bị tịch thu. Bắt buộc phải chạy lệnh nhị phân: `node .agents/skills/ssot-task-governance/scripts/gov-client.js create-task ...` để đăng ký Task vào SSOT trước khi buông bút báo cáo Sếp Alex!"
         }));
         process.exit(0);
       }
