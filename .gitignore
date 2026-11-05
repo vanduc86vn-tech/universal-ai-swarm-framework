@@ -1,11 +1,17 @@
-# Python & Environment
+# Python & Virtual Environments
 .venv/
 venv/
 __pycache__/
 *.pyc
 *.pyo
+*.pyd
 
-# Backup & Temp Garbage (Strict Block)
+# Testing & Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Strict Blocks: Backup & Temp Garbage (Zero Litter Invariant)
 *.bak*
 *.tmp*
 *_old*
@@ -14,7 +20,7 @@ TODO.md
 TASK_TODO.md
 PENDING_TASKS.txt
 
-# Secrets & Environment Variables
+# Environment & Secrets
 .env
 .env.*
 *.secret
@@ -22,7 +28,6 @@ PENDING_TASKS.txt
 # Node.js
 node_modules/
 npm-debug.log*
-yarn-debug.log*
 
 # OS Clutter
 .DS_Store

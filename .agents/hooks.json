@@ -1,36 +1,26 @@
 {
-  "pre-invocation-role-anchor": {
-    "enabled": true,
-    "PreInvocation": [
-      {
-        "type": "command",
-        "command": "node scripts/pre_invocation_anchor.js",
-        "timeout": 5
-      }
-    ]
-  },
-  "runtime-physical-firewall": {
+  "runtime-file-firewall": {
     "enabled": true,
     "PreToolUse": [
       {
-        "matcher": "write_file|edit_file|replace_file_content|run_command|send_message",
+        "matcher": "write_file|edit_file|replace_file_content|write_to_file|multi_replace_file_content",
         "hooks": [
           {
             "type": "command",
-            "command": "node scripts/pre_tool_firewall.js",
+            "command": "python scripts/pre_tool_guard.py",
             "timeout": 5
           }
         ]
       }
     ]
   },
-  "stop-duty-completion-gate": {
+  "stop-oracle-and-ssot-gate": {
     "enabled": true,
     "Stop": [
       {
         "type": "command",
-        "command": "node scripts/stop_completion_gate.js",
-        "timeout": 15
+        "command": "python scripts/stop_verification_gate.py",
+        "timeout": 30
       }
     ]
   }
