@@ -1,11 +1,13 @@
 /**
  * 🛡️ PRE-TOOL PHYSICAL FIREWALL (ANTIGRAVITY LIFECYCLE HOOK)
- * Vị trí kích hoạt: Bước 5 của Pipeline.
- * Khóa cứng:
- *   1. Chặn tạo file rác (.bak, .tmp, TODO.md).
- *   2. Chặn chat-ops: NODE_01 gửi cho NODE_02 CHỈ ĐƯỢC PING nguyên tử [SIGNAL:NEW_TASK_ALERT] task_id=TASK-xxx.
- *      Chặn mọi tin nhắn chat mồm giải thích dài dòng!
- *   3. Chặn PM chạy lệnh hạ tầng VPS (Zero Role Creep).
+ * Vị trí kích hoạt: Bước 5 của Pipeline (Trước mọi tool call).
+ * Nhiệm vụ Cưỡng Chế Vật Lý:
+ *   1. GATE 1: Chặn tạo file rác (.bak, .tmp, TODO.md) và bảo vệ đề thi test_oracle_invariants.py.
+ *   2. GATE 2: Chặn chat-ops & Phân luồng Giao tiếp:
+ *      - Giao tiếp Nội bộ: CHỈ cho phép PING ngắt nguyên tử <= 200 ký tự dạng [SIGNAL:...].
+ *        CẤM TUYỆT ĐỐI văn tả cảnh, giải thích task mồm qua send_message!
+ *      - Giao tiếp Liên dự án: CẤM dùng send_message gửi ra ngoài Workspace (chống Sandbox Trap).
+ *   3. GATE 3: Chặn Role Creep (PM cấm gõ lệnh hạ tầng SSH/PM2/docker).
  */
 
 const fs = require('fs');
@@ -54,37 +56,37 @@ async function main() {
 
     let matchedRole = 'UNKNOWN';
     let matchedNodeId = 'UNKNOWN';
-    let pmUuid = '';
+    const internalUuids = new Set();
 
     if (registry && registry.nodes) {
       for (const [nodeId, nodeData] of Object.entries(registry.nodes)) {
-        if (nodeData.conversation_uuid && nodeData.conversation_uuid.toLowerCase() === conversationId.toLowerCase()) {
-          matchedRole = nodeData.role || '';
-          matchedNodeId = nodeId;
-        }
-        if (nodeData.role === 'PROJECT_MANAGER' || nodeId === 'NODE_02') {
-          pmUuid = nodeData.conversation_uuid || '';
+        if (nodeData.conversation_uuid) {
+          internalUuids.add(nodeData.conversation_uuid.toLowerCase());
+          if (conversationId && nodeData.conversation_uuid.toLowerCase() === conversationId.toLowerCase()) {
+            matchedRole = nodeData.role || '';
+            matchedNodeId = nodeId;
+          }
         }
       }
     }
 
     // =========================================================================
-    // GATE 1: KIỂM SOÁT THAO TÁC FILE (CHỐNG FILE RÁC & TASK MỒM)
+    // GATE 1: KIỂM SOÁT THAO TÁC FILE (CHỐNG FILE RÁC & BẢO VỆ ĐỀ THI)
     // =========================================================================
     if (['write_file', 'edit_file', 'replace_file_content', 'write_to_file', 'multi_replace_file_content'].includes(toolName)) {
       const targetPath = String(toolArgs.Path || toolArgs.path || '').replace(/\\/g, '/');
       const baseName = path.basename(targetPath).toLowerCase();
 
-      // Chặn sửa đề thi test_oracle_invariants.py
+      // 1.1. Chặn sửa đề thi test_oracle_invariants.py
       if (targetPath.includes('test_oracle_invariants.py')) {
         console.log(JSON.stringify({
           decision: "deny",
-          reason: "[BLOCKED_BY_FIREWALL] ĐỀ THI ĐÃ ĐÓNG BĂNG! Bạn không được phép sửa tests/test_oracle_invariants.py để gian lận. Hãy quay về sửa code trong src/hdd_core/!"
+          reason: "[BLOCKED_BY_FIREWALL] ĐỀ THI ĐÃ ĐÓNG BĂNG! Bạn không được phép sửa tệp tests/test_oracle_invariants.py để gian lận. Hãy quay về sửa logic mã nguồn trong src/hdd_core/ để pass test!"
         }));
         process.exit(0);
       }
 
-      // Chặn file rác .bak, .tmp, _old
+      // 1.2. Chặn file rác .bak, .tmp, _old
       if (/(\.bak\d*|\.tmp|_old|\.bk)$/i.test(baseName)) {
         console.log(JSON.stringify({
           decision: "deny",
@@ -93,7 +95,7 @@ async function main() {
         process.exit(0);
       }
 
-      // Chặn file task mồm
+      // 1.3. Chặn file task mồm (TODO.md, PENDING_TASKS.txt)
       if (/^(todo|task_todo|pending_tasks|tasks)\.(md|txt)$/i.test(baseName)) {
         console.log(JSON.stringify({
           decision: "deny",
@@ -104,38 +106,45 @@ async function main() {
     }
 
     // =========================================================================
-    // GATE 2: KIỂM SOÁT send_message (GIAO THỨC PING TỨC THÌ NỘI BỘ)
+    // GATE 2: KIỂM SOÁT send_message (GIAO THỨC P2P NỘI BỘ VS LIÊN DỰ ÁN)
     // =========================================================================
     if (toolName === 'send_message') {
       const messageText = String(toolArgs.Message || '').trim();
+      const recipientUuid = String(toolArgs.Recipient || '').trim().toLowerCase();
 
-      // Cho phép tín hiệu Ping tức thì chuẩn [SIGNAL:NEW_TASK_ALERT] task_id=TASK-xxx
-      const isInstantTaskAlert = /^\[SIGNAL:\s*NEW_TASK_ALERT\]\s*(task_id\s*=|TASK-)/i.test(messageText);
-      if (isInstantTaskAlert) {
-        // Kiểm tra độ dài: Ping thì phải ngắn gọn nguyên tử (< 150 ký tự), cấm chat mồm giải thích task
-        if (messageText.length > 200) {
-          console.log(JSON.stringify({
-            decision: "deny",
-            reason: "[BLOCKED_CHAT_OPS] TIN NHẮN PING QUÁ DÀI: Bạn đang cố tình giải thích nội dung task qua chat! Theo Hiến pháp, Trợ lý CHỈ PING báo có task bằng cú pháp nguyên tử: [SIGNAL:NEW_TASK_ALERT] task_id=TASK-xxx để PM tự kéo chi tiết từ SSOT về. Cấm nói mồm mô tả nội dung task!"
-          }));
-          process.exit(0);
-        }
-        console.log(JSON.stringify({ decision: "allow" }));
+      // 2.1. CHẶN GIAO TIẾP LIÊN DỰ ÁN QUA send_message (CHỐNG SANDBOX TRAP)
+      // Nếu recipientUuid không nằm trong danh bạ nội bộ đã đăng bạ
+      if (recipientUuid && internalUuids.size > 0 && !internalUuids.has(recipientUuid)) {
+        console.log(JSON.stringify({
+          decision: "deny",
+          reason: "[BLOCKED_BY_PHYSICAL_HOOK] VI PHẠM RANH GIỚI WORKSPACE: Recipient '" + recipientUuid + "' không thuộc không gian nội bộ của dự án này! Antigravity IDE cô lập Sandbox giữa các Workspace. Giao tiếp liên dự án BẮT BUỘC phải dùng Federated Bridge (REST API / Git Mailbox), tuyệt đối CẤM dùng send_message xuyên dự án!"
+        }));
         process.exit(0);
       }
 
-      // Cho phép các tín hiệu hệ thống khác
-      const allowlistSignalRegex = /^(\[SIGNAL:\s*[A-Z0-9_-]+\]|\[(ADMIN|SYSTEM|ACK|P2P_MESH_ACK|REJECTED_CHAT_OPS|HEARTBEAT|DISCOVERY|PING|PONG|WAKEUP|HANDOVER|COMPACT_DONE|HEALTH_CHECK)\])/i;
-      if (allowlistSignalRegex.test(messageText)) {
-        console.log(JSON.stringify({ decision: "allow" }));
+      // 2.2. VAN CHẶN VẬT LÝ ANTI-VERBOSE (CẤM VIẾT VĂN TẢ CẢNH LÀM TRÔI NGỮ CẢNH)
+      // Giới hạn độ dài tối đa 200 ký tự cho mọi tin nhắn P2P nội bộ
+      if (messageText.length > 200) {
+        console.log(JSON.stringify({
+          decision: "deny",
+          reason: "[BLOCKED_BY_PHYSICAL_HOOK] VI PHẠM NGUYÊN TẮC ZERO-NOISE P2P INTERRUPT: Tin nhắn quá dài (" + messageText.length + " ký tự > 200 ký tự)! Bạn đang viết văn tả cảnh làm loãng ngữ cảnh. Giao tiếp nội bộ CHỈ ĐƯỢC gửi Ping ngắt siêu nhẹ dạng '[SIGNAL:NEW_TASK_ALERT] task_id=TASK-xxx' để đối tác tự kéo task từ SSOT về! Tuyệt đối CẤM diễn giải nhiệm vụ trong send_message!"
+        }));
         process.exit(0);
       }
 
-      // Nếu không có cờ tín hiệu hoặc chat mồm dài dòng
-      console.log(JSON.stringify({
-        decision: "deny",
-        reason: "[BLOCKED_BY_FIREWALL] Hiến pháp vi phạm (Anti Chat-Ops): Bạn đang giao việc mồm! Khi đã nạp Task vào SSOT, Trợ lý CHỈ ĐƯỢC dùng send_message để PING tức thì: [SIGNAL:NEW_TASK_ALERT] task_id=TASK-xxx. Cấm chat văn bản giải thích task làm loãng ngữ cảnh và gây ngủ đông!"
-      }));
+      // 2.3. BẮT BUỘC PHẢI ĐÚNG ĐỊNH DẠNG TÍN HIỆU NGẮT NGUYÊN TỬ
+      const validPingRegex = /^\[SIGNAL:\s*[A-Z0-9_-]+\](\s*(task_id\s*=|TASK-)[A-Z0-9_-]+)?/i;
+      const isSystemSignal = /^\[(ADMIN|SYSTEM|ACK|P2P_MESH_ACK|REJECTED_CHAT_OPS|HEARTBEAT|DISCOVERY|PING|PONG|WAKEUP|HANDOVER|COMPACT_DONE|HEALTH_CHECK)\]/i.test(messageText);
+
+      if (!validPingRegex.test(messageText) && !isSystemSignal) {
+        console.log(JSON.stringify({
+          decision: "deny",
+          reason: "[BLOCKED_BY_PHYSICAL_HOOK] CÚ PHÁP PING KHÔNG HỢP LỆ: Tin nhắn ngắt nội bộ bắt buộc phải có cờ tín hiệu nguyên tử '[SIGNAL:NEW_TASK_ALERT] task_id=TASK-xxx' hoặc các cờ hệ thống hợp lệ! Cấm chat văn bản mồm ngoài luồng."
+        }));
+        process.exit(0);
+      }
+
+      console.log(JSON.stringify({ decision: "allow" }));
       process.exit(0);
     }
 
